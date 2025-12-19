@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/adminStyles/Categories.css">
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+        
+        <div class="bg-white" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom-0">
+                <div class="logo-box d-inline-block me-2"><svg width="74" height="36" viewBox="0 0 74 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M51.4 24.144C50.7067 24.144 50.0827 24.0213 49.528 23.776C48.984 23.52 48.552 23.1787 48.232 22.752C47.912 22.3147 47.7413 21.8293 47.72 21.296H49.608C49.64 21.6693 49.816 21.984 50.136 22.24C50.4667 22.4853 50.8773 22.608 51.368 22.608C51.88 22.608 52.2747 22.512 52.552 22.32C52.84 22.1173 52.984 21.8613 52.984 21.552C52.984 21.2213 52.824 20.976 52.504 20.816C52.1947 20.656 51.6987 20.48 51.016 20.288C50.3547 20.1067 49.816 19.9307 49.4 19.76C48.984 19.5893 48.6213 19.328 48.312 18.976C48.0133 18.624 47.864 18.16 47.864 17.584C47.864 17.1147 48.0027 16.688 48.28 16.304C48.5573 15.9093 48.952 15.6 49.464 15.376C49.9867 15.152 50.584 15.04 51.256 15.04C52.2587 15.04 53.064 15.296 53.672 15.808C54.2907 16.3093 54.6213 16.9973 54.664 17.872H52.84C52.808 17.4773 52.648 17.1627 52.36 16.928C52.072 16.6933 51.6827 16.576 51.192 16.576C50.712 16.576 50.344 16.6667 50.088 16.848C49.832 17.0293 49.704 17.2693 49.704 17.568C49.704 17.8027 49.7893 18 49.96 18.16C50.1307 18.32 50.3387 18.448 50.584 18.544C50.8293 18.6293 51.192 18.7413 51.672 18.88C52.312 19.0507 52.8347 19.2267 53.24 19.408C53.656 19.5787 54.0133 19.8347 54.312 20.176C54.6107 20.5173 54.7653 20.9707 54.776 21.536C54.776 22.0373 54.6373 22.4853 54.36 22.88C54.0827 23.2747 53.688 23.584 53.176 23.808C52.6747 24.032 52.0827 24.144 51.4 24.144ZM64.8269 19.376C64.8269 19.7067 64.8055 20.0053 64.7629 20.272H58.0269C58.0802 20.976 58.3415 21.5413 58.8109 21.968C59.2802 22.3947 59.8562 22.608 60.5389 22.608C61.5202 22.608 62.2135 22.1973 62.6189 21.376H64.5869C64.3202 22.1867 63.8349 22.8533 63.1309 23.376C62.4375 23.888 61.5735 24.144 60.5389 24.144C59.6962 24.144 58.9389 23.9573 58.2669 23.584C57.6055 23.2 57.0829 22.6667 56.6989 21.984C56.3255 21.2907 56.1389 20.4907 56.1389 19.584C56.1389 18.6773 56.3202 17.8827 56.6829 17.2C57.0562 16.5067 57.5735 15.9733 58.2349 15.6C58.9069 15.2267 59.6749 15.04 60.5389 15.04C61.3709 15.04 62.1122 15.2213 62.7629 15.584C63.4135 15.9467 63.9202 16.4587 64.2829 17.12C64.6455 17.7707 64.8269 18.5227 64.8269 19.376ZM62.9229 18.8C62.9122 18.128 62.6722 17.5893 62.2029 17.184C61.7335 16.7787 61.1522 16.576 60.4589 16.576C59.8295 16.576 59.2909 16.7787 58.8429 17.184C58.3949 17.5787 58.1282 18.1173 58.0429 18.8H62.9229ZM69.8219 24.144C69.1285 24.144 68.5045 24.0213 67.9499 23.776C67.4059 23.52 66.9739 23.1787 66.6539 22.752C66.3339 22.3147 66.1632 21.8293 66.1419 21.296H68.0299C68.0619 21.6693 68.2379 21.984 68.5579 22.24C68.8885 22.4853 69.2992 22.608 69.7899 22.608C70.3019 22.608 70.6965 22.512 70.9739 22.32C71.2619 22.1173 71.4059 21.8613 71.4059 21.552C71.4059 21.2213 71.2459 20.976 70.9259 20.816C70.6165 20.656 70.1205 20.48 69.4379 20.288C68.7765 20.1067 68.2379 19.9307 67.8219 19.76C67.4059 19.5893 67.0432 19.328 66.7339 18.976C66.4352 18.624 66.2859 18.16 66.2859 17.584C66.2859 17.1147 66.4245 16.688 66.7019 16.304C66.9792 15.9093 67.3739 15.6 67.8859 15.376C68.4085 15.152 69.0059 15.04 69.6779 15.04C70.6805 15.04 71.4859 15.296 72.0939 15.808C72.7125 16.3093 73.0432 16.9973 73.0859 17.872H71.2619C71.2299 17.4773 71.0699 17.1627 70.7819 16.928C70.4939 16.6933 70.1045 16.576 69.6139 16.576C69.1339 16.576 68.7659 16.6667 68.5099 16.848C68.2539 17.0293 68.1259 17.2693 68.1259 17.568C68.1259 17.8027 68.2112 18 68.3819 18.16C68.5525 18.32 68.7605 18.448 69.0059 18.544C69.2512 18.6293 69.6139 18.7413 70.0939 18.88C70.7339 19.0507 71.2565 19.2267 71.6619 19.408C72.0779 19.5787 72.4352 19.8347 72.7339 20.176C73.0325 20.5173 73.1872 20.9707 73.1979 21.536C73.1979 22.0373 73.0592 22.4853 72.7819 22.88C72.5045 23.2747 72.1099 23.584 71.5979 23.808C71.0965 24.032 70.5045 24.144 69.8219 24.144Z" fill="#8B8E99"/>
+                <rect width="40" height="36" fill="#F5F5F7"/>
+                <path d="M21.5385 36V25.2H0L5.37988e-07 10.8H21.5385V0H24.6154L40 18L24.6154 36H21.5385Z" fill="#8B8E99"/>
+                </svg></div> 
+            </div>
+            
+            <%- include('../partials/adminSideBar') %>
+           
+        <div id="page-content-wrapper">
+            
+            <%- include('../partials/adminNavBar') %>
+
+            <div class="container-fluid px-4">
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="fw-bold fs-4 mb-1">Categories</h3>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none ">Dashboard</a></li>
+                                <li class="breadcrumb-item active text-primary" aria-current="page">Categories List</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <a href="/admin/AddCategories" class="btn btn-primary add-btn"><i class="fas fa-plus me-2"></i> Add Categories</a>
+                </div>
+
+                <div class="mb-4">
+                </div>
+
+                <div class="row my-4">
+                    <div class="col">
+                        <div class="card shadow-sm border-0 rounded-3">
+                            <div class="card-body p-0">
+                                <table class="table table-hover align-middle mb-0 bg-white">
+                                    <thead class="bg-light">
+                                        <tr class="text-muted">
+                                            <th class="ps-4 py-3 border-0"> Category name</th>
+                                            <th class="py-3 border-0">Offer</th>
+                                            <th class="py-3 border-0">Stock</th>
+                                            <th class="py-3 border-0">Added</th>
+                                            <th class="py-3 border-0">Status</th>
+                                            <th class="pe-4 py-3 border-0 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <% data.forEach((value)=>{ %>
+                                    <tbody class="border-top-0">
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="<%=value.thumbnail %>" class="avatar-placeholder rounded me-3">
+                                                    <span class="fw-bold"><%= value.categoryName %></span>
+                                                </div>
+                                            </td>
+                                            <td class="text-muted">-</td>
+                                            <td class="text-muted">-</td>
+                                            <td><%= value.createdAt.toISOString().split("T")[0]; %></td>
+                                            <% if(!value.isBlocked) { %>
+                                              <td><a  class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Active</a></td>  
+                                            <%}else{ %>
+                                                    <td><span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Blocked</span></td> 
+                                            <% }%>
+                                            <td class="pe-4 text-center">
+                                                <a href="/admin/editCategory/<%= value._id%>" class="btn btn-link text-muted p-0 me-2"><i class="fas fa-pencil-alt"></i></a>
+                                                <% if(!value.isBlocked) { %>
+                                                <button onclick="deleteCategory('<%= value._id%>',true)" class="btn bg-danger-subtle text-danger btn-red">block</button>
+                                                   <%}else{ %>
+                                                <button onclick="deleteCategory('<%= value._id%>',false)" class="btn bg-success-subtle text-success btn-red">Un Block</button>
+                                                   <% }%>
+                                            </td>
+                                        </tr>
+                                   
+                                    </tbody>
+                                     <% }) %>
+                                </table>
+                            </div>
+                            <div class="card-footer bg-white border-0 py-3 ps-4 pe-4 d-flex justify-content-between align-items-center">
+                                <small class="text-muted fw-bold">Showing 1-10 from 100</small>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item">
+                                            <a class="page-link rounded-circle mx-1 text-primary border-primary" onclick="previousPage(`<%= page %>`)" aria-label="Previous">
+                                                <i class="fas fa-arrow-left"></i>
+                                            </a>
+                                        </li>
+                                        <% for(let i = 1; i <= count/limit; i++) {%>
+                                        <li class="page-item"><button id="nextButton"  class="page-link rounded-circle mx-1 active-page text-white border-0" value="<%= i %>" onclick="setPage('<%= i %>')"><%= i %></button></li>
+                                        <%}%>
+                                        <li class="page-item">
+                                            <button class="page-link rounded-circle mx-1 text-primary border-primary" onclick="nextPage(`<%= page %>`)" aria-label="Next">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <script>
+        async function deleteCategory(id,isBlocked){
+            console.log("hello")
+            await fetch(`/admin/category/block/${id}/${isBlocked}`,{
+                    method:"POST"
+                })
+            location.reload()
+        }
+
+
+          function setPage(page){
+          correntPage = page
+          window.location.href = `/admin/categories?page=${correntPage}`
+        }
+
+        function nextPage(correntPgae){
+           correntPgae++;
+          setPage(correntPgae)  
+             }
+             function previousPage(page){
+                page--;
+                if(page>0){
+                     setPage(page)
+                }
+             }
+     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

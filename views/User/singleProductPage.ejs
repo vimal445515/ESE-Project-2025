@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail Page UI - With Related Items</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4054d2;
+            --bg-color: #f8f9fa;
+        }
+        body {
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+        }
+
+        /* --- Image Gallery Styles --- */
+        .main-image {
+            width: 100%;
+            height: 450px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 0.5rem;
+        }
+        .thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: border-color 0.2s;
+        }
+        .thumbnail.active {
+            border-color: var(--primary-color);
+            border-width: 2px;
+        }
+
+        /* --- Product Info Styles --- */
+        .rating-star {
+            color: orange;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #adb5bd;
+            font-size: 1.2rem;
+        }
+        .current-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40;
+        }
+        .stock-badge {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.3rem 0.6rem;
+        }
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .buy-now-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+
+        /* --- Tab Section Styles --- */
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: #6c757d;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: #fff;
+        }
+        
+        /* --- Related Items Specific Styles --- */
+        .related-card {
+            border: 1px solid #eee;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+            background-color: #fff; /* Ensure card background is white */
+        }
+        .related-img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+        }
+        /* Style for horizontal scroll wrapper */
+        .related-scroll-wrapper {
+            overflow-x: auto;
+            white-space: nowrap; /* Prevents wrapping of inner cards */
+            padding-bottom: 1rem;
+            /* Optional: Add smooth scrolling */
+            scroll-behavior: smooth;
+        }
+        .related-card-wrapper {
+            display: inline-block;
+            width: 250px; /* Fixed width for the cards in the carousel */
+            margin-right: 1rem;
+            white-space: normal;
+        }
+
+
+.main-image {
+  width: 100%;
+  height: auto;
+  transition: transform 0.4s ease;
+}
+
+.zoom-box:hover .main-image {
+  transform: scale(1.30);
+  cursor: zoom-in;
+   
+   
+}
+
+    </style>
+</head>
+<body>
+<%- include("../partials/navbar.ejs")%>
+<div class="container py-5">
+    <div class="row">
+        
+        <div class="col-md-6  ">
+            
+            <div class=" mb-3  zoom-box ">
+                <img src="/upload/<%= productData.variants.images[0]%>" id="bigimg" class="  main-image shadow-sm bg-light" alt="Main Product Image">
+            </div>
+          
+            <p></p>
+            <div class="d-flex gap-3 justify-content-center">
+                <img src="/upload/<%= productData.variants.images[0]%>" class="thumbnail active" alt="Thumbnail 1">
+                <img src="/upload/<%= productData.variants.images[1]%>" class="thumbnail" alt="Thumbnail 2">
+                <img src="/upload/<%= productData.variants.images[2]%>" class="thumbnail" alt="Thumbnail 3">
+                <img src="/upload/<%= productData.variants.images[3]%>" class="thumbnail" alt="Thumbnail 4">
+                
+            </div>
+        </div>
+        
+        <div class="col-md-6 ps-md-5">
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-light"><i class="bi bi-heart fs-4 text-danger"></i></button>
+            </div>
+            
+            <div class="d-flex align-items-center mb-2">
+                <span class="rating-star fs-5 me-1"><i class="bi bi-star-fill"></i></span>
+                <span class="rating-star fs-5 me-1"><i class="bi bi-star-fill"></i></span>
+                <span class="rating-star fs-5 me-1"><i class="bi bi-star-fill"></i></span>
+                <span class="rating-star fs-5 me-1"><i class="bi bi-star-fill"></i></span>
+                <span class="rating-star fs-5 me-2"><i class="bi bi-star-half"></i></span>
+                <span class="text-muted small">4.7 Rating</span>
+            </div>
+            
+            <h3 class="fw-bold mb-3"></h3>
+           
+            
+            <div class="mb-4 d-flex align-items-center">
+               <% if(productData.variants.stock > 0){%>
+                <span class="me-3 text-muted">Availability: <span class="badge bg-success-subtle text-success stock-badge">In Stock</span></span>
+                <%}else{%>
+                <span class="me-3 text-muted">Availability: <span class="badge bg-danger-subtle text-danger stock-badge">Out of Stock</span></span>
+                <%}%>
+                <span class="text-muted">Category: <span class="fw-bold text-dark"><%= productData.category[0].categoryName%></span></span>
+            </div>
+            
+            <div class="d-flex align-items-baseline mb-4">
+                <span class="current-price me-3">₹<%= parseInt(productData.variants.price-((productData.discound/100)*productData.variants.price))%></span>
+                <span class="old-price me-3">₹<%= productData.variants.price%></span>
+                <span class="badge bg-warning text-dark fw-bold"><%= productData.discound%>% OFF</span>
+            </div>
+            
+            <div class="row mb-4 g-3">
+                <div class="col-6">
+                    <label for="memorySelect" class="form-label small text-muted">Memory</label>
+                    <select class="form-select" id="memorySelect">
+                        <% getVariants[0].ram.forEach((value)=>{%>
+                        <option value="<%= value%>"><%= value %> GB</option>
+                        <%})%>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label for="storageSelect" class="form-label small text-muted">Storage</label>
+                    <select class="form-select" id="storageSelect">
+                        <% getVariants[0].storage.forEach((value)=>{%>
+                        <option value="<%= value%>"><%= value %> GB SSD</option>
+                        <%})%>
+                        
+                    </select>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="input-group" style="width: 120px;">
+                    <button class="btn btn-outline-secondary counter-btn rounded-start" type="button">-</button>
+                    <input type="text" class="form-control text-center p-0" value="01" style="height: 40px; width: 40px;">
+                    <button class="btn btn-outline-secondary counter-btn rounded-end" type="button">+</button>
+                </div>
+                
+                <button class="btn buy-now-btn btn-primary flex-grow-1 rounded-pill">Buy Now</button>
+                <button class="btn btn-outline-secondary p-2"><i class="bi bi-cart-plus-fill fs-5"></i></button>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn btn-outline-secondary">Add to Cart</button>
+                </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white p-0">
+                    <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">DESCRIPTION</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">REVIEW</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-4">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                            <p class="text-muted">
+                                <%= productData.description%>
+                                    </p>
+                        </div>
+                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                            <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 pt-4 border-top">
+        <h3 class="fw-bold mb-4">You Might Also Like</h3>
+        
+        <div class="related-scroll-wrapper">
+           <% relateditems.forEach((product)=>{%>
+                <div class="related-card-wrapper">
+                    <div class="related-card bg-white shadow-sm">
+                        <img src="/upload/<%= product.generalPhoto%>" class="related-img" alt="Related Product ">
+                        <p class="fw-bold text-truncate mb-1"><%= product.productName%></p>
+                        <p class="text-primary fw-bold mb-2">₹<%= product.basePrice %></p>
+                        <a onclick='window.location.href=`/productDetails/<%= product._id%>`' class="btn btn-sm btn-outline-primary w-100">View</a>
+                    </div>
+                </div>
+            <%})%>
+        </div>
+        </div>
+    </div>
+<%- include("../partials/footer.ejs") %>
+<script>
+    let ram = '<%= ram%>'
+     document.querySelector('#memorySelect').value='<%= ram%>'||document.querySelector('#memorySelect').value
+    let storage ='<%= storage%>'
+    document.querySelector('#storageSelect').value='<%= storage%>'||document.querySelector('#storageSelect').value
+   
+
+  function redirectWithFilters() {
+    const ram = memorySelect.value;
+    const rom = storageSelect.value;
+
+    window.location.href =
+      `/productDetails/<%= productData._id %>?ram=${ram}&rom=${rom}`;
+  }
+
+   document.querySelector('#memorySelect').addEventListener('change',redirectWithFilters)
+     document.querySelector('#storageSelect').addEventListener('change',redirectWithFilters)
+ const mainImage = document.querySelector("#bigimg");
+const thumbnails = document.querySelectorAll(".thumbnail");
+
+thumbnails.forEach((img) => {
+  img.addEventListener("click", () => {
+    mainImage.src = img.src;
+
+    thumbnails.forEach(t => t.classList.remove("active"));
+    img.classList.add("active");
+  });
+})
+document.querySelector('.fw-bold').textContent =  `<%= productData.productName%> (${document.querySelector('#memorySelect').value}GB RAM ${document.querySelector('#storageSelect').value}GB SSD)`
+ 
+   
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

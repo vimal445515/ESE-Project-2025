@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Product Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
+    <style>
+        /* --- Layout Spacing CSS --- */
+        :root {
+            --header-height: 60px;
+            --main-bg: #f4f6f9;
+            --primary-blue: #007bff;
+        }
+        body {
+            /*  Removed: padding-left: var(--sidebar-width); */
+            background-color: var(--main-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Reserves vertical space for the fixed top header and provides general padding */
+        .content-body {
+            /* Padding for the fixed header placeholder is kept */
+            padding-top: var(--header-height);
+            /* Padding on the sides for the container */
+            padding: 20px;
+            width: 100%;
+        }
+        
+        /* --- Rest of the Custom Form/Card Styling (Kept the same) --- */
+        .form-card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Image Upload Styling --- */
+        .image-drop-area {
+            border: 2px dashed #e9eef6;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            text-align: center;
+            padding: 3rem 1rem;
+            cursor: pointer;
+        }
+        .image-drop-area i {
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .add-image-link {
+            color: #7d6de2;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .variant-thumb {
+            width: 70px;
+            height: 70px;
+            border: 2px dashed #e9eef6;
+            background-color: #f8f9fa;
+            border-radius: 0.3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .variant-thumb i {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+        .variant-thumb .small {
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+
+        /* --- Variant List Styling --- */
+        .variant-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    .img-container {
+  width: 100%;
+  height: 75vh; 
+  overflow: hidden;
+}
+
+    #croppedResult img {
+      max-width: 256px;
+      border: 1px solid #ccc;
+    }
+    </style>
+</head>
+<body>
+
+<div class="content-body container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-2">Add Product</h2>
+        </div>
+        <div class="d-flex">
+            <a href="/admin/products" class="btn btn-light border me-3 fw-bold">Cancel</a>
+            <button onclick="saveData()" class="btn btn-primary d-flex align-items-center fw-bold">Save Product</button>
+        </div>
+    </div>
+ <input type="hidden" id="variants" name="variants">
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="form-card">
+                <h3 class="section-title">General Information</h3>
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Product Name</label>
+                    <input type="text" class="form-control" name="productName" id="productName" value="" placeholder="Type product name here...">
+                    <p id="productNameError" class="text-danger small"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="5" placeholder="Type product description here..."></textarea>
+                    <p id="descriptionError" class="text-danger small"></p>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3 class="section-title">Pricing</h3>
+                <div class="mb-3">
+                    <label for="basePrice" class="form-label">Base Price</label>
+                    <input type="text" class="form-control" name="basePrice" id="basePrice" placeholder="Type base price here..."required>
+                    <p id="basePriceError" class="text-danger small"></p>
+                </div>
+                <div class="mb-0">
+                    <label for="discount" class="form-label">Discount Percentage (%)</label>
+                    <input type="text" class="form-control"  name="discount" id="discount" placeholder="Type discount percentage..." required>
+                    <p id="discountError" class="text-danger small"></p>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3 class="section-title">General Photo</h3>
+                <label class="form-label">Photo</label>
+                <div class="image-drop-area d-flex flex-column align-items-center p-3">
+
+            <div id="croppedResult" class="mt-4"></div>
+            <label for="imageInput" class="icon-box mb-2">
+                <i class="bi bi-image"></i>
+            </label>
+            <input type="file" name="mainImage" class="form-control w-auto text-center" id="inputImage">
+           
+        </div>
+            </div>
+             <p id="generalImageError" class="text-danger small"></p>
+        </div>
+
+        <!-- Cropper Modal -->
+  <div class="modal fade" id="cropModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Crop Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body d-flex" >
+          <div class="img-container">
+            <img id="image" style="max-width: 100%;">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" id="cropButton">Crop</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+        <div class="col-lg-4">
+
+            <div class="form-card">
+                <h3 class="section-title">Category</h3>
+                <div class="mb-0">
+                    <label for="productCategory" class="form-label">Product Category</label>
+                    <select class="form-select" id="productCategory">
+                        <option value="Select a category" selected>Select a category</option>
+                        <% categorys.forEach((category)=>{ %>
+                            <option name="categoryId" value="<%= category._id%>" id="category"><%= category.categoryName%></option>
+                       <% })%>
+                        
+                       
+                    </select>
+                </div>
+                
+            </div>
+
+            <div class="form-card">
+                <h3 class="section-title">Variant</h3>
+
+                <div class="d-flex align-items-center mb-3">
+                    <div class="variant-pill bg-success me-2 text-white">1</div>
+                    <div class="variant-pill bg-danger me-2 text-white">2</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Storage" class="form-label">Enter Storage</label>
+                    <input type="text" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
+                    <p id="storageError" class="text-danger small"></p>
+                     <p id="categoryError" class="text-danger small"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="ram" class="form-label">Enter Ram</label>
+                    <input type="text" name="ram" class="form-control" id="ram" placeholder="Enter Ram">
+                    <p id="ramError" class="text-danger small"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" name="stock" class="form-control" id="stock" placeholder="Stock">
+                    <p id="stockError" class="text-danger small"></p>
+                </div>
+                <div class="mb-0">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="text" name="price" class="form-control" id="price" placeholder="price">
+                    <p id="variantPriceError" class="text-danger small"></p>
+                </div>
+            </div>
+           
+            <div class="form-card">
+                <h3 class="section-title">Single variant photos</h3>
+                <label class="form-label">Photo</label>
+               <div class="d-flex gap-2 flex-wrap">
+                     <div class="input-group"><label class="input-group-text" for="imageInput"> <i class="bi bi-image"></i> </label><input type="file" name="img1" class="form-control" id="img1">
+                        <p id="img1Error" class="text-danger small"></p>
+                    </div>
+                      <div class="input-group"><label class="input-group-text" for="imageInput"> <i class="bi bi-image"></i> </label><input type="file" name="img2" class="form-control" id="img2">
+                    <p id="img2Error" class="text-danger small"></p>
+                    </div>
+                       <div class="input-group"><label class="input-group-text" for="imageInput"> <i class="bi bi-image"></i> </label><input type="file" name="img3" class="form-control" id="img3">
+                    <p id="img3Error" class="text-danger small"></p>
+                    </div>
+                        <div class="input-group"><label class="input-group-text" for="imageInput"> <i class="bi bi-image"></i> </label><input type="file" name="img4" class="form-control" id="img4">
+                        <p id="img4Error" class="text-danger small"></p>
+                        </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+
+   
+
+</div>
+ <div class="d-flex justify-content-end pb-4">
+        <button type="submit" onclick="clean()" class="btn btn-primary btn-lg px-5 fw-bold me-2">Clear</button>
+        <button onclick="add()" class="btn btn-primary btn-lg px-5 fw-bold">Add</button>
+    </div>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script>
+    const objectArray = []
+    let cropper;
+    let croppedBlob;
+
+    const inputImage = document.getElementById('inputImage');
+    const image = document.getElementById('image');
+    const cropButton = document.getElementById('cropButton');
+    const croppedResult = document.getElementById('croppedResult');
+
+    const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
+
+    
+    document.getElementById('cropModal')
+  .addEventListener('shown.bs.modal', () => {
+    if (cropper) {
+      cropper.resize();
+      cropper.reset();
+    }
+});
+
+    // Open modal on image select
+    inputImage.addEventListener('change', (e) => {
+
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        image.src = reader.result;
+        cropModal.show();
+
+        if (cropper) cropper.destroy();
+
+        cropper = new Cropper(image, {
+          aspectRatio: 4/3,
+          viewMode: 1,
+          autoCropArea: 0.8,
+          cropBoxResizable:false,
+           autoCropArea: 1
+         
+
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Crop inside modal
+    cropButton.addEventListener('click', () => {
+      const canvas = cropper.getCroppedCanvas({
+        width: 256,
+        height: 256
+      });
+
+      canvas.toBlob((blob) => {
+        croppedBlob = blob;
+
+        const previewURL = URL.createObjectURL(blob);
+        croppedResult.innerHTML = `<img src="${previewURL}">`;
+        cropModal.hide();
+      }, 'image/jpeg', 0.8);
+    });
+
+
+    function showError(id, message) {
+    document.getElementById(id).innerText = message;
+}
+
+   function clearErrors() {
+    document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+   }
+
+    function add(){
+
+            
+            const price = document.querySelector("#price").value;
+            const stock = document.querySelector("#stock").value;
+            const storage =  document.querySelector("#storage").value;
+            const ram = document.querySelector("#ram").value;
+            const img1 =   document.querySelector("#img1").files[0];
+            const img2 =   document.querySelector("#img2").files[0];
+            const img3 =   document.querySelector("#img3").files[0];
+            const img4 =   document.querySelector("#img4").files[0];
+
+         let valid = true;
+
+    if (!storage || isNaN(storage)) { showError("storageError", "Storage is invalid."); valid = false; }
+    if (!ram || isNaN(storage)) { showError("ramError", "RAM is invalid."); valid = false; }
+
+    if (!price || isNaN(price) || Number(price) <= 0) {
+        showError("variantPriceError", "Enter a valid price."); valid = false;
+    }
+
+    if (!stock || isNaN(stock) || Number(stock) < 0) {
+        showError("stockError", "Enter valid stock."); valid = false;
+    }
+
+    if (!img1) { showError("img1Error", "Image 1 required."); valid = false; }
+    if (!img2) { showError("img2Error", "Image 2 required."); valid = false; }
+    if (!img3) { showError("img3Error", "Image 3 required."); valid = false; }
+    if (!img4) { showError("img4Error", "Image 4 required."); valid = false; }
+
+    if (!valid) return;
+
+
+           const group = {
+            price,
+            stock,
+            storage,
+            ram,
+            img1,
+            img2,
+            img3,
+            img4
+        }
+       for(let value of objectArray)
+       {
+        if(price ===value.price && stock === value.stock && storage ===value.storage && ram == value.ram)
+       {
+        alert("Repeat varients not allowed");
+        return
+       }
+       }
+
+     objectArray.push(group);
+     console.log("value",group)
+     console.log("Values ",objectArray)
+
+      
+    }
+    function saveData() {
+
+         clearErrors();
+
+         const productName = document.querySelector("#productName").value;
+            const description = document.querySelector("#description").value;
+            const basePrice   = document.querySelector("#basePrice").value;
+            const discount = document.querySelector("#discount").value;
+            const category = document.querySelector("#category").value
+
+        
+            let valid = true;
+
+            if (!productName) { showError("productNameError", "Product name required."); valid = false; }
+            if (!description) { showError("descriptionError", "Description required."); valid = false; }
+
+            if (!basePrice || isNaN(basePrice) || Number(basePrice) <= 0) {
+                showError("basePriceError", "Enter valid base price."); valid = false;
+            }
+
+            if (!discount || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
+                showError("discountError", "Discount must be between 0–100."); valid = false;
+            }
+
+            if (!croppedBlob) { showError("generalImageError", "General image required."); valid = false; }
+
+            if (!category || category === "Select a category") {
+                showError("categoryError", "Select a category."); valid = false;
+            }
+
+            if (objectArray.length === 0) {
+                alert("Please add at least one variant.");
+                valid = false;
+            }
+
+            if (!valid) return;
+
+
+
+        const formData = new FormData()
+        objectArray.forEach((group,index)=>{
+            formData.append(`price${index}`,group.price)
+            formData.append(`stock${index}`,group.stock)
+            formData.append(`storage${index}`,group.storage)
+            formData.append(`ram${index}`,group.ram)
+            formData.append(`img1${index}`,group.img1)
+            formData.append(`img2${index}`,group.img2)
+            formData.append(`img3${index}`,group.img3)
+            formData.append(`img4${index}`,group.img4)
+        })
+
+        formData.append(`productName`,productName)
+        formData.append(`basePrice`,basePrice)
+        formData.append(`description`,description)
+        formData.append(`discound`,discount)
+        formData.append(`generalPhoto`,croppedBlob);
+        formData.append(`category`,category);
+
+        fetch('/admin/product/add',{
+            method:'POST',
+            body:formData
+        }).then(data =>data.json())
+        .then(data =>alert(data))
+        .catch("Somthing was worng")
+    }
+
+    function clean(){
+        
+         
+
+    document.querySelector("#price").value = "";
+    document.querySelector("#stock").value = "";
+    document.querySelector("#storage").value = "";
+    document.querySelector("#ram").value = "";
+    document.querySelector("#img1").value = "";
+    document.querySelector("#img2").value = "";
+    document.querySelector("#img3").value = "";
+    document.querySelector("#img4").value = "";
+
+    console.log("All fields cleared!");
+        
+
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

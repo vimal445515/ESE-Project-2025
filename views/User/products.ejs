@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Search and Grid UI (Filters Left)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        /* Define colors for the look */
+        :root {
+            --primary-color: #4054d2; 
+            --bg-color: #f8f9fa; 
+            --border-color: #dee2e6;
+        }
+        body {
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+        
+        /* Custom styling for the product card */
+        .product-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .product-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+        }
+        .rating-star {
+            color: orange;
+            font-size: 0.8rem;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .current-price {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* Sidebar Filters */
+        .filter-section {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .filter-section:last-child {
+            border-bottom: none;
+        }
+        .filter-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #343a40;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Pagination */
+        .pagination-link {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.2rem;
+            color: #6c757d;
+        }
+        .pagination .active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+<%- include("../partials/navbar.ejs") %>
+<div class="container-fluid p-4">
+    <div class="row">
+        
+        <div class="col-md-2 pe-4 border-end">
+            <h6 class="fw-bold text-uppercase mb-3">Filter Options</h6>
+
+            <div class="filter-section">
+                <p class="filter-title">CATEGORY</p>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" value="Phone" name="category" id="categoryPhone" checked>
+                    <label class="form-check-label text-muted" for="categoryPhone">PHONE</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" value="laptop" name="category" id="categoryLaptop">
+                    <label class="form-check-label text-muted" for="categoryLaptop">LAPTOP</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" value="watch" name="category" id="categoryWatch">
+                    <label class="form-check-label text-muted" for="categoryWatch">Galaxy Watch</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" value="tablet" name="category" id="categoryTablets">
+                    <label class="form-check-label text-muted" for="categoryTablets">Tablets</label>
+                </div>
+            </div>
+
+            <div class="filter-section border-0">
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" name="priceRange" value="all" id="priceAll" checked>
+                    <label class="form-check-label text-muted" for="priceAll">All Price</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" name="priceRange" value="priceUnder10k" id="priceUnder10k">
+                    <label class="form-check-label text-muted" for="priceUnder10k">Under 10000₹</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" name="priceRange" value="price20k30k" id="price20k30k">
+                    <label class="form-check-label text-muted" for="price20k30k">20000₹ - 30000₹</label>
+                </div>
+                <div class="form-check small">
+                    <input class="form-check-input" type="radio" name="priceRange" value="priceOver50k" id="priceOver50k">
+                    <label class="form-check-label text-muted" for="priceOver50k">Above 50000₹</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-10">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="input-group" style="max-width: 400px;">
+                    <input type="text" id="search" class="form-control" placeholder="Search..." aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                </div>
+                
+                <div class="d-flex align-items-center small text-muted">
+                    <button class="me-2 btn btn-light" onclick="Clear()">Clear</button>
+                    <label for="sortPrice" class="me-2 text-nowrap">Sort By:</label>
+                    <select class="form-select form-select-sm" id="sort" style="width: auto;">
+                        <option value="" selected>sort</option>
+                        <option value="ltoH">Low to high</option>
+                        <option value="htoL">High to low</option>
+                        <option value="AZ">Name (A-Z)</option>
+                        <option value="ZA">Name (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+              
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+              <% products.forEach((product) =>{%>
+                <div onclick="window.location.href=`productDetails/<%= product._id%>`" class="col">
+                    <div class="product-card bg-white shadow-sm">
+                        <i class="bi bi-heart position-absolute top-0 end-0 m-3 text-danger"></i>
+                        <img src="/upload/<%= product.generalPhoto%>" class="product-image" alt="Samsung Galaxy S25 Ultra">
+                        
+                        <div class="d-flex align-items-center small mb-1">
+                            <span class="rating-star me-1"><i class="bi bi-star-fill"></i></span>
+                            <span class="text-muted">(796)</span>
+                        </div>
+                        <h6 class="mb-1 fw-bold text-truncate"><%= product.productName%></h6>
+                        
+                        <div class="d-flex align-items-baseline mt-2">
+                            <span class="old-price me-2">₹<%= product.basePrice %></span>
+                            <span class="current-price fs-5">₹<%= parseInt(product.basePrice - (parseInt((product.discound/100)*product.basePrice)))%></span>
+                        </div>
+                    </div>
+                </div>
+         <%})%>
+                </div>
+
+            <nav class="d-flex justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item ">
+                        <button class="page-link pagination-link" onclick="previousPage('<%= page%>')" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </button>
+                    </li> 
+                    <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                    <li class="page-item active"><button class="page-link pagination-link" id="page" value="<%= i %>" onclick="search(`<%= i %>`)"><%= i %></button></li>
+                    <% } %>
+                    <li class="page-item">
+                        <a class="page-link pagination-link" onclick="nextPage('<%= page%>')" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<%- include("../partials/footer.ejs") %>
+<script>
+    let sort = '<%= sort%>'
+    let correntPage = '<%= page%>';
+    let category='<%= category%>';
+    let priceRange='<%= priceRange%>';
+    let  searchValue = '<%= searchValue %>';
+    if(sessionStorage.getItem("categoryTarget")){
+        category = sessionStorage.getItem("categoryTarget");
+    }
+    
+    if(sessionStorage.getItem('priceTarget')){
+        priceRange = sessionStorage.getItem('priceTarget');
+    }
+
+    if(priceRange){
+        console.log(priceRange)
+        const input = document.querySelector(
+            `input[name=priceRange][value=${priceRange}]`
+        )
+        if(input) input.checked = true;
+    }
+    
+        if (category) {
+        const input = document.querySelector(
+            `input[name="category"][value="${category}"]`
+        );
+        if (input) input.checked = true;
+        }
+
+
+     document.getElementById('sort').addEventListener('change',()=>{
+        sort = document.getElementById('sort').value
+        search(1)
+    })
+   
+    document.querySelectorAll('input[name=category]').forEach(radio =>{
+        radio.addEventListener('change',(e)=>{
+            category = e.target.value
+            sessionStorage.removeItem('categoryElement')
+            sessionStorage.removeItem('categoryTarget')
+            sessionStorage.setItem('categoryElement',e)
+            sessionStorage.setItem('categoryTarget',e.target.value);
+            search(1);
+        })
+    })
+
+
+     document.querySelectorAll('input[name=priceRange]').forEach(radio =>{
+        radio.addEventListener('change',(e)=>{
+            priceRange = e.target.value
+            sessionStorage.removeItem('priceTarget')
+            sessionStorage.setItem('priceTarget',e.target.value);
+            search(1);
+        })
+    })
+
+    function Clear(){
+            sessionStorage.removeItem('categoryElement')
+            sessionStorage.removeItem('categoryTarget')
+            sessionStorage.removeItem('priceTarget')
+            window.location.href = `/products`
+             sort = ''
+            correntPage = '';
+            category = ''
+            priceRange = ''
+
+            
+    }
+    
+     function search(page){
+          correntPage = page
+          window.location.href = `/products?page=${correntPage}&sort=${sort}&category=${category}&priceRange=${priceRange}&search=${searchValue}`
+        }
+        function nextPage(correntPgae){
+           correntPgae++;
+          search(correntPgae)  
+             }
+
+        function previousPage(page){
+                page--;
+                if(page>0){
+                     search(page)
+                }
+             }
+
+             function debounce (fun,delay){
+                let timer;
+                return function(){
+                    clearTimeout(timer);
+                    timer = setTimeout(()=>{
+                        fun()
+                    },delay)
+                }
+             }
+
+             function searchText(){
+                searchValue = document.getElementById('search').value
+                document.getElementById('search').value = ''
+                search(1);
+             }
+
+             const debounceSearch = debounce(searchText,1000);
+
+             document.getElementById('search').addEventListener("input",debounceSearch)
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

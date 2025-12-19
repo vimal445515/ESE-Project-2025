@@ -1,0 +1,62 @@
+import session from "express-session"
+import adminService from "../../Service/adminService.js"
+import otp from "../../helpers/otpHelper.js"
+import user from '../../Service/userService.js'
+import userService from "../../Service/userService.js"
+
+const findEmail= async (req,res,next)=>{
+   const {email} = req.body
+   const data = await adminService.getAdminFromDB(email)
+  if(!data) return res.status(404).json({status:"error",message:"User not found"});
+  next()
+}
+const generateOtpForPasswordReset= async (req,res)=>{
+  const {email} = req.body
+  const OTP = otp.otpGenerator();
+  await user.clearOtp(email)
+  await user.storeOtpInDb(email,OTP)
+  otp.sendEmail(email,OTP);
+  req.session.email = email;
+  res.status(200).json({status:"success",href:"/admin/resetPassowrdOtp"});
+  
+}
+
+const loadOtpPageForResetPassword = (req,res) =>{
+  const {email} = req.session;
+  res.render('Admin/otpResetPassword',{email,status:null,message:null});
+}
+
+
+
+ const resetPasswordOtpVarification = async (req,res) =>{
+  const {otp} = req.body
+  const {email} = req.session;
+  const result = await user.checkOtp(otp,email);
+
+  if(result) return res.render('Admin/resetPassword');
+  
+  res.status(400).render('Admin/otpResetPassword',{email,status:"error",message:"invalid otp"})
+}
+
+ const resetPassword = async(req,res) =>{
+ 
+  const {password} = req.body
+
+  await userService.updatePassword(password,req.session.email)
+  await user.clearOtp(req.session.email)
+ req.session.destroy((err)=>{
+    if(err) throw new Error("erorr in sesion distroy");
+   
+    res.status(200).redirect('/admin/login')
+  })
+
+  
+}
+
+export default  {
+    findEmail,
+    generateOtpForPasswordReset,
+    loadOtpPageForResetPassword,
+    resetPasswordOtpVarification,
+    resetPassword
+}

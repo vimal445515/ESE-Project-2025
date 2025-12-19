@@ -1,0 +1,426 @@
+/* General Settings */
+:root {
+    --primary-blue: #4a6fdc;
+    --dark-blue-bg: #0e2a56;
+    --dark-blue-end: #2a5298;
+    --section-bg-light: #f5f6f7;
+    --text-grey: #888;
+    --text-dark: #333;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--section-bg-light);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+/* --- Custom Navbar Styles (Screenshot 1) --- */
+.custom-navbar {
+    background-color: white;
+    border-top: 4px solid var(--primary-blue);
+    padding: 10px 0;
+}
+
+.custom-navbar .container-fluid {
+    max-width: 1200px;
+    padding: 0 40px;
+    margin: 0 auto;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 10px;
+}
+
+.logo-icon {
+    font-size: 1.5rem;
+    color: var(--text-grey);
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-grey);
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-grey);
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin: 0 15px;
+    transition: color 0.2s;
+}
+
+.utility-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.icon-btn {
+    position: relative;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--primary-blue);
+    color: white;
+    font-size: 0.6rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 8px;
+}
+
+.user-avatar {
+    font-size: 1.8rem;
+    color: #2ecc71; /* Exact green color */
+}
+
+.user-name {
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+
+/* --- Section 1: Top Hero (Screenshot 2) --- */
+.top-hero {
+    background: linear-gradient(135deg, var(--dark-blue-bg) 0%, var(--dark-blue-end) 100%);
+    color: white;
+    height: 70vh;
+    position: relative;
+    overflow: hidden;
+    padding-top: 50px;
+}
+
+.top-hero .container {
+    max-width: 1200px;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.hero-content h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 800;
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-top: 50px;
+}
+
+.hero-content p {
+    font-size: 0.9rem;
+    opacity:1;
+    max-width: 350px;
+    margin-top: 20px;
+}
+
+.hero-image-placeholder {
+    /* Use positioning to mimic the phone corner */
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* User will replace this with the actual angled PNG */
+}
+
+.hero-image-placeholder img {
+    max-height: 90vh;
+    transform: rotate(5deg)  scale(2) translateY(-20px) translateX(-500px);
+    opacity: 0.9;
+}
+
+
+/* --- Section 2: Ecosystem --- */
+.section-heading {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.ecosystem {
+    background-color: var(--section-bg-light);
+}
+
+.eco-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+}
+
+.icon-box {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Fit image inside box without cropping */
+    object-position: center; /* Center the image */
+    background-color: #f0f0f0; /* Optional background for empty space */
+}
+
+.eco-item span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* --- Section 3: Mid Hero (Woman/Buds) --- */
+.mid-hero {
+    height: 500px;
+    overflow: hidden;
+    background-color: #e0e0e0;
+}
+
+.mid-hero-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mid-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Subtle overlay to help text readability */
+    background: rgba(0,0,0,0.1); 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.promo-text {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-dark);
+}
+
+.promo-text h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.small-text {
+    font-size: 0.8rem;
+    margin-top: 5px;
+    color: #555;
+}
+
+.btn-buy-small {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.learn-more-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.mid-hero-branding {
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    text-align: right;
+    color: var(--text-dark);
+}
+
+.branding-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.branding-ai {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* --- Section 4 & 6: Products --- */
+.product-collection {
+    background-color: white;
+}
+
+.product-slider {
+    display: flex;
+    overflow-x: auto; /* Allows horizontal scrolling */
+    gap: 30px;
+    padding: 20px 0;
+    /* Optional: Hide scrollbar for a cleaner look */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.product-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.product-card {
+    min-width: 220px;
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    padding: 10px;
+}
+
+.product-img {
+    height: 250px; /* Consistent height for images */
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.product-card h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.product-card .price {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.badge-new {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #e67e22; /* Orange-ish color */
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.btn-buy-full {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 50px;
+    font-size: 0.85rem;
+    width: 100%;
+    max-width: 150px;
+    font-weight: 600;
+}
+
+/* Navigation Arrows (Positioning relative to container) */
+.nav-arrow {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #555;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+.nav-arrow:hover {
+    opacity: 1;
+}
+
+.prev-arrow { left: 0; }
+.next-arrow { right: 0; }
+
+/* --- Section 5: Black Banner --- */
+.banner-section {
+    background-color: var(--section-bg-light);
+}
+
+.black-banner {
+    background: linear-gradient(to right, #000, #111);
+    border-radius: 15px;
+    padding: 80px 0;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.watch-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 3.5rem;
+    letter-spacing: 2px;
+    color: white;
+    font-weight: 700;
+}
+
+/* Specific styling for watch images */
+.product-collection .rounded-circle {
+    height: 150px; 
+    width: 150px;
+    border: 1px solid #eee;
+    margin: 0 auto 10px;
+}
+
+ .product-card {
+    width: 220px;              
+    padding: 10px;
+    text-align: center;
+}
+
+.product-img {
+    width: 100%;
+    height: 160px;             
+    object-fit: cover;       
+    border-radius: 8px;
+}
+img {
+   width: 160px;
+   height: auto;
+}
+
+.img-fluid {
+    max-width: auto !important;
+    height: 200px !important;
+}
+.product-slider {
+    scroll-behavior: smooth;
+}
