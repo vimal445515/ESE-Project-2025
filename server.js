@@ -27,5 +27,5 @@ app.use("/admin",adminRouter);
 app.use(userRouter)
 
 app.listen(process.env.PORT,()=>{
-    console.log(`Server is running on http://localhost:${process.env.PORT}/admin/login`);
+    console.log(`Server is running on http://localhost:${process.env.PORT}/userProfile`);
 })

@@ -93,9 +93,10 @@ export const loadAddProductPage = async (req,res)=>{
 
 export const loadUserManagementPage = async(req,res) =>{
     const page = req.query.page||1;
+    const search = req.query.search;
     const limit = 8;
     const skip =  helpers.paginationSkip(page,limit)
-    const data = await adminService.getAllUsers(skip,limit)
+    const data = await adminService.getAllUsers(skip,limit,search)
     const count = await adminService.getAllUsersCount();
     res.render('admin/userManage',{data,page,limit,count})
 }
@@ -122,9 +123,10 @@ export const saveCategoryData =async (req,res)=>{
 
 export const loadCategoriePage =  async (req,res) =>{
     const page = req.query.page||1
-    const limit = 1;
+    const search = req.query.search
+    const limit = 18;
     const skip = helpers.paginationSkip(page,limit)
-    const data = await adminService.getCategories(skip,limit)
+    const data = await adminService.getCategories(skip,limit,search)
     const count = await adminService.getAllCategoriesCount()
     res.render('admin/categories',{data,page,limit,count});
 }

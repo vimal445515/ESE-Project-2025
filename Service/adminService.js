@@ -6,9 +6,12 @@ import fs from 'fs'
 const getAdminFromDB  = async (email)=>{
   return  await Admin.findOne({email,role:"admin"})
 }
-const getAllUsers = async(skip,limit) =>{
- 
-  return await User.find({role:"user",deleted:false}).skip(skip).limit(limit);
+const getAllUsers = async(skip,limit,search) =>{
+  let pipeline = []
+  if(search) pipeline.push({$match:{email:{$regex:search,$options:"i"}}});
+  pipeline.push({$match:{role:"user",deleted:false}},{$skip:skip},{$limit:limit})
+  return await User.aggregate(pipeline)
+  // return await User.find({role:"user",deleted:false}).skip(skip).limit(limit); //befor implementing search
 }
 
 const blockUserInDB = async(id)=>{
@@ -48,8 +51,16 @@ const getCategoryFromDB = async(_id)=>
   return await categoryModel.findOne({_id})
 }
 
-const getCategories = async (skip,limit)=>{
-  return await categoryModel.find().skip(skip).limit(limit);
+const getCategories = async (skip,limit,search)=>{
+  let pipeline = []
+  if(search){
+    pipeline.push({$match:{categoryName:{$regex:search,$options:"i"}}});
+  }
+  
+  pipeline.push({$skip:skip})
+  pipeline.push({$limit:limit});
+  return categoryModel.aggregate(pipeline)
+  // return await categoryModel.find().skip(skip).limit(limit);
 }
 
 const getAllCategoriesCount = async ()=>{

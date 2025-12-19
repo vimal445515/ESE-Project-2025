@@ -1,0 +1,24 @@
+<div class="col-lg-3 mb-4">
+    <div class="sidebar-card">
+        <nav class="nav flex-column">
+            <a href="/userProfile" class="sidebar-link <%= page === 'dashboard' ? 'active' : '' %>">
+                <i class="fa-solid fa-border-all"></i> Dashboard
+            </a>
+            <a href="/EditUser" class="sidebar-link <%= page === 'account' ? 'active' : '' %>">
+                <i class="fa-regular fa-user"></i> Account Details
+            </a>
+            <a href="/orders" class="sidebar-link <%= page === 'orders' ? 'active' : '' %>">
+                <i class="fa-solid fa-clock-rotate-left"></i> Order History
+            </a>
+            <a href="/wishlist" class="sidebar-link <%= page === 'wishlist' ? 'active' : '' %>">
+                <i class="fa-regular fa-heart"></i> Wishlist
+            </a>
+            <a href="/address" class="sidebar-link <%= page === 'address' ? 'active' : '' %>">
+                <i class="fa-regular fa-credit-card"></i> Address
+            </a>
+            <a href="/wallet" class="sidebar-link <%= page === 'wallet' ? 'active' : '' %>">
+                <i class="fa-solid fa-wallet"></i> Wallet
+            </a>
+        </nav>
+    </div>
+</div>

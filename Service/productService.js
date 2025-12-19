@@ -15,8 +15,10 @@ const storeProductDataInDB = async (generalPhoto,productName,basePrice,descripti
     })
 }
 
-const getAllProducts = async (skip,limit) =>{
-  return await productModel.aggregate([{
+const getAllProducts = async (skip,limit,search) =>{
+  let pipeline =[]
+ if(search) pipeline.push({$match:{productName:{$regex:search,$options:"i"}}});
+  pipeline.push({
     $match:{isDeleted:false}
   },{
     $lookup:{
@@ -30,7 +32,8 @@ const getAllProducts = async (skip,limit) =>{
   },
   {$skip:skip},
   {$limit:limit}
-])
+)
+  return await productModel.aggregate(pipeline)
 }
 
 const countPages = async () =>{

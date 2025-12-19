@@ -22,5 +22,33 @@ router.get('/google/authenticate',userControllers.googleAuthenticate,userControl
 
 router.get("/products",Auth.isUser,Auth.checkUser,products.loadUserSideProductsPage)
 
+
 router.get("/productDetails/:id",Auth.isUser,Auth.checkUser,products.loadProductDetails)
+
+
+
+router.get('/EditUser',Auth.isUser,Auth.checkUser,(req,res)=>{
+    res.render('User/userEditProfile',{userName:req.session.userName})
+})
+
+router.get('/userProfile',Auth.isUser,Auth.checkUser,(req,res)=>{
+    res.render('User/userDashbord',{userName:req.session.userName})
+})
+
+
+router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
+    res.render('User/orders',{userName:req.session.userName})
+})
+
+router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
+    res.render('User/wallet',{userName:req.session.userName})
+})
+
+router.get('/address',(req,res)=>{
+    res.render('User/address',{userName:req.session.userName})
+})
+
+router.get('/wishlist',(req,res)=>{
+    res.render('User/wishlist',{userName:req.session.userName})
+})
 export default router

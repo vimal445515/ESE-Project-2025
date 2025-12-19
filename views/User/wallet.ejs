@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/userStyles/UserSideBar.css">
+
+    <style>
+        /* --- Global Styles --- */
+        :root { --primary-blue: #3b59d8; --bg-color: #f4f5f7; }
+        body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; padding-top: 50px; }
+        .page-container { max-width: 1200px; margin: 0 auto; }
+
+        /* --- Wallet Balance Card --- */
+        .balance-card {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .balance-info { display: flex; align-items: center; }
+        
+        .wallet-icon-box {
+            width: 60px;
+            height: 60px;
+            background-color: #e9ecef; /* Light gray box */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-right: 20px;
+            font-size: 1.8rem;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+        }
+
+        .balance-amount { font-size: 2rem; font-weight: 700; color: #333; line-height: 1; margin-bottom: 5px; }
+        .balance-label { font-size: 0.9rem; color: #666; margin: 0; }
+
+        .btn-add-money {
+            background-color: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            padding: 10px 30px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .btn-add-money:hover { background-color: #304ac0; color: white; }
+
+        /* --- Transaction Table Card --- */
+        .transaction-card {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            padding-bottom: 20px;
+        }
+
+        .card-header-custom {
+            padding: 20px 30px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #444;
+            text-transform: uppercase;
+            border-bottom: none;
+        }
+
+        .table-custom { width: 100%; margin-bottom: 0; }
+        
+        .table-custom thead th {
+            background-color: #f4f5f7;
+            color: #666;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            border: none;
+        }
+
+        .table-custom tbody td {
+            padding: 20px 30px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 500;
+            vertical-align: middle;
+        }
+
+        /* --- Pagination --- */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            gap: 10px;
+        }
+
+        .page-link-custom {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .page-link-custom:hover { background-color: #f8f9fa; color: var(--primary-blue); }
+        .page-link-custom.active { background-color: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+        .page-arrow { color: var(--primary-blue); border-color: var(--primary-blue); }
+
+    </style>
+</head>
+<body class="pt-0">
+    <%- include('../partials/navbar.ejs')%>
+
+    <div class="container-fluid page-container mt-5">
+        
+        <div class="row">
+            
+            <%- include('../partials/userSideBar.ejs', {page: 'wallet'}) %>
+
+            <div class="col-lg-9">
+                
+                <div class="balance-card">
+                    <div class="balance-info">
+                        <div class="wallet-icon-box">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div>
+                            <div class="balance-amount">₹16,000</div>
+                            <p class="balance-label">My Wallet Balance</p>
+                        </div>
+                    </div>
+                    <button class="btn-add-money">Add Money</button>
+                </div>
+
+                <div class="transaction-card">
+                    <div class="card-header-custom">Transaction Details</div>
+                    
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Withdrawal</th>
+                                    <th>Deposit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>#96459761</td>
+                                    <td>You Added</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>₹ 6,000</td>
+                                    <td>-</td>
+                                </tr>
+
+                                <tr>
+                                    <td>#96459760</td>
+                                    <td>You Added</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>₹ 10,000</td>
+                                    <td>-</td>
+                                </tr>
+
+                                <tr>
+                                    <td>#96459759</td>
+                                    <td>Bought a product</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>-</td>
+                                    <td>₹ 36000</td>
+                                </tr>
+
+                                <tr>
+                                    <td>#96459758</td>
+                                    <td>You added</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>₹ 12,000</td>
+                                    <td>-</td>
+                                </tr>
+
+                                <tr>
+                                    <td>#96459757</td>
+                                    <td>You added</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>₹ 9,000</td>
+                                    <td>-</td>
+                                </tr>
+
+                                <tr>
+                                    <td>#96459756</td>
+                                    <td>You added</td>
+                                    <td>Dec 30, 2023</td>
+                                    <td>₹ 14,000</td>
+                                    <td>-</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-container">
+                        <a href="#" class="page-link-custom page-arrow"><i class="fa-solid fa-arrow-left"></i></a>
+                        <a href="#" class="page-link-custom active">01</a>
+                        <a href="#" class="page-link-custom">02</a>
+                        <a href="#" class="page-link-custom">03</a>
+                        <a href="#" class="page-link-custom">04</a>
+                        <a href="#" class="page-link-custom">05</a>
+                        <a href="#" class="page-link-custom page-arrow"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                </div>
+
+            </div> </div> </div> <%- include("../partials/footer") %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

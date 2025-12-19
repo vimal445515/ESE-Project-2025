@@ -12,9 +12,10 @@ const storeProducts = async (req,res)=>{
 }
  const loadProductsPage = async(req,res)=>{
     const page = req.query.page||1
+    const search = req.query.search
     const limit = 8;
     const skip = helpers.paginationSkip(page,limit)
-    const products = await productService.getAllProducts(skip,limit);
+    const products = await productService.getAllProducts(skip,limit,search);
     const count = await productService.getAllProductsCount();
     res.render('Admin/product',{products,page,limit,count})
 }
