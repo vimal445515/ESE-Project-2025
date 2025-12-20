@@ -98,7 +98,7 @@ export const loadUserManagementPage = async(req,res) =>{
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.getAllUsers(skip,limit,search)
     const count = await adminService.getAllUsersCount();
-    res.render('admin/userManage',{data,page,limit,count})
+    res.render('admin/userManage',{data,page,limit,count,search})
 }
 
 export const handleImage = (req,res,next)=>{
