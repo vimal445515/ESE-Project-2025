@@ -46,6 +46,7 @@ const authentication = async (req,res)=>{
   req.session.email = data.email
   req.session.role = data.role
   req.session.phoneNumber  = data.phoneNumber;
+  req.session.referralCode = data.referralId;
 
   console.log(req.session.userName);
   return res.status(200).redirect("/home");
@@ -144,6 +145,14 @@ const resetPassword = async(req,res) =>{
   req.session.phoneNumber  = req.user.phoneNumber;
   res.redirect('/home');
  }
+
+
+const loadUserProfile=(req,res)=>{
+    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode})
+}
+
+
+
 export default {
     otpGenerator,
     verifyOtp,
@@ -159,5 +168,6 @@ export default {
     resetPassword,
     startGoogleLogin,
     googleAuthenticate,
-    storeUserDataInSession
+    storeUserDataInSession,
+    loadUserProfile
 }

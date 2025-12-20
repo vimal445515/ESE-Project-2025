@@ -25,15 +25,13 @@ router.get("/products",Auth.isUser,Auth.checkUser,products.loadUserSideProductsP
 
 router.get("/productDetails/:id",Auth.isUser,Auth.checkUser,products.loadProductDetails)
 
-
+router.get('/userProfile',Auth.isUser,Auth.checkUser,userControllers.loadUserProfile)
 
 router.get('/EditUser',Auth.isUser,Auth.checkUser,(req,res)=>{
     res.render('User/userEditProfile',{userName:req.session.userName})
 })
 
-router.get('/userProfile',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/userDashbord',{userName:req.session.userName})
-})
+
 
 
 router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
