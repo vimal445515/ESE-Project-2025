@@ -29,6 +29,7 @@ const checkEmail = (req,res,next)=>{
 }
 
 const checkUser = async (req,res,next)=>{
+    console.log(req.session.email)
     const isTrue = await user.findUserFromDB(req.session.email)
     if(isTrue) return next();
     req.session.userName = null
@@ -37,6 +38,8 @@ const checkUser = async (req,res,next)=>{
     req.session.phoneNumber  = null
     res.redirect("/login");
 }
+
+
 
 
 export default {

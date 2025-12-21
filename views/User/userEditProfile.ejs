@@ -45,25 +45,26 @@
                         <div class="row">
                             <div class="col-md-4 d-flex flex-column align-items-center">
                                 <div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div>
-                                <button class="btn btn-custom-primary w-75 mt-2">Update photo</button>
+                                <label for="profilePic" class="btn btn-custom-primary w-75 mt-2">Update photo</label>
+                                <input type="file" id="profilePic" class="invisible">
                             </div>
                             <div class="col-md-8">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" value="vimal">
+                                        <input type="text" class="form-control" id="userName" value="<%= userName%>">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" value="vimal@gmail.com">
+                                        <input type="email" class="form-control" id="email" value="<%= email%>">
                                     </div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" value="+91 000000000">
+                                    <input type="text" class="form-control" id="phoneNumber" value="<%= phoneNumber %>">
                                 </div>
                                 <div class="text-end">
-                                    <button class="btn btn-custom-primary">Save Changes</button>
+                                    <button onclick="sendUserData()" class="btn btn-custom-primary">Save Changes</button>
                                 </div>
                             </div>
                         </div>
@@ -99,6 +100,43 @@
                 </div>
 
             </div> </div> </div> <%- include("../partials/footer") %>
+
+
+            <script>
+                    function sendUserData(){
+                        const data = new FormData()
+                        const userName = document.querySelector("#userName").value;
+                        const email = document.querySelector("#email").value;
+                        const phoneNumber = document.querySelector("#phoneNumber")?.value;
+                        const profilePic = document.querySelector("#profilePic").files[0]
+
+                        data.append("userName",userName)
+                        data.append("email",email)
+                        data.append("phoneNumber",phoneNumber)
+                        data.append("profilePic",profilePic)
+                        data.append("oldEmail",'<%= email%>')
+                       fetch('/Profile/edit',{
+                        method:'PATCH',
+                        body:data
+                       }).then(data=>data.json())
+                       .then(data=>{
+                         console.log("datacomming ",data.href,data.status)
+                        if(data.status=='success'){
+                            console.log("datacomming this  ",data.href)
+                            window.location.href=data.href
+                        }
+                        else if(data.status=='updated'){
+                            console.log("datra is arived")
+                          window.location.href=data.href
+                        }
+                        if(data.status=="error")
+                        {
+                            console.log(data.status,data.message)
+                        }
+                       })
+                    }
+
+            </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import product from "../product.js";
 import passport from 'passport'
 
 
+
 const otpGenerator= async (req,res)=>{
     const {email,userName,password,phoneNumber = null,referralCode = null} = req.body;
     const OTP = otp.otpGenerator();
@@ -151,6 +152,53 @@ const loadUserProfile=(req,res)=>{
     res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode})
 }
 
+const editProfile=(req,res)=>{
+   
+    res.render('User/userEditProfile',{userName:req.session.userName,email:req.session.email,phoneNumber:req.session.phoneNumber})
+}
+
+ const sendData = async(req,res,next)=>{
+        
+      const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber)
+        if(data === "error"){
+           return res.status(409).json({status:"error",message:"User alredy exists"});
+        }
+       if(data)
+       {
+         const {email} = req.body
+         const OTP = otp.otpGenerator();
+         await user.clearOtp(email)
+         await user.storeOtpInDb(email,OTP)
+         otp.sendEmail(email,OTP);
+         return res.status(200).json({status:"success",href:"/profile/otp"})
+       }
+       else{
+         await userService.updateUserData(req)
+        res.status(200).json({status:"updated",message:"Data updated",href:"/EditUser"})
+        
+       }
+   
+}
+
+const loadOtpPageForUpdateEmail = (req,res)=>{
+   res.render('User/emailUpdateOtpPage',{status:"success",message:null})
+}
+
+const verifyOptforUpdateEmail = async (req,res,next)=>{
+  const email =req.session.newEmail
+   const result = await user.checkOtp(req.body.otp,email);
+   console.log("otp resllt",result)
+   if(result){
+   await userService.updateUserData(req)
+    res.redirect("/userProfile");
+   }
+}
+
+
+
+   
+
+
 
 
 export default {
@@ -169,5 +217,10 @@ export default {
     startGoogleLogin,
     googleAuthenticate,
     storeUserDataInSession,
-    loadUserProfile
+    loadUserProfile,
+    editProfile,
+    sendData,
+    loadOtpPageForUpdateEmail,
+    verifyOptforUpdateEmail,
+    
 }

@@ -2,6 +2,8 @@ import {Router} from 'express'
 import Auth from '../middleware/userAuth.js'
 import userControllers from '../Controllers/userControllers/userControllers.js'
 import products from "../Controllers/product.js"
+import image from "../Config/categoryThumbnail.js"
+import userService from '../Service/userService.js'
 
 
 const router = Router()
@@ -27,12 +29,11 @@ router.get("/productDetails/:id",Auth.isUser,Auth.checkUser,products.loadProduct
 
 router.get('/userProfile',Auth.isUser,Auth.checkUser,userControllers.loadUserProfile)
 
-router.get('/EditUser',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/userEditProfile',{userName:req.session.userName})
-})
+router.get('/EditUser',Auth.isUser,Auth.checkUser,userControllers.editProfile)
 
-
-
+router.patch('/Profile/edit',Auth.isUser,Auth.checkUser,image.single('image'),userControllers.sendData)
+router.get("/profile/otp",Auth.isUser,Auth.checkUser,userControllers.loadOtpPageForUpdateEmail)
+router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
 
 router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
     res.render('User/orders',{userName:req.session.userName})
