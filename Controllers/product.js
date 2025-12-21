@@ -84,7 +84,7 @@ const loadUserSideProductsPage = async(req,res)=>{
     const toatalCount = await productService.countPages()
     const {count} =toatalCount[0]
     
-    res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange})
+    res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile})
 }
 
  const loadProductDetails = async (req, res) => {
@@ -107,14 +107,14 @@ const loadUserSideProductsPage = async(req,res)=>{
   }
 
   const relateditems = await productService.getRelateditems(productData.categoryId);
-
   res.render("User/singleProductPage", {
     userName: req.session.userName,
     productData,
     getVariants,
     relateditems,
     ram,
-    storage
+    storage,
+    profile:req.session.profile
   });
 };
 

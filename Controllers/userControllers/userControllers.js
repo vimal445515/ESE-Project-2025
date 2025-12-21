@@ -42,12 +42,13 @@ const authentication = async (req,res)=>{
   const data = await user.findUserFromDB(email)
   if(!data) return res.status(404).render('User/login',{userName:null,status:"error",message:"User Not found"});
   if(!hash.comparePassword(password,data.password)) return res.status(401).render("User/login",{userName:null,status:'error',message:"invaid password"});
-  
+  console.log(data)
   req.session.userName = data.userName
   req.session.email = data.email
   req.session.role = data.role
   req.session.phoneNumber  = data.phoneNumber;
   req.session.referralCode = data.referralId;
+  req.session.profile = data.profile
 
   console.log(req.session.userName);
   return res.status(200).redirect("/home");
@@ -62,7 +63,7 @@ const loadHomePage=async(req,res)=>{
   const newProducts = await productService.getNewProducts()
   const watches = await productService.getWatches()
 
-  res.render('User/home',{userName,data,newProducts,watches});
+  res.render('User/home',{userName,data,newProducts,watches,profile:req.session.profile});
 } 
 
 const findEmail= async (req,res,next)=>{
@@ -149,31 +150,34 @@ const resetPassword = async(req,res) =>{
 
 
 const loadUserProfile=(req,res)=>{
-    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode})
+  
+    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile})
 }
 
 const editProfile=(req,res)=>{
-   
-    res.render('User/userEditProfile',{userName:req.session.userName,email:req.session.email,phoneNumber:req.session.phoneNumber})
+    
+    res.render('User/userEditProfile',{userName:req.session.userName,email:req.session.email,phoneNumber:req.session.phoneNumber,profile:req.session.profile})
 }
 
  const sendData = async(req,res,next)=>{
         
-      const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber)
+      const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)
         if(data === "error"){
            return res.status(409).json({status:"error",message:"User alredy exists"});
         }
+       
        if(data)
        {
          const {email} = req.body
          const OTP = otp.otpGenerator();
-         await user.clearOtp(email)
+         await user.clearOtp(email)    
          await user.storeOtpInDb(email,OTP)
          otp.sendEmail(email,OTP);
          return res.status(200).json({status:"success",href:"/profile/otp"})
        }
        else{
          await userService.updateUserData(req)
+         console.log("befor render:",req.session.profile)
         res.status(200).json({status:"updated",message:"Data updated",href:"/EditUser"})
         
        }

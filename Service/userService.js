@@ -2,7 +2,7 @@ import {User} from '../Models/userSchema.js'
 import {OtpModel} from "../Models/otpSchema.js"
 import hash from "../helpers/passwordHash.js"
 import {categoryModel} from '../Models/categorySchema.js'
-
+import helpers from '../helpers/helpers.js'
 
 
 const findUserFromDB= async (email) =>
@@ -51,7 +51,7 @@ const updatePassword = async(password,email)=>{
     await User.findOneAndUpdate({email},{$set:{password:passwordHashed}})
 }
 
-const verifyData = async(session,userName,email,phoneNumber) =>{
+const verifyData = async(session,userName,email,phoneNumber,image) =>{
     let flag = false;
     if( session.userName !== userName){
         session.newUserName=userName;
@@ -63,6 +63,9 @@ const verifyData = async(session,userName,email,phoneNumber) =>{
        
         session.newPhoneNumber = phoneNumber;
     }
+     if(image){
+        session.newImage = image.filename;
+     }
 
      if(email !== session.email ){
 
@@ -82,6 +85,7 @@ const verifyData = async(session,userName,email,phoneNumber) =>{
 
 const updateUserData = async (req)=>{
     let data = {}
+    let profile
     if(req.session.newEmail){
         data.email= req.session.newEmail;
        
@@ -91,16 +95,29 @@ const updateUserData = async (req)=>{
         data.phoneNumber = req.session.newPhoneNumber
         
     }
+    
+    if(req.session.newImage)
+    {
+        data.profile = req.session.newImage
+        profile =  await User.findOne({email:req.session.email},{_id:0,profile:1})
+         console.log("profileSide working",profile+"  "+data.profile)
+
+    }
     if(req.session.newUserName){
         data.userName = req.session.newUserName
     }
     delete req.session?.newEmail
     delete req.session?.newUserName
     delete req.session?.newPhoneNumber
-     data = await User.findOneAndUpdate({email:req.session.email},{$set:data},{new:true})
+     data =  await User.findOneAndUpdate({email:req.session.email},{$set:data},{new:true})
+     if(profile)
+     {
+        helpers.deleteProfile(profile.profile)
+     }
     req.session.userName = data.userName;
     req.session.email = data.email
-    req.session.phoneNumber = data.phoneNumber 
+    req.session.phoneNumber = data.phoneNumber
+    req.session.profile = data.profile 
 }
 
 export default {

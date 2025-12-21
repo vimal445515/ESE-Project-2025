@@ -1,4 +1,6 @@
-
+import fs from "fs"
+import path from 'path'
+import { fileURLToPath } from "url"
 import {transport} from '../Config/EmailConfig.js'
 const otpGenerator=()=>{
    return Math.floor(Math.random(999,10000)*10000)
@@ -27,12 +29,22 @@ const groupValues = ()=>{
 
 }
 
-
+const deleteProfile = (file)=>{
+    let __filename = fileURLToPath(import.meta.url);
+     let __dirname =path.dirname(path.dirname(__filename))
+     let root = __dirname.split("\\").join('/')
+     if(fs.existsSync(`${root}/public/upload/${file}`)){
+      fs.unlink(`${root}/public/upload/${file}`,(error)=>{
+         console.log("profile Deleted");
+      })
+     }
+}
 
 
 export default {
    otpGenerator,
    sendEmail,
    paginationSkip,
-   groupValues
+   groupValues,
+   deleteProfile
 }

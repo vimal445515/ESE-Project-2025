@@ -3,7 +3,8 @@ import Auth from '../middleware/userAuth.js'
 import userControllers from '../Controllers/userControllers/userControllers.js'
 import products from "../Controllers/product.js"
 import image from "../Config/categoryThumbnail.js"
-import userService from '../Service/userService.js'
+
+
 
 
 const router = Router()
@@ -36,18 +37,18 @@ router.get("/profile/otp",Auth.isUser,Auth.checkUser,userControllers.loadOtpPage
 router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
 
 router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/orders',{userName:req.session.userName})
+    res.render('User/orders',{userName:req.session.userName,profile:req.session.profile})
 })
 
 router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/wallet',{userName:req.session.userName})
+    res.render('User/wallet',{userName:req.session.userName,profile:req.session.profile})
 })
 
 router.get('/address',(req,res)=>{
-    res.render('User/address',{userName:req.session.userName})
+    res.render('User/address',{userName:req.session.userName,profile:req.session.profile})
 })
 
 router.get('/wishlist',(req,res)=>{
-    res.render('User/wishlist',{userName:req.session.userName})
+    res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile})
 })
 export default router
