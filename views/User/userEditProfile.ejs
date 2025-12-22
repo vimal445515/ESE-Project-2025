@@ -68,11 +68,14 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" value="<%= email%>">
+                                         <p id="emailError" class="text-danger"></p>
                                     </div>
+                                   
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Phone Number</label>
                                     <input type="text" class="form-control" id="phoneNumber" value="<%= phoneNumber %>">
+                                      <p id="phoneNuberError" class="text-danger"></p>
                                 </div>
                                 <div class="text-end">
                                     <button onclick="sendUserData()" class="btn btn-custom-primary">Save Changes</button>
@@ -151,8 +154,21 @@
                         const userName = document.querySelector("#userName").value;
                         const email = document.querySelector("#email").value;
                         const phoneNumber = document.querySelector("#phoneNumber")?.value;
-                        
-
+                       
+                        const emailError = document.querySelector("#emailError");
+                        const phoneNumberError = document.querySelector("#phoneNuberError");
+                     
+                      if(!email.includes("@") || !email.includes(".") ){
+                           emailError.innerText = "Invaild email"
+                           return
+                        }
+                        if(phoneNumber){
+                          if(phoneNumber.length != 10){
+                            phoneNumberError.innerText="Invalid phone Number"
+                            return 
+                          }
+                        }
+                       
                         if(croppedBlob){
                           let image = new File([croppedBlob],"profile.jpg",{
                             type:'image/jpeg'
@@ -175,7 +191,7 @@
                             window.location.href=data.href
                         }
                         else if(data.status=='updated'){
-                            console.log("datra is arived")
+
                           window.location.href=data.href
                         }
                         if(data.status=="error")
@@ -183,7 +199,8 @@
                             console.log(data.status,data.message)
                         }
                        })
-                    }
+                 
+                  }
 
 
                     const inputImage = document.getElementById('inputImage');
