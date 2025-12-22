@@ -120,10 +120,10 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
     else if(sort ==='htoL'){
       pipeline.push({$sort:{basePrice:-1}})
     }else if(sort ==='AZ'){
-      pipeline.push({$sort:{productName:1}})
+      pipeline.push({$addFields:{lowerCase:{$toLower:"$productName"}}},{$sort:{lowerCase:1}})
     }
     else if(sort ==='ZA'){
-      pipeline.push({$sort:{productName:-1}})
+      pipeline.push({$addFields:{lowerCase:{$toLower:"$productName"}}},{$sort:{lowerCase:-1}})
     }
   }
 
