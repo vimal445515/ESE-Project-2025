@@ -198,7 +198,18 @@ const verifyOptforUpdateEmail = async (req,res,next)=>{
    }
 }
 
-
+const userProfileResetPassword =async(req,res)=>{
+  const {currentPassword,newPassword} =req.body;
+  const password = await userService.getCorrentPassword(req.session.email);
+  if(await hash.comparePassword(currentPassword,password)){
+    await userService.updatePassword(newPassword,req.session.email)
+  }else
+  {
+   return res.status(401).json({status:"error",message:"invalid password"})
+  }
+  return res.status(200).json({status:"success",message:"password reseted successfully"});
+  
+}
 
    
 
@@ -226,5 +237,6 @@ export default {
     sendData,
     loadOtpPageForUpdateEmail,
     verifyOptforUpdateEmail,
+    userProfileResetPassword
     
 }

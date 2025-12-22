@@ -120,6 +120,11 @@ const updateUserData = async (req)=>{
     req.session.profile = data.profile 
 }
 
+const getCorrentPassword = async (email)=>{
+  const  {password} = await User.findOne({email:email},{_id:0,password:1})
+  return password
+}
+
 export default {
     findUserFromDB,
     storeOtpInDb,
@@ -129,6 +134,7 @@ export default {
     getAllCategory,
     updatePassword,
     verifyData,
-    updateUserData
+    updateUserData,
+    getCorrentPassword
 
 }

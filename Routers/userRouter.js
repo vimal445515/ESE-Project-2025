@@ -4,9 +4,6 @@ import userControllers from '../Controllers/userControllers/userControllers.js'
 import products from "../Controllers/product.js"
 import image from "../Config/categoryThumbnail.js"
 
-
-
-
 const router = Router()
 router.get('/',Auth.isUser,userControllers.loadHomePage)
 router.get("/signup",Auth.isLoggedIn,userControllers.loadSignupPage)
@@ -35,6 +32,9 @@ router.get('/EditUser',Auth.isUser,Auth.checkUser,userControllers.editProfile)
 router.patch('/Profile/edit',Auth.isUser,Auth.checkUser,image.single('image'),userControllers.sendData)
 router.get("/profile/otp",Auth.isUser,Auth.checkUser,userControllers.loadOtpPageForUpdateEmail)
 router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
+router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
+
+
 
 router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
     res.render('User/orders',{userName:req.session.userName,profile:req.session.profile})
@@ -51,4 +51,6 @@ router.get('/address',(req,res)=>{
 router.get('/wishlist',(req,res)=>{
     res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile})
 })
+
+
 export default router
