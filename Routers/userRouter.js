@@ -44,9 +44,7 @@ router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
     res.render('User/wallet',{userName:req.session.userName,profile:req.session.profile})
 })
 
-router.get('/address',(req,res)=>{
-    res.render('User/address',{userName:req.session.userName,profile:req.session.profile})
-})
+
 
 router.get('/wishlist',(req,res)=>{
     res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile})

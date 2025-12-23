@@ -49,6 +49,7 @@ const authentication = async (req,res)=>{
   req.session.phoneNumber  = data.phoneNumber;
   req.session.referralCode = data.referralId;
   req.session.profile = data.profile
+  req.session._id = data._id
 
   console.log(req.session.userName);
   return res.status(200).redirect("/home");

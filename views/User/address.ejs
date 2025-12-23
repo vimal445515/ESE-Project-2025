@@ -77,86 +77,176 @@
             
             <%- include('../partials/userSideBar.ejs', {page: 'address'}) %>
 
-            <div class="col-lg-9">
+            <form href="/address" method="post" class="col-lg-9">
                 
                 <div class="card settings-card">
                     <div class="card-body">
                         
                         <div class="row mb-4">
                             <div class="col-lg-5 mb-3 mb-lg-0">
-                                <label class="form-label">User name</label>
+                                <label class="form-label">User name *</label>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <input type="text" class="form-control" placeholder="First name">
+                                        <input type="text" name="userName" value="<%= data?.userName||``%>" class="form-control" placeholder="First name">
                                     </div>
-                                    <div class="col-6">
-                                        <input type="text" class="form-control" placeholder="Last name">
-                                    </div>
+                                    <p id="userNameError"></p>
                                 </div>
                             </div>
 
                             <div class="col-lg-4 mb-3 mb-lg-0">
                                 <label class="form-label">Company Name <span class="text-muted fw-light">(Optional)</span></label>
-                                <input type="text" class="form-control">
+                                <input type="text" name="companyName" value="<%= data?.companyName||``%>" class="form-control">
                             </div>
 
                             <div class="col-lg-3">
                                 <label class="form-label d-none d-lg-block">&nbsp;</label> 
-                                <button class="btn btn-save-address">Save Address</button>
+                                <button type="submit" class="btn btn-save-address">Save Address</button>
+                                
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Address</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">Address *</label>
+                            <input type="text" value="<%= data?.address||``%>" name="address" class="form-control">
+                            <p id="addressError" class="text-danger"></p>
                         </div>
 
                         <div class="row mb-4">
                             <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Country</label>
-                                <select class="form-select">
-                                    <option selected disabled>Select...</option>
-                                    <option>India</option>
-                                    <option>USA</option>
+                                <label class="form-label">Country *</label>
+                                <select name="country"  class="form-select">
+                                   <option value="" disabled <%= !data?.country ? "selected" : "" %>> Select...</option>
+                                    <option value="India" <%= data?.country === "India" ? "selected" : "" %>>India</option>
+                                    <option value="USA" <%= data?.country === "USA" ? "selected" : "" %> >USA</option>
                                 </select>
+                                 <p id="countryError" class="text-danger"></p>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Region/State</label>
-                                <select class="form-select">
-                                    <option selected disabled>Select...</option>
-                                    <option>Kerala</option>
-                                    <option>Tamil Nadu</option>
+                                <label class="form-label">Region/State *</label>
+                                <select name="state" value="<%= data?.state||``%>" class="form-select">
+                                    <option value="" disabled <%= !data?.city ? "selected" : "" %>>Select...</option>
+                                    <option  <%= data?.city === "Kerala" ? "selected" : "" %> >Kerala</option>
+                                    <option  <%= data?.city === "Tamil Nadu" ? "selected" : "" %> >Tamil Nadu</option>
                                 </select>
+                                <p id="stateError" class="text-danger"></p>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">City</label>
-                                <select class="form-select">
-                                    <option selected disabled>Select...</option>
-                                    <option>Kochi</option>
-                                    <option>Munnar</option>
+                                <label class="form-label">City *</label>
+                                <select name="city" class="form-select">
+                                    <option value="" disabled <%= !data?.city ? "selected" : "" %>>Select...</option>
+                                    <option value="Kochi" <%= data?.city === "Kochi" ? "selected" : "" %> >Kochi</option>
+                                    <option value="Munnar" <%= data?.city === "Munnar" ? "selected" : "" %>>Munnar</option>
                                 </select>
+                                <p id="cityError" class="text-danger"></p>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">PIN Code</label>
-                                <input type="text" class="form-control">
+                                <label class="form-label">PIN Code *</label>
+                                <input name="pinCode" value="<%= data?.pinCode||``%>" type="text" class="form-control">
                             </div>
+                            <p id="pinCodeError" class="text-danger"></p>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control">
+                                <label class="form-label">Email *</label>
+                                <input name="email" value="<%= data?.email||``%>" type="email" class="form-control">
+                                <p id="emailError" class="text-danger"></p>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone Number</label>
-                                <input type="text" class="form-control">
+                                <label class="form-label">Phone Number *</label>
+                                <input name="phoneNumber" value="<%= data?.phoneNumber||`` %>" type="text" class="form-control">
+                                <p id="phoneNumberError" class="text-danger"></p>
                             </div>
                         </div>
 
                     </div>
                 </div>
 
-            </div> </div> </div> <%- include("../partials/footer") %>
+            </form> </div> </div> <%- include("../partials/footer") %>
+            <script>
+                
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", function (e) {
+    let isValid = true;
+
+    // helper functions
+    const showError = (id, msg) => {
+      document.getElementById(id).innerText = msg;
+      isValid = false;
+    };
+
+    const clearError = (id) => {
+      document.getElementById(id).innerText = "";
+    };
+
+    // get values
+    const userName = form.userName.value.trim();
+    const address = form.address.value.trim();
+    const country = form.country.value;
+    const state = form.state.value;
+    const city = form.city.value;
+    const pinCode = form.pinCode.value.trim();
+    const email = form.email.value.trim();
+    const phoneNumber = form.phoneNumber.value.trim();
+
+   
+    clearError("userNameError");
+    if (!userName) {
+      showError("userNameError", "User name is required");
+    }
+
+   
+    clearError("addressError");
+    if (!address) {
+      showError("addressError", "Address is required");
+    }
+
+    
+    clearError("countryError");
+    if (!country) {
+      showError("countryError", "Please select a country");
+    }
+
+    
+    clearError("stateError");
+    if (!state) {
+      showError("stateError", "Please select a state");
+    }
+
+   
+    clearError("cityError");
+    if (!city) {
+      showError("cityError", "Please select a city");
+    }
+
+    
+    clearError("pinCodeError");
+    if (!/^\d{6}$/.test(pinCode)) {
+      showError("pinCodeError", "Enter a valid 6-digit PIN code");
+    }
+
+    
+    clearError("emailError");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError("emailError", "Enter a valid email address");
+    }
+
+    
+    clearError("phoneNumberError");
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      showError("phoneNumberError", "Enter a valid 10-digit phone number");
+    }
+
+    // stop submit if invalid
+    if (!isValid) {
+      e.preventDefault();
+    }
+  });
+
+
+            </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
