@@ -12,10 +12,10 @@ const loadWishListPage= async(req,res)=>{
 
 const storeWishlistData = async(req,res)=>{
     await wishlistService.storeWishlistItemInDB(req.body.productId,req.body.variantId,req.session._id);
+    res.redirect('/wishlist');
 }
 
-const deleteWislistItem = async(req,res) =>{
-    
+const deleteWislistItem = async(req,res) =>{  
     await wishlistService.remove(req.body._id);
     res.status(200).json({data:"success"});
 }

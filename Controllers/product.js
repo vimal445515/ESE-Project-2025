@@ -2,6 +2,7 @@ import productService from '../Service/productService.js'
 import productHelper from '../helpers/productHelper.js'
 import helpers from '../helpers/helpers.js'
 import adminService from '../Service/adminService.js'
+import wishlistService from '../Service/wishlistService.js'
 const storeProducts = async (req,res)=>{
     const {productName,basePrice,description,category,discound} = req.body
     const generalPhoto = productHelper.extractGeneralImage(req.files)
@@ -99,13 +100,18 @@ const loadUserSideProductsPage = async(req,res)=>{
 
   if (!productArray || productArray.length === 0) {
     const fallback = await productService.getSingleProduct(id);
-
-
     productData = fallback[0];
   } else {
     productData = productArray[0];
   }
-
+  let isLiked = false
+  const wishlist = await wishlistService.findWishlist(productData._id,productData.variants._id,req.session._id)
+  let wishlistId = null
+  if(wishlist){
+    isLiked=true;
+   wishlistId = wishlist._id;
+  } 
+  
   const relateditems = await productService.getRelateditems(productData.categoryId);
   res.render("User/singleProductPage", {
     userName: req.session.userName,
@@ -114,7 +120,9 @@ const loadUserSideProductsPage = async(req,res)=>{
     relateditems,
     ram,
     storage,
-    profile:req.session.profile
+    profile:req.session.profile,
+    isLiked:isLiked,
+    wishlistId:wishlistId
   });
 };
 

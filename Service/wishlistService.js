@@ -48,8 +48,13 @@ const remove = async(id)=>{
    await wishlistModel.deleteOne({_id:id});
 }
 
+const findWishlist = async (productId,variantId,userId) =>{
+  return await wishlistModel.findOne({productId:productId,variantId:variantId,userId:userId})
+}
+
 export default {
     storeWishlistItemInDB,
     getWishlistItems,
-    remove
+    remove,
+    findWishlist
 }
