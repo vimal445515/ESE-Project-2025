@@ -33,7 +33,7 @@ const addToCart = async (req,res) =>{
       
       
    }
-    await cartService.addProduct(req.body.productId,req.body.variantId,req.session._id,req.body.quantity)
+    await cartService.addProduct(req.body.productId,req.body.variantId,req.session._id,parseInt(req.body.quantity))
     res.redirect('/cart')
  }catch(error){
       res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:"error",message:error.message});

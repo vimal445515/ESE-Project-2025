@@ -161,9 +161,13 @@
         </div>
         
         <div class="col-md-6 ps-md-5">
+            <form action="/wishlist" method="post">
+                <input type="hidden" name="productId" value="<%= productData._id %>">
+                <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
             <div class="d-flex justify-content-end mb-3">
-                <button class="btn btn-light"><i class="bi bi-heart fs-4 text-danger"></i></button>
+                <button type="submit" class="btn btn-light"><i class="bi bi-heart fs-4 text-danger"></i></button>
             </div>
+            </form>
             
             <div class="d-flex align-items-center mb-2">
                 <span class="rating-star fs-5 me-1"><i class="bi bi-star-fill"></i></span>

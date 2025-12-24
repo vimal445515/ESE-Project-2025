@@ -46,9 +46,6 @@ router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
 
 
 
-router.get('/wishlist',(req,res)=>{
-    res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile})
-})
 
 
 export default router
