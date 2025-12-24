@@ -9,6 +9,7 @@ import nocache from "nocache";
 import env from 'dotenv'
 import passport from './Config/passport.js'
 import addressRouter from './Routers/addressRouter.js'
+import cartRoutere  from './Routers/cartRouter.js'
 env.config()
 let app = express();
 let __filename = fileURLToPath(import.meta.url);
@@ -27,7 +28,7 @@ app.use(passport.session());
 app.use("/admin",adminRouter);
 app.use(userRouter)
 app.use("/address",addressRouter)
-
+app.use(cartRoutere)
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}/userProfile`);
 })
