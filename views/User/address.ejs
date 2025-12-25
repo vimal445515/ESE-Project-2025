@@ -111,6 +111,14 @@
                             <p id="addressError" class="text-danger"></p>
                         </div>
 
+                         <div class="col-md-3">
+                                <label class="form-label">PIN Code *</label>
+                                <input name="pinCode" id="pinCode" value="<%= data?.pinCode||``%>" type="text" class="form-control">
+                                 <p id="pinCodeError" class="text-danger"></p>
+                            </div>
+                           
+                        </div>
+
                         <div class="row mb-4">
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Country *</label>
@@ -121,30 +129,65 @@
                                 </select>
                                  <p id="countryError" class="text-danger"></p>
                             </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Region/State *</label>
-                                <select name="state" value="<%= data?.state||``%>" class="form-select">
-                                    <option value="" disabled <%= !data?.city ? "selected" : "" %>>Select...</option>
-                                    <option  <%= data?.city === "Kerala" ? "selected" : "" %> >Kerala</option>
-                                    <option  <%= data?.city === "Tamil Nadu" ? "selected" : "" %> >Tamil Nadu</option>
+                                                        <%
+                                const states = [
+                                "Andhra Pradesh",
+                                "Arunachal Pradesh",
+                                "Assam",
+                                "Bihar",
+                                "Chhattisgarh",
+                                "Goa",
+                                "Gujarat",
+                                "Haryana",
+                                "Himachal Pradesh",
+                                "Jharkhand",
+                                "Karnataka",
+                                "Kerala",
+                                "Madhya Pradesh",
+                                "Maharashtra",
+                                "Manipur",
+                                "Meghalaya",
+                                "Mizoram",
+                                "Nagaland",
+                                "Odisha",
+                                "Punjab",
+                                "Rajasthan",
+                                "Sikkim",
+                                "Tamil Nadu",
+                                "Telangana",
+                                "Tripura",
+                                "Uttar Pradesh",
+                                "Uttarakhand",
+                                "West Bengal"
+                                ];
+                                %>
+
+                                <div class="col-md-3 mb-3 mb-md-0">
+                                <label class="form-label">State *</label>
+
+                                <select name="state" class="form-select">
+                                    <option value="" disabled <%= !data?.state ? "selected" : "" %>>
+                                    Select...
+                                    </option>
+
+                                    <% states.forEach(state => { %>
+                                    <option 
+                                        value="<%= state %>"
+                                        <%= data?.state === state ? "selected" : "" %>>
+                                        <%= state %>
+                                    </option>
+                                    <% }) %>
                                 </select>
+
                                 <p id="stateError" class="text-danger"></p>
-                            </div>
+                                </div>
+
                             <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">City *</label>
-                                <select name="city" class="form-select">
-                                    <option value="" disabled <%= !data?.city ? "selected" : "" %>>Select...</option>
-                                    <option value="Kochi" <%= data?.city === "Kochi" ? "selected" : "" %> >Kochi</option>
-                                    <option value="Munnar" <%= data?.city === "Munnar" ? "selected" : "" %>>Munnar</option>
-                                </select>
+                                <label class="form-label">City/District *</label>
+                                <input type="text" value="<%= data?.city%>" class="form-control" name="city">
                                 <p id="cityError" class="text-danger"></p>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">PIN Code *</label>
-                                <input name="pinCode" value="<%= data?.pinCode||``%>" type="text" class="form-control">
-                            </div>
-                            <p id="pinCodeError" class="text-danger"></p>
-                        </div>
+                           
 
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
@@ -239,12 +282,36 @@
       showError("phoneNumberError", "Enter a valid 10-digit phone number");
     }
 
+
+     
+
+
     // stop submit if invalid
     if (!isValid) {
       e.preventDefault();
     }
   });
 
+document.getElementById('pinCode').addEventListener('input',(e)=>{
+        console.log("hello")
+      if(e.target.value.length ===6){
+        fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
+        .then(data=>data.json())
+        .then(data=>{
+            if(data[0].Status==="Error"){
+                document.getElementById("pinCodeError").textContent = "Pin code not found!"
+            }
+            if(data[0].Status==="Success"){
+                document.getElementById("pinCodeError").textContent = ""
+                form.state.value = data[0].PostOffice[0].State
+                form.country.value = data[0].PostOffice[0].Country
+                form.city.value = data[0].PostOffice[0].District
+            }
+     })
+      }
+
+   })
+  
 
             </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

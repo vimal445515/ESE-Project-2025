@@ -15,6 +15,8 @@ const loadAddressPage = async(req,res)=>{
     res.render('User/address',{userName:req.session.userName,profile:req.session.profile,data})
 }
 
+
+
 export default
 {
 address,

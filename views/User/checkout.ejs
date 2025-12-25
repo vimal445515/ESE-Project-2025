@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Billing Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .checkout-container { padding: 40px 0; }
+        
+        /* Form Styling */
+        .card-custom { border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .form-label { font-weight: 500; color: #444; margin-bottom: 8px; }
+        .form-control, .form-select { padding: 12px; border: 1px solid #dee2e6; border-radius: 6px; }
+        
+        /* Payment Option Styling */
+        .payment-method { 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+            padding: 20px; 
+            text-align: center; 
+            cursor: pointer;
+            transition: 0.3s;
+            height: 100%;
+        }
+        .payment-method i { font-size: 24px; margin-bottom: 10px; color: #4054d2; }
+        .payment-method input[type="radio"] { width: 18px; height: 18px; cursor: pointer; }
+        .payment-method:hover { border-color: #4054d2; background-color: #f0f2ff; }
+
+        /* Order Summary Styling */
+        .summary-card { border: 1px solid #eee; border-radius: 8px; background: #fff; }
+        .product-item img { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; }
+        .price-text { font-weight: 600; color: #4054d2; }
+        .total-row { font-size: 1.1rem; border-top: 1px solid #eee; padding-top: 15px; }
+        .btn-place-order { background-color: #4054d2; border: none; padding: 14px; font-weight: 600; letter-spacing: 0.5px; }
+        .btn-place-order:hover { background-color: #3444b0; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+<%- include('../partials/navbar.ejs')%>
+<form  class="container checkout-container">
+    <div class="row g-4">
+        
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 mb-4">
+                <h5 class="fw-bold mb-4">Edit Billing Information</h5>
+                
+                
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">User name</label>
+                            <input type="text" name="userName" id="userName" class="form-control" placeholder="First name">
+                            <p id="userNameError" class="text-danger"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Company Name (Optional)</label>
+                            <input type="text" name="companyName" id="companyName" class="form-control">
+                           
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" id="address" class="form-control">
+                             <p id="addressError" class="text-danger"></p>
+                        </div>
+
+                         <div class="col-md-3">
+                            <label  class="form-label">PIN Code</label>
+                            <input id="pinCode" name="pinCode" type="text" class="form-control">
+                            <p class="text-danger" id="pinCodeError"></p>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Country</label>
+                            <select id="country" name="country" class="form-select">
+                                <option>Select...</option>
+                                <option value="India" >India</option>
+                            </select>
+                             <p id="countryError" class="text-danger"></p>
+                        </div>
+                                            <%
+                        const states = [
+                        "Andhra Pradesh",
+                        "Arunachal Pradesh",
+                        "Assam",
+                        "Bihar",
+                        "Chhattisgarh",
+                        "Goa",
+                        "Gujarat",
+                        "Haryana",
+                        "Himachal Pradesh",
+                        "Jharkhand",
+                        "Karnataka",
+                        "Kerala",
+                        "Madhya Pradesh",
+                        "Maharashtra",
+                        "Manipur",
+                        "Meghalaya",
+                        "Mizoram",
+                        "Nagaland",
+                        "Odisha",
+                        "Punjab",
+                        "Rajasthan",
+                        "Sikkim",
+                        "Tamil Nadu",
+                        "Telangana",
+                        "Tripura",
+                        "Uttar Pradesh",
+                        "Uttarakhand",
+                        "West Bengal"
+                        ];
+                        %>
+
+                        <div class="col-md-3">
+                        <label class="form-label">Region / State</label>
+
+                        <select id="state" name="state" class="form-select">
+                            <option value="" >
+                            Select...
+                            </option>
+
+                            <% states.forEach(state => { %>
+                            <option 
+                                value="<%= state %>">
+                                <%= state %>
+                            </option>
+                            <% }) %>
+                        </select>
+                         <p id="stateError" class="text-danger"></p>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label  class="form-label">City/district</label>
+                            <input type="text" name="city" class="form-control" id="city" >
+                          <p id="cityError" class="text-danger"></p>
+                        </div>
+                       
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input id="email" name="email" type="email" class="form-control">
+                             <p id="emailError" class="text-danger"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input id="phoneNumber" name="phoneNumber" type="text" class="form-control">
+                         <p id="phoneNumberError" class="text-danger"></p>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="form-check">
+                                
+                                <input class="form-check-input" type="checkbox" id="defaultAddress">
+                                <label class="form-check-label text-muted" for="defaultAddress">
+                                    Ship into default address
+                                </label>
+                               
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Address</label>
+                            <select id="address" class="form-select">
+                                <option selected>Select...</option>
+                                <% allAddress.forEach(address=>{%>
+                                <option value="<%= address._id%>"><%= address.address%></option>
+                                 <%})%>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-5">
+
+                    <h5 class="fw-bold mb-4">Payment Option</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="payment-method">
+                                <i class="bi bi-cash-stack"></i>
+                                <p class="mb-3 small fw-bold">Cash on Delivery</p>
+                                <input type="radio" value="cod" name="payment" id="cod">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="payment-method">
+                                <i class="bi bi-lightning-fill"></i>
+                                <p class="mb-3 small fw-bold">Rayorpay</p>
+                                <input type="radio" value="rayorpay" name="payment" id="rayorpay">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="payment-method">
+                                <i class="bi bi-wallet2"></i>
+                                <p class="mb-3 small fw-bold">My Wallet</p>
+                                <input type="radio" value="wallet" name="payment" id="wallet">
+                            </div>
+                        </div>
+                    </div>
+              
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm p-4 summary-card">
+                <h5 class="fw-bold mb-4">Order Summery</h5>
+                <% products.forEach(product=>{%>
+                <div class="product-item d-flex align-items-center mb-3">
+                    <img src="/upload/<%= product.product.generalPhoto%>" class="me-3">
+                    <div class="flex-grow-1">
+                        <p class="mb-0 small fw-bold"><%= product.product.productName%></p>
+                        <p class="mb-0 text-muted small"><%=product.quantity%> x <span class="price-text">₹<%= product.product.variants.price%>...</span></p>
+                    </div>
+                </div>
+                <%})%>
+
+                <div class="summary-details small">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Sub-total</span>
+                        <span class="fw-bold">₹<%= orderDetails.totalPriceCartItem%></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Shipping</span>
+                        <span class="text-success fw-bold">Free</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Discount</span>
+                        <span class="fw-bold">₹<%=orderDetails.totalDiscountPrice%></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Tax</span>
+                        <span class="fw-bold">₹<%= orderDetails.tax%></span>
+                    </div>
+                </div>
+
+                <div class="total-row d-flex justify-content-between align-items-center mb-4">
+                    <span class="h6 fw-bold mb-0">Total</span>
+                    <span class="h5 fw-bold mb-0">₹<%= orderDetails.total%> INR</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<%- include("../partials/footer.ejs")%>
+
+<script>
+
+  
+  const form = document.querySelector(".checkout-container");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Inputs
+    const userName = userNameInput();
+    const address = addressInput();
+    const pinCode = pinCodeInput();
+    const country = document.getElementById("country").value;
+    const state = document.getElementById("state").value;
+    const city = document.getElementById("city").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phoneNumber").value.trim();
+    const payment = document.querySelector('input[name="payment"]:checked');
+
+    clearErrors();
+
+    let isValid = true;
+     if(email===""){
+         setError("emailError", "Email Required");
+      isValid = false;
+    }
+     if(phone===""){
+        setError("phoneNumberError", "Enter valid 10-digit phone number");
+      isValid = false;
+    }
+    // Email
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("emailError", "Enter valid email");
+      isValid = false;
+    }
+
+   
+
+    // Phone
+    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+      setError("phoneNumberError", "Enter valid 10-digit phone number");
+      isValid = false;
+    }
+
+
+    // Username
+    if (!userName) {
+      setError("userNameError", "User name is required");
+      isValid = false;
+    }
+
+    // Address
+    if (!address) {
+      setError("addressError", "Address is required");
+      isValid = false;
+    }
+
+    // Pincode
+    if (!/^[0-9]{6}$/.test(pinCode)) {
+      setError("pinCodeError", "Enter valid 6-digit pincode");
+      isValid = false;
+    }
+
+    // Country
+    if (!country || country === "Select...") {
+      setError("countryError", "Please select country");
+      isValid = false;
+    }
+
+    // State
+    if (!state) {
+      setError("stateError", "Please select state");
+      isValid = false;
+    }
+
+    // City
+    if (!city) {
+      setError("cityError", "City is required");
+      isValid = false;
+    }
+     if(email===""){
+         setError("emailError", "Email Required");
+      isValid = false;
+    }
+     if(phone===""){
+        setError("phoneNumberError", "Enter valid 10-digit phone number");
+      isValid = false;
+    }
+    // Email
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("emailError", "Enter valid email");
+      isValid = false;
+    }
+
+   
+
+    // Phone
+    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+      setError("phoneNumberError", "Enter valid 10-digit phone number");
+      isValid = false;
+    }
+   
+
+    // Payment
+    if (!payment) {
+      alert("Please select a payment method");
+      isValid = false;
+    }
+
+    // Final submit
+    if (isValid) {
+      form.submit();
+    }
+  });
+
+  // Helpers
+  function setError(id, message) {
+    document.getElementById(id).textContent = message;
+  }
+
+  function clearErrors() {
+    document.querySelectorAll(".text-danger").forEach(e => e.textContent = "");
+  }
+
+  function userNameInput() {
+    return document.getElementById("userName").value.trim();
+  }
+
+  function addressInput() {
+    return document.getElementById("address").value.trim();
+  }
+
+  function pinCodeInput() {
+    return document.getElementById("pinCode").value.trim();
+  }
+
+
+
+
+    const userName = document.getElementById("userName")
+    const companyName =document.getElementById("companyName")
+    const address = document.getElementById("address")
+    const country = document.getElementById("country")
+    const state  = document.getElementById("state")
+    const city = document.getElementById("city")
+    const pinCode = document.getElementById("pinCode")
+    const email = document.getElementById("email")
+    const phoneNumber  = document.getElementById("phoneNumber")
+
+
+    document.getElementById("defaultAddress").addEventListener('click',()=>{
+      
+        fetch('/checkout/address',{
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({addressId:"<%= defaultAddressId %>"})
+        }).then(data=>data.json())
+                .then(data=>{
+                    console.log(data)
+                   userName.value = data.userName 
+                   companyName.value = data.companyName
+                   address.value  = data.address
+                   city.value = data.city
+                   email.value = data.email
+                   phoneNumber.value = data.phoneNumber
+                   pinCode.value = data.pinCode
+                   state.value = data.state
+                    country.value = data.country
+                   
+                })
+
+        })
+
+    document.querySelectorAll('#address').forEach(element=>{
+        element.addEventListener('change',(e)=>{
+            
+                    fetch('/checkout/address',{
+                    method:"POST",
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({addressId:e.target.value})
+                }).then(data=>data.json())
+                .then(data=>{
+                    console.log(data)
+                   userName.value = data.userName 
+                   companyName.value = data.companyName
+                   address.value  = data.address
+                   city.value = data.city
+                   email.value = data.email
+                   phoneNumber.value = data.phoneNumber
+                   pinCode.value = data.pinCode
+                   state.value = data.state
+                    country.value = data.country
+                   
+                })
+
+        })
+    })
+
+   pinCode.addEventListener('input',(e)=>{
+      if(e.target.value.length ===6){
+        fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
+        .then(data=>data.json())
+        .then(data=>{
+            if(data[0].Status==="Error"){
+                document.getElementById("pinCodeError").textContent = "Pin code not found!"
+            }
+            if(data[0].Status==="Success"){
+                document.getElementById("pinCodeError").textContent = ""
+                state.value = data[0].PostOffice[0].State
+                country.value = data[0].PostOffice[0].Country
+                city.value = data[0].PostOffice[0].District
+            }
+     })
+      }
+
+   })
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

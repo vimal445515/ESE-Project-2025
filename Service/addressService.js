@@ -1,6 +1,7 @@
 
 import address from '../Controllers/address.js'
 import addressSchema from '../Models/addressSchema.js'
+import mongoose from 'mongoose'
 
 const storeAddress = async(data,id)=>{
     let address = {}
@@ -31,8 +32,20 @@ const getUserAddress= async (_id)=>{
    const data = await addressSchema.findOne({userId:_id,default:true})
    return data
 }
+
+const getAllAddressForCheckout = async(_id) =>{
+  const data = await addressSchema.find({userId:_id,default:false})
+  return data
+}
+
+const findAddressFromDB = async(addressId)=>{
+  
+  return await addressSchema.findOne({_id:addressId}); 
+}
 export default 
 {
     storeAddress,
-    getUserAddress
+    getUserAddress,
+    getAllAddressForCheckout,
+    findAddressFromDB
 }
