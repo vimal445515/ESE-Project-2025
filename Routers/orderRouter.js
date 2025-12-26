@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/',auth.isUser,orderController.loadOrdersHistory)
 
-router.get('/orderDetails',orderController.loadOrderDetailPage)
+router.get('/orderDetails/:id',orderController.loadOrderDetailPage)
 
 router.get('/cancel',orderController.loadOrderCancelPage)
 

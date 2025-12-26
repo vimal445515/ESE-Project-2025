@@ -54,11 +54,11 @@
             <div class="order-header-box mb-4">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h4 class="fw-bold mb-1">#96459761</h4>
-                        <p class="text-muted small mb-0">2 Products  •  Order Placed in 20 nov, 2025 at 7:32 PM</p>
+                        <h4 class="fw-bold mb-1"><%= order.orderId%></h4>
+                        <p class="text-muted small mb-0"><%= order.items.length%> Products  •  Order Placed in <%= order.createdAt.toISOString().slice(0,10)%></p>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <h3 class="fw-bold mb-0">₹163,999</h3>
+                        <h3 class="fw-bold mb-0">₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <h6 class="fw-bold mb-3">Product <span class="text-muted fw-normal">(02)</span></h6>
+            <h6 class="fw-bold mb-3">Product <span class="text-muted fw-normal">(<%= order.items.length%>)</span></h6>
             <div class="table-responsive">
                 <table class="table align-middle product-table">
                     <thead>
@@ -101,32 +101,21 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <% order.items.forEach(item=>{%>
                         <tr>
                             <td>
                                 <div class="d-flex align-items-start">
-                                    <img src="https://via.placeholder.com/70" class="product-img me-3" alt="Laptop">
+                                    <img src="/upload/<%= item.image%>" class="product-img me-3" alt="Laptop">
                                     <div>
-                                        <div class="category-label mb-1">Laptop</div>
-                                        <a href="#" class="product-title d-block">Samsung Galaxy Book5 Pro Next Gen AI PC Full Metal Chasis...</a>
+                                        <a href="#" class="product-title d-block"><%= item.productName%></a>
                                     </div>
                                 </div>
                             </td>
-                            <td class="text-muted">x1</td>
-                            <td class="fw-bold">₹89000</td>
+                            <td class="text-muted"><%= item.quantity%></td>
+                            <td class="fw-bold">₹<%= item.price%></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-start border-top-0">
-                                    <img src="https://via.placeholder.com/70" class="product-img me-3" alt="Phone">
-                                    <div>
-                                        <div class="category-label mb-1">Smart phone</div>
-                                        <a href="#" class="product-title d-block">Samsung Galaxy S25 Ultra 5G (Titanium Black, 256 GB) (12 GB RAM)</a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-muted">x1</td>
-                            <td class="fw-bold">₹132999</td>
-                        </tr>
+                        <%})%>
+                       
                     </tbody>
                 </table>
             </div>
@@ -135,12 +124,12 @@
                 <div class="col-md-4">
                     <div class="address-box pe-3">
                         <h6 class="fw-bold mb-3">Address</h6>
-                        <p class="fw-bold mb-1 small">Kevin Gilbert</p>
+                        <p class="fw-bold mb-1 small"><%= order.address.userName%></p>
                         <p class="text-muted small mb-3">
-                            East Tejturi Bazar, Word No. 04, Road No. 13/x, House no. 1320/C, Flat No. 5D, Dhaka - 1200, Bangladesh
+                            <%=order.address.address%>
                         </p>
-                        <p class="small mb-1"><strong>Phone Number:</strong> <span class="text-muted">+1-202-555-0118</span></p>
-                        <p class="small"><strong>Email:</strong> <span class="text-muted">kevin.gilbert@gmail.com</span></p>
+                        <p class="small mb-1"><strong>Phone Number:</strong> <span class="text-muted">+91 <%= order.address.phoneNumber%></span></p>
+                        <p class="small"><strong>Email:</strong> <span class="text-muted"><%= order.address.email%></span></p>
                     </div>
                 </div>
                 <div class="col-md-8">

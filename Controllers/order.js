@@ -12,14 +12,16 @@ const loadOrdersHistory = async(req,res)=>{
         res.render('User/orders',{userName:req.session.userName,profile:req.session.profile,orders,page,limit,skip,count})
 }
 
-const loadOrderDetailPage = (req,res)=>{
-    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile})
+const loadOrderDetailPage = async(req,res)=>{
+    const order = await orderSevice.getSingleOrder(req.params.id)
+    console.log(order)
+    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0]})
 }
 
 const loadOrderCancelPage = (req,res)=>{
-    (req,res)=>{
+   
    res.render('User/orderCancelPage',{userName:req.session.userName,profile:req.session.profile})
-}
+
 }
 
 const placeOrder = async(req,res)=>{
@@ -34,7 +36,8 @@ const placeOrder = async(req,res)=>{
                 const orderDetails =  cartService.cartSummary(products)
                 
                 const [{product,quantity}] = products
-                await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails)
+                
+                await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants.price,product.discound)
 
       }
       else{

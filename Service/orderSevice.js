@@ -5,7 +5,7 @@ import helper from '../helpers/helpers.js'
 import cartModel from '../Models/cartSchema.js'
 
 
-const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails)=>{
+const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount)=>{
 
     // Reduce stock
     await productModel.findOneAndUpdate(
@@ -27,7 +27,9 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
                 variantId:variantId,
                 quantity:quantity,
                 productName:productName,
-                image:generalPhoto
+                price:parseInt(price-((discount/100)*price)),
+                image:generalPhoto,
+                
             }
         ],
         payment:{
@@ -58,13 +60,14 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
 const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
    let items=[];
 
-
+   
     products.forEach(async (product)=>{
         items.push({
             productId:product.productId,
             variantId:product.variantId,
             productName:product.product.productName,
             quantity:product.quantity,
+            price:parseInt(product.product.variants.price-((product.product.discound/100)*product.product.variants.price)),
             image:product.product.generalPhoto
         })
 
@@ -114,14 +117,16 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
  
     await cartModel.deleteMany({userId:userId})
 
-    
-      
-
 }
 
 
+const getSingleOrder = async(orderId)=>{
+    
+    return await orderModel.find({_id:orderId});
+}
+
 const getOrders = async(userId,skip,limit)=>{
-  return await orderModel.find({userId:userId}).skip(skip).limit(limit)
+  return (await orderModel.find({userId:userId}).sort({"createdAt":-1}).skip(skip).limit(limit))
 }
 const countOrders = async(userId)=>{
     return await orderModel.countDocuments({userId});
@@ -131,5 +136,6 @@ export default {
     orderSingleProduct,
     orderCartItmes,
     getOrders,
-    countOrders
+    countOrders,
+    getSingleOrder
 }

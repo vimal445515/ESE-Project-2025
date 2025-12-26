@@ -122,7 +122,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Product Name</th>
+                                    <th scope="col">ID</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Total</th>
@@ -132,11 +132,11 @@
                             <tbody>
                                 <% orders.forEach((order)=>{%>
                                 <tr>
-                                    <td><%= order.items[0].productName%></td>
+                                    <td><%= order.orderId%></td>
                                     <td><span class="status-progress"><%= order.orderStatus%></span></td>
                                     <td><%= order.createdAt.toISOString().slice(0,10)%></td>
                                     <td>₹<%= order.pricing.totalAmount.toLocaleString('en-IN')  %></td>
-                                    <td><a href=`/orders/orderDetails/${'<%=order._id%>'}` class="view-details">View Details <i class="fa-solid fa-arrow-right"></i></a></td>
+                                    <td><a href="/orders/orderDetails/<%=order._id%>" class="view-details">View Details <i class="fa-solid fa-arrow-right"></i></a></td>
                                 </tr>
                                 <%})%>
                             </tbody>
