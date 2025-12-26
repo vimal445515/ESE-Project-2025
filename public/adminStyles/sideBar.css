@@ -1,0 +1,61 @@
+/* Sidebar Variables */
+:root {
+    --sidebar-width: 250px;
+    --primary-color: #4054d2;
+    --active-menu-bg: #eef2ff;
+    --second-text-color: #9ea4ac;
+}
+
+/* Sidebar Container */
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: var(--sidebar-width);
+    margin-left: 0;
+    transition: margin 0.25s ease-out;
+    border-right: 1px solid #eef2f5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff; /* Ensures background is solid */
+}
+
+/* Sidebar Heading/Logo Section */
+.sidebar-heading {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* Sidebar Menu Items */
+.list-group-item {
+    border: none;
+    padding: 12px 30px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.list-group-item i {
+    width: 25px;
+    margin-right: 10px;
+}
+
+/* Text color for inactive or secondary links */
+.second-text {
+    color: var(--second-text-color) !important;
+}
+
+/* Active Menu State */
+.active-nav {
+    background-color: var(--active-menu-bg) !important;
+    color: var(--primary-color) !important;
+    border-right: 4px solid var(--primary-color) !important;
+}
+
+/* Hover Effect */
+.list-group-item:hover {
+    background-color: var(--active-menu-bg);
+    color: var(--primary-color) !important;
+}

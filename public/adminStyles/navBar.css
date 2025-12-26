@@ -1,0 +1,47 @@
+/* Navbar Container */
+.navbar {
+    z-index: 1000;
+}
+
+/* Search Bar Wrapper */
+.search-bar {
+    max-width: 400px;
+    background-color: #fff;
+    padding: 5px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+/* Search Input field */
+.search-bar .form-control:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* User Profile Circle Icon */
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-icon:hover {
+    transform: scale(1.05);
+}
+
+/* Admin Name Text */
+.navbar h6 {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Admin Role Text */
+.navbar small {
+    font-size: 0.75rem;
+}
+
+/* Visibility Utility */
+.invisible {
+    visibility: hidden;
+}

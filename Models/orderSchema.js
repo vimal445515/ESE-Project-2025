@@ -55,6 +55,10 @@ const orderSchema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:new Date()
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     }
 })
 

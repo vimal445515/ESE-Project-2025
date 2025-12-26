@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link  rel="stylesheet" href="/adminStyles/sideBar.css">
+         <link rel="stylesheet" href="/adminStyles/navBar.css">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --primary-blue: #4054d2;
+            --bg-light: #f5f6fa;
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; 
+        }
+
+        /* --- Content Layout Offset --- */
+        #page-content-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+
+        /* --- Card & Info Styling --- */
+        .detail-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            background: #fff;
+            height: 100%;
+        }
+
+        .info-icon-box {
+            width: 32px;
+            height: 32px;
+            background: #f1f3f5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f0f2ff;
+            color: #4054d2;
+        }
+
+        /* --- Table Styling --- */
+        .order-table thead th {
+            background-color: #fcfcfc;
+            color: #888;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #f1f1f1;
+            padding: 15px;
+        }
+
+        .product-img-placeholder {
+            width: 45px;
+            height: 45px;
+            background: #e9ecef;
+            border-radius: 6px;
+        }
+        .product-img-placeholder img{
+           
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+        <div id="sidebar-wrapper">
+            <%- include('../partials/adminSideBar') %>
+        </div>
+
+        <div id="page-content-wrapper">
+            <%- include('../partials/adminNavBar') %>
+
+            <div class="container-fluid px-4 mt-3">
+                <div class="mb-4">
+                    <h4 class="fw-bold mb-1">Order Details</h4>
+                    <nav aria-label="breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted small">Dashboard</a></li>
+                                <a class="breadcrumb-item  small" href="/admin/order" >Order List</a>
+                                 <li class="breadcrumb-item active text-primary">Order Details</li>
+                            </ol>
+                        </nav>
+                    </nav>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-4">
+                        <div class="card detail-card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="fw-bold mb-0">Order: <%= order[0].orderId%></h6>
+                                <%if(order[0].orderStatus === 'placed'){%>
+                                    <span class="status-badge">Processing</span>
+                                    <%}else if(order[0].orderStatus === 'shipped'){%>
+                                        <span class="status-badge">Shipped</span>
+                                        <%}else if(order[0].orderStatus === "delivered"){%> 
+                                            
+                                            <span class="status-badge">Delivered</span>
+                                            <%}else if(order[0].orderStatus === "cancelled"){%>
+                                                <span class="status-badge">Cancelled</span>
+                                                <%}%>
+
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="info-icon-box me-3"><i class="far fa-calendar-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Added</small>
+                                    <span class="small fw-bold"><%= order[0].createdAt.toISOString().slice(0,10)%></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="info-icon-box me-3"><i class="fas fa-credit-card"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Payment Method</small>
+                                    <span class="small fw-bold"><%= order[0].payment.method%></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mt-3">
+                                <label class="small text-muted mb-2">Edit order status</label>
+                                <select id="edit" class="form-select form-select-sm bg-light border-0">
+                                    <option value="placed" >Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card detail-card p-4">
+                            <h6 class="fw-bold mb-4">Customer</h6>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="info-icon-box me-3"><i class="far fa-user"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Customer</small>
+                                    <span class="small fw-bold"><%= order[0].address.userName%></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="info-icon-box me-3"><i class="far fa-envelope"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Email</small>
+                                    <span class="small fw-bold"><%= order[0].address.email%></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="info-icon-box me-3"><i class="fas fa-phone-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Phone</small>
+                                    <span class="small fw-bold"><%= order[0].address.phoneNumber%></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card detail-card p-4">
+                            <h6 class="fw-bold mb-4">Document</h6>
+                            <div class="d-flex align-items-center">
+                                <div class="info-icon-box me-3"><i class="far fa-file-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Invoice</small>
+                                    <a href="#" class="small fw-bold text-decoration-none">Invoice</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card detail-card p-0 overflow-hidden">
+                            <div class="p-4 d-flex align-items-center">
+                                <h6 class="fw-bold mb-0 me-2">Order List</h6>
+                                <span class="badge bg-success-subtle text-success small">+<%= order[0].items.length%> Orders</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table order-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%order[0].items.forEach(item=>{%>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="product-img-placeholder me-3"><img src="/upload/<%= item.image%>" alt=""></div>
+                                                    <div>
+                                                        <div class="fw-bold small"><%= item.productName%></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="small"><%= item.quantity%></td>
+                                            <td class="small">₹<%= item.price%></td>
+                                            <td class="small fw-bold">₹<%= item.quantity+item.price%></td>
+                                        </tr>
+                                        <%})%>
+                                    </tbody>
+                                    <tfoot>
+                                        <!-- <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Subtotal</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.subTotal%></td>
+                                        </tr> -->
+                                         <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Discount</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.discount%></td>
+                                        </tr>
+                                         <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Tax</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.tax%></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3 border-0">Total</td>
+                                            
+                                            <td class="fw-bold small py-3 border-0">₹<%= order[0].pricing.totalAmount%></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card detail-card p-4">
+                            <h6 class="fw-bold mb-4">Address</h6>
+                            <div class="d-flex">
+                                <div class="info-icon-box me-3"><i class="fas fa-map-marker-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Billing Address</small>
+                                    <p class="small fw-bold mb-0 lh-base">
+                                        <%= order[0].address.address%>,<br>
+                                        <%= order[0].address.state%> <%= order[0].address.pinCode%>, <%= order[0].address.country%>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        document.querySelectorAll('#edit').forEach(value=>{
+            value.addEventListener('change',(e)=>{
+                fetch('/admin/order/edit',{
+                    method:"PATCH",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({value:e.target.value,id:"<%= order[0]._id%>"})
+                }).then((data)=>{
+                window.location.href = '/admin/order/edit/<%= order[0]._id%>';
+            })
+            })
+        })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

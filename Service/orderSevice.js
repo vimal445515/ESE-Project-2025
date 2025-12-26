@@ -126,10 +126,36 @@ const getSingleOrder = async(orderId)=>{
 }
 
 const getOrders = async(userId,skip,limit)=>{
-  return (await orderModel.find({userId:userId}).sort({"createdAt":-1}).skip(skip).limit(limit))
+  return (await orderModel.find({userId:userId,isDeleted:false}).sort({"createdAt":-1}).skip(skip).limit(limit))
 }
 const countOrders = async(userId)=>{
     return await orderModel.countDocuments({userId});
+}
+
+const getAllOrders = async (skip,limit)=>{
+    return await orderModel.find().sort({"createdAt":-1}).skip(skip).limit(limit)
+}
+
+const getAllOrdersCount = async() =>{
+     return await orderModel.countDocuments();
+}
+
+const unlistOrder = async(orderId)=>{
+    
+    await orderModel.findOneAndUpdate({_id:orderId},{isDeleted:true});
+}
+
+const listOrder = async(orderId) =>{
+    await orderModel.findOneAndUpdate({_id:orderId},{$set:{isDeleted:false}})
+}
+
+const updateData = async(orderId,orderStatus) =>{
+    await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:orderStatus}})
+}
+
+const getOrderById = async(orderId)=>{
+    
+    return await orderModel.find({orderId:orderId});
 }
 
 export default {
@@ -137,5 +163,11 @@ export default {
     orderCartItmes,
     getOrders,
     countOrders,
-    getSingleOrder
+    getSingleOrder,
+    getAllOrders,
+    getAllOrdersCount,
+    unlistOrder,
+    listOrder,
+    updateData,
+    getOrderById
 }

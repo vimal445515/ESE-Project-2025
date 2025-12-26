@@ -4,6 +4,7 @@ import categoryThumbnail from '../Config/categoryThumbnail.js'
 import { loadLoginPage,authentication,loadUserManagementPage,loadCategoriePage,LoadAddCategoriesPage, logout,loadEditCategoriesPage, loadAddProductPage, blockUser, unBlockUser, deleteUser, ActiveUsers,blockedUsers,saveCategoryData ,handleImage,blockCategory,editCategory,handleEditImage} from '../Controllers/admin/controller.js'
 import product from '../Controllers/product.js'
 import resetPassword from '../Controllers/admin/resetPassword.js'
+import adminOrderController from '../Controllers/admin/adminOrderController.js'
 
 const router = Router()
 
@@ -36,6 +37,14 @@ router.post('/category/edit/:id',handleEditImage,editCategory)
 router.post('/product/add', categoryThumbnail.any(),product.storeProducts)
 router.patch('/product/edit/:id',categoryThumbnail.any(),product.editProduct)
 router.delete('/deleteProduct/:id',product.deleteProduct)
+
+router.get('/order',adminOrderController.loadOrderPage)
+
+router.get('/order/edit/:id',adminOrderController.loadEditOrderPage)
+router.post('/order/delete',adminOrderController.deleteOrder)
+router.patch('/order/edit',adminOrderController.updateOrderStatus)
+
+router.get('/order/search',adminOrderController.search)
 
 router.get('/logout',logout)
 export default router

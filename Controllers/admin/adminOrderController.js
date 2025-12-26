@@ -1,0 +1,51 @@
+import orderSevice from '../../Service/orderSevice.js';
+import orderService from '../../Service/orderSevice.js'
+import helpers from '../../helpers/helpers.js'
+import mongoose from 'mongoose'
+const loadOrderPage = async(req,res)=>{
+    const page = req.query.page||1
+    const limit = 8;
+    const skip = helpers.paginationSkip(page,limit)
+    const count = await orderService.getAllOrdersCount()
+    const orders = await orderService.getAllOrders(skip,limit)
+   res.render('Admin/orderPage',{orders,skip,limit,page,count})
+}
+
+const loadEditOrderPage = async (req,res)=>{
+    const {id:orderId}=req.params
+    const order = await orderService.getSingleOrder(orderId)
+    res.render('Admin/editOrder',{order})
+}
+
+const deleteOrder = async(req,res)=>{
+    const orderId = req.body.orderId
+    
+    if(req.body.isDeleted === 'true'){
+        
+        await orderSevice.unlistOrder(req.body.orderId)
+    }else{
+       await orderService.listOrder(req.body.orderId);
+    }
+
+   res.redirect("/admin/order")
+}
+
+const updateOrderStatus = async(req,res)=>{
+    console.log(req.body)
+    await orderSevice.updateData(req.body.id,req.body.value)
+    res.status(200).json({data:"success"});
+}
+
+const search = async(req,res)=>{
+    const search = req.query.value
+  const data =  await orderSevice.getOrderById(search)
+  res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null});
+}
+
+export default {
+    loadOrderPage,
+    loadEditOrderPage,
+    deleteOrder,
+    updateOrderStatus,
+    search
+}
