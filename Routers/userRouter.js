@@ -36,9 +36,7 @@ router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 
 
 
-router.get('/orders',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/orders',{userName:req.session.userName,profile:req.session.profile})
-})
+
 
 router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
     res.render('User/wallet',{userName:req.session.userName,profile:req.session.profile})

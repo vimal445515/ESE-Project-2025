@@ -2,7 +2,7 @@ import {productModel} from '../Models/productSchema.js'
 import mongoose from 'mongoose'
 
 const getProduct = async(productId,variantId)=>{
-    console.log(productId,variantId)
+    console.log("this is productId and",productId,variantId)
   const data =await  productModel.aggregate([
         {$match:{_id:new mongoose.Types.ObjectId(productId)}},
         {$unwind:'$variants'},

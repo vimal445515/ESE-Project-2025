@@ -41,10 +41,17 @@ const deleteProfile = (file)=>{
 }
 
 
+const generateOrderId = () => {
+  const date = new Date().toISOString().slice(0,10).replace(/-/g,""); 
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `ORD-${date}-${random}`;
+}
+
 export default {
    otpGenerator,
    sendEmail,
    paginationSkip,
    groupValues,
-   deleteProfile
+   deleteProfile,
+  generateOrderId
 }

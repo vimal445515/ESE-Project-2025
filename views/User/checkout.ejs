@@ -40,7 +40,7 @@
 </head>
 <body>
 <%- include('../partials/navbar.ejs')%>
-<form  class="container checkout-container">
+<form  action="/orders" method="post" class="container checkout-container">
     <div class="row g-4">
         
         <div class="col-lg-8">
@@ -199,6 +199,11 @@
               
             </div>
         </div>
+        
+        <input type="hidden" name="variantId" value="<%= variantId%>">
+        <input type="hidden" name="productId" value="<%= productId%>">
+        
+
 
         <div class="col-lg-4">
             <div class="card shadow-sm p-4 summary-card">
@@ -207,6 +212,7 @@
                 <div class="product-item d-flex align-items-center mb-3">
                     <img src="/upload/<%= product.product.generalPhoto%>" class="me-3">
                     <div class="flex-grow-1">
+                      <input type="hidden" name="quantity" value="<%=product.quantity%>">
                         <p class="mb-0 small fw-bold"><%= product.product.productName%></p>
                         <p class="mb-0 text-muted small"><%=product.quantity%> x <span class="price-text">₹<%= product.product.variants.price%>...</span></p>
                     </div>
