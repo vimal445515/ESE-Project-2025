@@ -229,7 +229,8 @@
                 <form action="/checkout">
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
                     <input type="hidden" name="productId" value="<%= productData._id%>"> 
-                    <input type="hidden" id="quantityforCheckout" name="quantity"> 
+                    <input type="hidden" id="quantityforCheckout" name="quantity">
+                    <input type="hidden" name="categoryId" value="<%= productData.categoryId%>"> 
                 <button id="addToCheckout" type="submit" class="btn buy-now-btn btn-primary  px-5 flex-grow-1 rounded-pill">Buy Now</button>
                 </form> 
             </div>

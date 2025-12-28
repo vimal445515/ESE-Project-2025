@@ -1,4 +1,5 @@
 import { categoryModel } from "../Models/categorySchema.js";
+import mongoose from "mongoose"
 const findCategoryByName = async (name)=>{
     let inputName = name.toLowerCase()
     let  dBNames = await categoryModel.find({},{categoryName:1,_id:0});
@@ -14,6 +15,25 @@ const findCategoryByName = async (name)=>{
     return  false
 }
 
+const isBlocked = async (categoryId) =>{
+    
+    const data = await categoryModel.findOne({_id:categoryId,isBlocked:false});
+    console.log("this is data",data)
+    if(data){
+        return false
+    }
+    return true
+}
+
+const getAllCategory = async()=>{
+    const category  = await categoryModel.find({isBlocked:false},{categoryName:1,_id:0})
+    return category
+}
+
+
+
 export default {
-    findCategoryByName
+    findCategoryByName,
+    getAllCategory,
+    isBlocked 
 }

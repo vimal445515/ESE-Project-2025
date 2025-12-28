@@ -63,6 +63,10 @@ const getCategories = async (skip,limit,search)=>{
   // return await categoryModel.find().skip(skip).limit(limit);
 }
 
+const getCategoriesForProductEdit = async ()=>{
+  return await categoryModel.find({isBlocked:false})
+}
+
 const getAllCategoriesCount = async ()=>{
   return await categoryModel.countDocuments();
 }
@@ -90,6 +94,7 @@ export default {
     findBlockedUsers,
     addCategorInDB,
     getCategories,
+     getCategoriesForProductEdit,
     blockCategoryFromDB,
     getCategoryFromDB,
     updateCategory,

@@ -1,7 +1,6 @@
 
-import address from '../Controllers/address.js'
 import addressSchema from '../Models/addressSchema.js'
-import mongoose from 'mongoose'
+
 
 const storeAddress = async(data,id)=>{
     let address = {}

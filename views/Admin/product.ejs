@@ -104,8 +104,11 @@
                                             <td class="text-muted">24 Jun 2024</td>
                                             <td class="pe-4 text-end">
                                                 <a href="/admin/editProduct/<%= value._id %>" class="btn btn-link text-muted p-0 me-2"><i class="fas fa-pencil-alt"></i></a>
-                                                <a onclick="openDeleteModal(`<%= value._id %>`)" class="btn btn-link text-muted p-0"><i class="fas fa-trash-alt"></i></a>
-
+                                                <% if(!value.isDeleted){%>
+                                                <a onclick="openDeleteModal(`<%= value._id %>`)" class="btn btn-link text-muted p-0"><i class="fas fa-eye"></i></a>
+                                                <%}else{%>
+                                                <a onclick="unDeleteProduct(`<%= value._id %>`)" class="btn btn-link text-muted p-0"><i class="fas fa-eye-slash"></i></a>
+                                                <%}%>
                                             </td>
                                         </tr>
                                         <tr>
@@ -146,7 +149,7 @@
                                                 <i class="fas fa-arrow-left"></i>
                                             </a>
                                         </li>
-                                        <% for(let i = 1; i <= count/limit; i++) {%>
+                                        <% for(let i = 1; i <= parseInt(count/limit)+1; i++) {%>
                                         <li class="page-item"><button id="nextButton"  class="page-link rounded-circle mx-1 active-page text-white border-0" value="<%= i %>" onclick="setPage('<%= i %>')"><%= i %></button></li>
                                         <%}%>
                                         <li class="page-item">
@@ -192,6 +195,21 @@
 
 
         }
+
+        function unDeleteProduct(productId){
+            
+            fetch(`/admin/unDeleteProduct/${productId}`,{
+                method:'PATCH'
+            }).then(data=>data.json())
+            .then(data=>showSuccessToast(data))
+            .catch(data=>errorToast(data));
+            window.location.reload()
+
+
+        }
+
+
+     
 
         function showSuccessToast(message){
             document.querySelector('#successTost .toast-body').innerText = message;

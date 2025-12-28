@@ -64,7 +64,7 @@
                                         <div class="d-flex align-items-center">
                                             <button onclick="deleteCart(`<%= value._id%>`)" class="btn btn-sm text-muted me-3"><i class="bi bi-x-circle fs-5"></i></button>
                                             <img src="/upload/<%= value.product.generalPhoto%>" class="product-img me-3" alt="Laptop">
-                                            <span class="text-truncate" style="max-width: 150px;">Samsung Galaxy book 4 pro...</span>
+                                            <span class="text-truncate" style="max-width: 150px;"><%= value.product.productName%></span>
                                         </div>
                                     </td>
                                     <td>
@@ -78,6 +78,7 @@
                                                 <input type="hidden" name="productId" value="<%= value.productId %>">
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
+                                               
                                             <button  type="submit" class="decrementButton btn btn-qty">-</button>
                                             </form>
                                             <input type="text" class="form-control text-center bg-white" value="<%= value.quantity%>" readonly>
@@ -86,6 +87,7 @@
                                                 <input type="hidden" name="productId" value="<%= value.productId %>">
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
+                                                
                                             <button  type="submit" class="incrementButton btn btn-qty ">+</button>
                                             </form>
                                         </div>

@@ -1,9 +1,12 @@
 import address from "../Service/addressService.js";
 import cartService from "../Service/cartService.js"
 import checkoutService from "../Service/checkoutService.js";
+import productService from '../Service/productService.js'
+import categoryService from '../Service/categoryService.js'
 
 
 const loadCheckOutPage = async (req,res)=>{
+
     const path = req.headers.referer.split('/').pop().trim()
     let products;
     if(path ==="cart"){
@@ -16,6 +19,10 @@ const loadCheckOutPage = async (req,res)=>{
         products[0].quantity = Number(req.query.quantity);
         
     }
+
+    const isBlock = await productService.isBlocked(req.query.productId)
+     if(await categoryService.isBlocked(req.query.categoryId)) return res.redirect('/products');
+      if(isBlock.length === 0) return res.redirect('/');
    
      const orderDetails = await cartService.cartSummary(products)
      const defaultAddress  = await address.getUserAddress(req.session._id)

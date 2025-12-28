@@ -116,7 +116,7 @@
                                         <%}else if(order[0].orderStatus === "delivered"){%> 
                                             
                                             <span class="status-badge">Delivered</span>
-                                            <%}else if(order[0].orderStatus === "cancelled"){%>
+                                            <%}else if(order[0].orderStatus === "canceled"){%>
                                                 <span class="status-badge">Cancelled</span>
                                                 <%}%>
 
@@ -142,6 +142,7 @@
                                     <option value="placed" >Processing</option>
                                     <option value="shipped">Shipped</option>
                                     <option value="delivered">Delivered</option>
+                                    <option value="canceled">Canceled</option>
                                 </select>
                             </div>
                         </div>

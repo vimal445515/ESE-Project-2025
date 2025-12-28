@@ -18,16 +18,17 @@ const storeProductDataInDB = async (generalPhoto,productName,basePrice,descripti
 const getAllProducts = async (skip,limit,search) =>{
   let pipeline =[]
  if(search) pipeline.push({$match:{productName:{$regex:search,$options:"i"}}});
-  pipeline.push({
-    $match:{isDeleted:false}
-  },{
+  pipeline.push(
+  {
     $lookup:{
       from:"categories",
       foreignField:"_id",
       localField:"categoryId",
       as:"category"
     }
-  },{
+  },{$sort:{'createdAt':-1}},
+  {$match:{'category.isBlocked':false}},
+  {
     $addFields:{totalStock:{$sum:"$variants.stock"}}
   },
   {$skip:skip},
@@ -70,8 +71,13 @@ const deleteProductFromDB = async(_id)=>{
   return await productModel.findOneAndUpdate({_id},{$set:{isDeleted:true}})
 }
 
+const unDeleteProductFromDB = async(_id)=>{
+  console.log("unDeleteProduct",_id)
+  return await productModel.findOneAndUpdate({_id},{$set:{isDeleted:false}})
+}
+
 const getAllProductsCount = async ()=>{
-  return await productModel.countDocuments({isDeleted:false});
+  return await productModel.countDocuments();
 }
 
 const getWatches = async ()=>{
@@ -100,14 +106,16 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   let pipeline = []
   pipeline.push({
     $match:{isDeleted:false}
-  },{
+  },{$sort:{'createdAt':-1}},{
     $lookup:{
       from:"categories",
       foreignField:"_id",
       localField:"categoryId",
       as:"category"
     }
-  },{
+  },
+  {$match:{'category.isBlocked':false}}
+  ,{
     $addFields:{totalStock:{$sum:"$variants.stock"}}
   },
   {$skip:skip},
@@ -130,7 +138,7 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
  
  
   if(priceRange){
-    console.log(priceRange)
+    
     if(priceRange==="priceUnder10k")
     {
       pipeline.push({$match:{basePrice:{$lte:10000}}})
@@ -144,7 +152,7 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
     
   }
 
-   if(category){
+   if(category && category !== "all" ){
       pipeline.push({$match:{'category.categoryName':category}})
   }
 
@@ -160,12 +168,14 @@ const getSingleProduct= async (_id,storage,ram) =>{
   let pipeline =[]
   pipeline.push(
        {$match:{_id:new mongoose.Types.ObjectId(_id)}},
+       {$match:{isDeleted:false}},
       {$lookup:{
         from:"categories",
         localField:"categoryId",
         foreignField:"_id",
         as:"category"
       }},
+      {$match:{"category.isBlocked":false}},
       {$unwind:'$variants'}      
     )
     if (storage !== undefined ) {
@@ -181,7 +191,10 @@ const getSingleProduct= async (_id,storage,ram) =>{
 
     
 }
+
 pipeline.push({$limit:1});
+
+
     return await productModel.aggregate(pipeline)
 }
 
@@ -196,6 +209,13 @@ const getRelateditems = async (_id)=>{
   return await productModel.find({categoryId:_id,isDeleted:false}).limit(10);
 }
 
+
+const isBlocked = async(productId)=>{
+  return await productModel.find({_id:productId,isDeleted:false})
+}
+
+
+
 export default {
  storeProductDataInDB,
  getAllProducts,
@@ -209,7 +229,9 @@ export default {
  countPages,
  getSingleProduct,
  getVariants,
- getRelateditems
+ getRelateditems,
+ isBlocked,
+ unDeleteProductFromDB
 
 
 }

@@ -86,7 +86,7 @@ const decrementQuantity = async(productId,variantId) =>{
   
 }
 
-const incrementQuantity = async(productId,variantId) =>{
+const incrementQuantity = async(productId,variantId,quantity) =>{
   try{
     await cartModel.findOneAndUpdate({productId:productId,variantId:variantId},{$inc:{quantity:1}})
   }
@@ -118,6 +118,8 @@ const cartSummary = (items)=>{
    return {totalPriceCartItem,totalDiscountPrice,tax,total}
   
 }
+
+
 
 export default {
     addProduct,

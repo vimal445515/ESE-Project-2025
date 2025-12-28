@@ -1,5 +1,6 @@
 import cartService from '../service/cartService.js'
-
+import productService from '../Service/productService.js'
+import categoryService from '../Service/categoryService.js'
 const leadCartPage = async(req,res) =>{
    
    const cartItems = await  cartService.getCartItems(req.session._id)
@@ -7,7 +8,16 @@ const leadCartPage = async(req,res) =>{
     res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:null,message:null,cartItems:cartItems,subTotal});
 }
 const addToCart = async (req,res) =>{
-    
+   const isBlock = await productService.isBlocked(req.body.productId)
+ 
+   if(req.body.categoryId !== undefined){
+      if(await categoryService.isBlocked(req.body.categoryId)) return res.redirect('/products');
+   }
+   
+if(req.body.categoryId !== undefined){
+    if(isBlock.length === 0) return res.redirect('/');
+  }
+  
  try{
    if( await cartService.checkcartItem(req.body.productId,req.body.variantId)){
       
@@ -23,7 +33,7 @@ const addToCart = async (req,res) =>{
       console.log(req.body?.quantity)
       if(req.body?.quantity < 10){
          
-          await cartService.incrementQuantity(req.body.productId,req.body.variantId)
+          await cartService.incrementQuantity(req.body.productId,req.body.variantId,req.body?.quantity)
       return res.redirect('/cart');
       }
       else{

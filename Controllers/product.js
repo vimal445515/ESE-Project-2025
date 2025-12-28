@@ -3,6 +3,7 @@ import productHelper from '../helpers/productHelper.js'
 import helpers from '../helpers/helpers.js'
 import adminService from '../Service/adminService.js'
 import wishlistService from '../Service/wishlistService.js'
+import categoryService from '../Service/categoryService.js'
 const storeProducts = async (req,res)=>{
     const {productName,basePrice,description,category,discound} = req.body
     const generalPhoto = productHelper.extractGeneralImage(req.files)
@@ -14,7 +15,7 @@ const storeProducts = async (req,res)=>{
  const loadProductsPage = async(req,res)=>{
     const page = req.query.page||1
     const search = req.query.search
-    const limit = 8;
+    const limit = 5;
     const skip = helpers.paginationSkip(page,limit)
     const products = await productService.getAllProducts(skip,limit,search);
     const count = await productService.getAllProductsCount();
@@ -26,7 +27,7 @@ const storeProducts = async (req,res)=>{
    const id =  req.params.id
     const product =  await productService.getProduct(id)
     const productCategory = await productService.getCategory(product.categoryId);
-    const categories = await adminService.getCategories()
+    const categories = await adminService.getCategoriesForProductEdit()
     res.render("Admin/editProduct",{product,categories,productCategory})
 }
 const editProduct = async  (req,res) =>{
@@ -72,6 +73,12 @@ const deleteProduct = async (req,res)=>{
     res.status(200).json("deleted succusfully");
 }
 
+const unDeleteProduct = async (req,res) =>{
+  await productService.unDeleteProductFromDB(req.params.id)
+  res.status(200).json("product listed");
+}
+
+
 const loadUserSideProductsPage = async(req,res)=>{
     const page = req.query.page||1
     const sort = req.query.sort
@@ -79,24 +86,28 @@ const loadUserSideProductsPage = async(req,res)=>{
     const priceRange = req.query.priceRange;
     const searchValue = req.query.search;
     
-    const limit = 16;
+    const limit = 12;
     const skip = helpers.paginationSkip(page,limit)
     const products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     const toatalCount = await productService.countPages()
     const {count} =toatalCount[0]
-    
-    res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile})
+
+    const categoryNames =  await categoryService.getAllCategory();
+    console.log("this is categoryNames",categoryNames)
+    res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile,categoryNames})
 }
 
  const loadProductDetails = async (req, res) => {
-  const id = req.params.id;
+ const id = req.params.id;
   const storage = req.query.rom;
   const ram = req.query.ram;
-
+  let productData;
+    let isLiked = false
+    let wishlistId = null
   const productArray = await productService.getSingleProduct(id, storage, ram);
   const getVariants = await productService.getVariants(id);
 
-  let productData;
+  try{
 
   if (!productArray || productArray.length === 0) {
     const fallback = await productService.getSingleProduct(id);
@@ -104,14 +115,16 @@ const loadUserSideProductsPage = async(req,res)=>{
   } else {
     productData = productArray[0];
   }
-  let isLiked = false
+
   const wishlist = await wishlistService.findWishlist(productData._id,productData.variants._id,req.session._id)
-  let wishlistId = null
+  
   if(wishlist){
     isLiked=true;
    wishlistId = wishlist._id;
   } 
-  
+}catch(error){
+  return res.redirect('/products')
+}
   const relateditems = await productService.getRelateditems(productData.categoryId);
   res.render("User/singleProductPage", {
     userName: req.session.userName,
@@ -135,5 +148,6 @@ export default {
     editProduct,
     deleteProduct,
     loadUserSideProductsPage,
-    loadProductDetails
+    loadProductDetails,
+    unDeleteProduct
 }

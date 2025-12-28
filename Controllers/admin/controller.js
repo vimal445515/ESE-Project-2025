@@ -62,7 +62,7 @@ export const ActiveUsers = async(req,res)=>{
     const data = await adminService.findActiveUsers(skip,limit)
     const count = await adminService.getAllUsersCount();
     
-    res.render('admin/userManage',{data,page,limit,count})
+    res.render('admin/userManage',{data,page,limit,count,search:null})
 }
 export const blockedUsers = async (req,res)=>{
 
@@ -71,7 +71,7 @@ export const blockedUsers = async (req,res)=>{
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.findBlockedUsers(skip,limit);
     const count = await adminService.getAllUsersCount();
-    res.render('admin/userManage',{data,page,limit,count});
+    res.render('admin/userManage',{data,page,limit,count,search:null});
 }
 
 export const LoadAddCategoriesPage =(req,res)=>{
@@ -83,7 +83,7 @@ export const loadEditCategoriesPage = async (req,res) => {
 }
 
 export const loadAddProductPage = async (req,res)=>{
-     const categorys  = await adminService.getCategories()
+     const categorys  = await adminService.getCategoriesForProductEdit()
     res.render("Admin/addProduct",{categorys,status:"null",message:"null"})
 }
 

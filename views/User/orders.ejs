@@ -105,8 +105,18 @@
 <body class="pt-0">
     <%- include('../partials/navbar.ejs')%>
 
+    
+          
+
     <div class="container-fluid page-container mt-5">
         
+          <div class=" ms-2 mb-2  input-group" style="max-width: 400px;">
+                <form action="/orders/search" method="post" class="d-flex">
+                    <input type="text" id="search" name="value" class="form-control" placeholder="Search..." aria-label="Search">
+                    <button id="clear" type="submit" class="btn btn-light">Search</button>
+                    </form>
+                    <a href="/orders" id="clear"  class="btn btn-light">Clear</a>
+                </div>
         <div class="row">
             
             <%- include('../partials/userSideBar.ejs', {page: 'orders'}) %>

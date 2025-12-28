@@ -3,9 +3,15 @@ import orderModel from '../Models/orderSchema.js'
 import {productModel} from '../Models/productSchema.js'
 import helper from '../helpers/helpers.js'
 import cartModel from '../Models/cartSchema.js'
+import addressModel from '../Models/addressSchema.js'
 
 
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount)=>{
+
+
+    
+    //store address
+    await addressModel.create()
 
     // Reduce stock
     await productModel.findOneAndUpdate(
@@ -18,7 +24,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
 
     //create order
     const orderId = helper.generateOrderId()
-    await orderModel.create({
+    const data = await orderModel.create({
         userId:userId,
         orderId:orderId,
         items:[
@@ -54,6 +60,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
         },
     
     })
+    return data
 }
 
 
@@ -88,7 +95,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
 
     const orderId = helper.generateOrderId()
 
-    await orderModel.create({
+  const data =   await orderModel.create({
         userId:userId,
         orderId:orderId,
         items:items,
@@ -116,6 +123,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
     })
  
     await cartModel.deleteMany({userId:userId})
+    return data;
 
 }
 
@@ -158,6 +166,14 @@ const getOrderById = async(orderId)=>{
     return await orderModel.find({orderId:orderId});
 }
 
+const updateOrderCancel = async(orderId)=>{
+    return await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"canceled"}})
+}
+
+const searchByUser = async (userId,orderId)=>{
+    return await orderModel.find({userId:userId,orderId:orderId})
+}
+
 export default {
     orderSingleProduct,
     orderCartItmes,
@@ -169,5 +185,7 @@ export default {
     unlistOrder,
     listOrder,
     updateData,
-    getOrderById
+    getOrderById,
+    updateOrderCancel,
+    searchByUser
 }

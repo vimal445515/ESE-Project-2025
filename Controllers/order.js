@@ -2,10 +2,11 @@ import orderSevice from "../Service/orderSevice.js"
 import checkoutService from "../Service/checkoutService.js"
 import cartService from "../Service/cartService.js"
 import helpers from '../helpers/helpers.js'
+
 const loadOrdersHistory = async(req,res)=>{
     
         const page = req.query.page||1
-        const limit = 8;
+        const limit = 7;
         const skip = helpers.paginationSkip(page,limit)
         const orders =  await orderSevice.getOrders(req.session._id,skip,limit)
         const count = await orderSevice.countOrders(req.session._id);
@@ -18,14 +19,18 @@ const loadOrderDetailPage = async(req,res)=>{
     res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0]})
 }
 
-const loadOrderCancelPage = (req,res)=>{
+const cancelOrder = async(req,res)=>{
    
-   res.render('User/orderCancelPage',{userName:req.session.userName,profile:req.session.profile})
-
+  await orderSevice.updateOrderCancel(req.body.orderId);
+  res.redirect('/orders');
 }
 
 const placeOrder = async(req,res)=>{
+
     // single product order
+
+
+    let order;
       if(req.body?.productId){
         let products;
 
@@ -37,21 +42,37 @@ const placeOrder = async(req,res)=>{
                 
                 const [{product,quantity}] = products
                 
-                await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants.price,product.discound)
+              order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants.price,product.discound)
 
       }
       else{
         //cart itme order page
         const products =  await cartService.getCartItems(req.session._id)
         const orderDetails =  cartService.cartSummary(products)
-        orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+        order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
 
       }
+      const orderId = order._id;
+      res.redirect(`/orders/orderDetails/${orderId}`)
+}
+
+const returnOrder = (req,res)=>{
+  res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile});
+}
+
+const search = async(req,res)=>{
+  console.log(req.body.value)
+    const search = req.body.value
+    const userId = req.session._id
+  const data =  await orderSevice.searchByUser(userId,search)
+  res.render('User/orders',{userName:req.session.userName,profile:req.session.profile,orders:data,page:1,count:null,limit:null});
 }
 
 export default {
     loadOrdersHistory,
     loadOrderDetailPage,
-    loadOrderCancelPage,
-    placeOrder
+    placeOrder,
+    cancelOrder,
+    returnOrder,
+    search
 }

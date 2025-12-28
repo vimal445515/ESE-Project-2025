@@ -37,6 +37,7 @@ router.post('/category/edit/:id',handleEditImage,editCategory)
 router.post('/product/add', categoryThumbnail.any(),product.storeProducts)
 router.patch('/product/edit/:id',categoryThumbnail.any(),product.editProduct)
 router.delete('/deleteProduct/:id',product.deleteProduct)
+router.patch('/unDeleteProduct/:id',product.unDeleteProduct)
 
 router.get('/order',adminOrderController.loadOrderPage)
 
@@ -45,6 +46,7 @@ router.post('/order/delete',adminOrderController.deleteOrder)
 router.patch('/order/edit',adminOrderController.updateOrderStatus)
 
 router.get('/order/search',adminOrderController.search)
+
 
 router.get('/logout',logout)
 export default router
