@@ -3,6 +3,55 @@ import addressSchema from '../Models/addressSchema.js'
 
 
 const storeAddress = async(data,id)=>{
+
+  if(data.isNew){
+  
+       let address ={}
+    address.userName = data.userName
+    if(data.companyName){
+    address.companyName = data.companyName
+    }
+    address.address = data.address
+    address.pinCode = data.pinCode
+    address.state = data.state
+    address.city = data.city
+    address.email = data.email
+    address.phoneNumber = data.phoneNumber
+    address.userId = id
+    address.country = data.country
+   try{ 
+      await addressSchema.create(address)
+    
+   }
+   catch(error){
+    console.log(error)
+    return "Somthing was wrong!"
+   }
+
+
+   }else if(data.addressId){
+    let address = {}
+    address.userName = data.userName
+    if(data.companyName){
+    address.companyName = data.companyName
+    }
+    address.address = data.address
+    address.pinCode = data.pinCode
+    address.state = data.state
+    address.city = data.city
+    address.email = data.email
+    address.phoneNumber = data.phoneNumber
+    address.userId = id
+    address.country = data.country
+ 
+   try{
+     await addressSchema.findOneAndUpdate({_id:data.addressId},data,{upsert:true,setDefaultsOnInsert:true})
+   }
+   catch(error){
+    return "Somthing was wrong!"
+   }
+
+  }else{
     let address = {}
     address.userName = data.userName
     if(data.companyName){
@@ -23,6 +72,7 @@ const storeAddress = async(data,id)=>{
    catch(error){
     return "Somthing was wrong!"
    }
+   }
 }
 
 
@@ -32,8 +82,10 @@ const getUserAddress= async (_id)=>{
    return data
 }
 
+
+
 const getAllAddressForCheckout = async(_id) =>{
-  const data = await addressSchema.find({userId:_id,default:false})
+  const data = await addressSchema.find({userId:_id})
   return data
 }
 
@@ -41,10 +93,21 @@ const findAddressFromDB = async(addressId)=>{
   
   return await addressSchema.findOne({_id:addressId}); 
 }
+
+const deleteAddressFromDB = async(addressId,userId) =>{
+    if(await addressSchema.findOne({_id:addressId,default:true})){
+         await addressSchema.deleteOne({_id:addressId});
+      return    await addressSchema.updateOne({userId:userId},{$set:{default:true}})
+    } 
+   await addressSchema.deleteOne({_id:addressId});
+}
+
+
 export default 
 {
     storeAddress,
     getUserAddress,
     getAllAddressForCheckout,
-    findAddressFromDB
+    findAddressFromDB,
+    deleteAddressFromDB
 }

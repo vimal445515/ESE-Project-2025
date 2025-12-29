@@ -12,15 +12,29 @@ const address = async (req,res)=>{
 const loadAddressPage = async(req,res)=>{
    
     let data = await addressService.getUserAddress(req.session._id);
-   
+    let allAddress = await addressService.getAllAddressForCheckout(req.session._id);
     data = data||null
-    res.render('User/address',{userName:req.session.userName,profile:req.session.profile,data})
+    if(allAddress.length ===0) allAddress = null;
+    res.render('User/address',{userName:req.session.userName,profile:req.session.profile,data,allAddress})
 }
 
+
+const loadSelectedAddress = async(req,res)=>{
+  let data = await addressService.findAddressFromDB(req.params.id)
+  res.status(200).json(data);
+}
+
+const deleteAddress = async (req,res)=>{
+     
+     await addressService.deleteAddressFromDB(req.body.addressId,req.session._id)
+     res.status(200).json({message:"address Deleted successfully"});
+}
 
 
 export default
 {
 address,
-loadAddressPage
+loadAddressPage,
+loadSelectedAddress,
+deleteAddress
 }

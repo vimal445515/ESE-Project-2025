@@ -10,16 +10,16 @@
     <link rel="stylesheet" href="/userStyles/UserSideBar.css">
 
     <style>
-        /* --- Reuse Global Styles --- */
+      
         :root { --primary-blue: #3b59d8; --bg-color: #f4f5f7; }
         body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; padding-top: 50px; }
         .page-container { max-width: 1200px; margin: 0 auto; }
 
-        /* --- Card Styles --- */
+    
         .settings-card { background: white; border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
-        .card-body { padding: 40px; } /* Increased padding to match airy look of screenshot */
+        .card-body { padding: 40px; }
 
-        /* --- Form Elements --- */
+       
         .form-label {
             font-weight: 600;
             font-size: 0.85rem;
@@ -29,7 +29,7 @@
 
         .form-control, .form-select {
             border-radius: 4px;
-            border: 1px solid #e0e0e0; /* lighter border */
+            border: 1px solid #e0e0e0;
             padding: 10px 15px;
             font-size: 0.95rem;
             color: #333;
@@ -44,7 +44,7 @@
             color: #aaa;
         }
 
-        /* Save Button (Top Right) */
+        
         .btn-save-address {
             background-color: var(--primary-blue);
             color: white;
@@ -54,8 +54,8 @@
             padding: 10px 25px;
             text-transform: uppercase;
             font-size: 0.85rem;
-            width: 100%; /* Fill the column */
-            height: 100%; /* Match height of inputs approximately */
+            width: 100%; 
+            height: 100%; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -82,32 +82,45 @@
                 <div class="card settings-card">
                     <div class="card-body">
                         
-                        <div class="row mb-4">
-                            <div class="col-lg-5 mb-3 mb-lg-0">
+                        <div class="row mb-4 " >
+                            <div class="  col-lg-5 mb-3 mb-lg-0">
                                 <label class="form-label">User name *</label>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <input type="text" name="userName" value="<%= data?.userName||``%>" class="form-control" placeholder="First name">
+                                        <input type="text" name="userName" id="userName"  value="<%= data?.userName||``%>" class="form-control" placeholder="First name">
                                     </div>
-                                    <p id="userNameError"></p>
+                                    <span id="userNameError"></span>
                                 </div>
                             </div>
-
+                            <input type="hidden" name="addressId" id="addressId">
                             <div class="col-lg-4 mb-3 mb-lg-0">
-                                <label class="form-label">Company Name <span class="text-muted fw-light">(Optional)</span></label>
-                                <input type="text" name="companyName" value="<%= data?.companyName||``%>" class="form-control">
+                                <label class="form-label" >Company Name <span class="text-muted fw-light">(Optional)</span></label>
+                                <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>" class="form-control">
                             </div>
 
-                            <div class="col-lg-3">
-                                <label class="form-label d-none d-lg-block">&nbsp;</label> 
-                                <button type="submit" class="btn btn-save-address">Save Address</button>
+                            <div class="  col-lg-3">
+                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end">Delete</button>
+                                <div class="d-flex my-4 justify-content-between ">
+                                <button type="submit" class="btn btn-primary ">Save Address</button>
+                                <button type="button" onclick="addNewAddress()" class="btn btn-success py-0">New</button>
+                                <input type="hidden" id="new" name="isNew">
+                                </div>
+                                 <label class="form-label">select addresses</label>
+                                <select name="addresses" id="addressSelect" class="form-select">
+                                    <% if(allAddress){%>
+                                    <% allAddress.forEach(address=>{%>
+                                    <option value="<%= address?._id||``%>"><%= address?.address||``%></option>
+                                    <%})%>
+                                    <%}%>
+                                
+                                </select>
                                 
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">Address *</label>
-                            <input type="text" value="<%= data?.address||``%>" name="address" class="form-control">
+                            <input type="text" id="address" value="<%= data?.address||``%>" name="address" class="form-control">
                             <p id="addressError" class="text-danger"></p>
                         </div>
 
@@ -122,7 +135,7 @@
                         <div class="row mb-4">
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Country *</label>
-                                <select name="country"  class="form-select">
+                                <select name="country" id="country" class="form-select">
                                    <option value="" disabled <%= !data?.country ? "selected" : "" %>> Select...</option>
                                     <option value="India" <%= data?.country === "India" ? "selected" : "" %>>India</option>
                                     <option value="USA" <%= data?.country === "USA" ? "selected" : "" %> >USA</option>
@@ -165,7 +178,7 @@
                                 <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">State *</label>
 
-                                <select name="state" class="form-select">
+                                <select name="state" id="state" class="form-select">
                                     <option value="" disabled <%= !data?.state ? "selected" : "" %>>
                                     Select...
                                     </option>
@@ -184,7 +197,7 @@
 
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">City/District *</label>
-                                <input type="text" value="<%= data?.city%>" class="form-control" name="city">
+                                <input type="text" id="city" value="<%= data?.city%>" class="form-control" name="city">
                                 <p id="cityError" class="text-danger"></p>
                             </div>
                            
@@ -192,16 +205,15 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label">Email *</label>
-                                <input name="email" value="<%= data?.email||``%>" type="email" class="form-control">
+                                <input name="email" id="email" value="<%= data?.email||``%>" type="email" class="form-control">
                                 <p id="emailError" class="text-danger"></p>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number *</label>
-                                <input name="phoneNumber" value="<%= data?.phoneNumber||`` %>" type="text" class="form-control">
+                                <input name="phoneNumber" id="phoneNumber" value="<%= data?.phoneNumber||`` %>" type="text" class="form-control">
                                 <p id="phoneNumberError" class="text-danger"></p>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -293,7 +305,6 @@
   });
 
 document.getElementById('pinCode').addEventListener('input',(e)=>{
-        console.log("hello")
       if(e.target.value.length ===6){
         fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
         .then(data=>data.json())
@@ -311,6 +322,66 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
       }
 
    })
+
+
+                               
+   document.querySelectorAll('#addressSelect').forEach((element)=>{
+    element.addEventListener('change',(e)=>{
+        console.log(e.target.value)
+     if(!e.target.value) return ;
+     fetch(`/address/${e.target.value}`)
+     .then((data)=>data.json())
+     .then((data)=>{
+        
+       
+                document.getElementById('userName').value = data.userName
+                document.getElementById('address').value = data.address
+                document.getElementById('country').value = data.country
+                document.getElementById('companyName').value = data.companyName;
+                document.getElementById('addressId').value = data._id;
+                document.getElementById('state').value = data.state
+                document.getElementById('city').value = data.city
+                document.getElementById('pinCode').value = data.pinCode
+                document.getElementById('email').value  = data.email
+                document.getElementById('phoneNumber').value = data.phoneNumber
+                e.vaule = data.address;
+     })
+   })
+   })
+
+   function addNewAddress(){
+            document.getElementById('new').value= "newAddress";
+            document.getElementById('userName').value =''
+            document.getElementById('address').value =''
+            document.getElementById('country').value =''
+            document.getElementById('addressId').value = ''
+            document.getElementById('companyName').value = ""
+            document.getElementById('state').value = ''
+            document.getElementById('city').value = ''
+            document.getElementById('pinCode').value = ''
+            document.getElementById('email').value  = ''
+            document.getElementById('phoneNumber').value = ''
+            document.getElementById('addressSelect').innerHTML= "<option selected>new</option>"
+   }
+
+ function deleteAddress() {
+    if(window.confirm("Are you shure about deleting this address","Deleteing the address?")){
+        fetch('/address',{
+        method:"DELETE",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({addressId:document.getElementById("addressSelect").value})
+        
+    })
+    .then((data)=>data.json())
+    .then((data)=>{
+        
+        window.location.reload()
+    })
+    }
+  
+ }
+
+
   
 
             </script>

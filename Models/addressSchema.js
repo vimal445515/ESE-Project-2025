@@ -43,7 +43,8 @@ const addressSchema = new mongoose.Schema({
     },
     default:{
         type:Boolean,
-        unique:true
+        default:false
+       
     },
     createdAt:{
         type:Date,
