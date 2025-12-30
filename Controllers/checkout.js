@@ -17,12 +17,19 @@ const loadCheckOutPage = async (req,res)=>{
         const data = await checkoutService.getProduct(req.query.productId,req.query.variantId)
         products =[{product:{...data[0]}}]
         products[0].quantity = Number(req.query.quantity);
+          const isBlock = await productService.isBlocked(req.query.productId)
+          if(isBlock.length === 0) return res.redirect('/');
+         if(await categoryService.isBlocked(req.query.categoryId)){
+
+        console.log("this is working",req.query.categoryId)
+        return res.redirect('/products');
+     } 
         
     }
 
-    const isBlock = await productService.isBlocked(req.query.productId)
-     if(await categoryService.isBlocked(req.query.categoryId)) return res.redirect('/products');
-      if(isBlock.length === 0) return res.redirect('/');
+  
+     
+      
    
      const orderDetails = await cartService.cartSummary(products)
      const defaultAddress  = await address.getUserAddress(req.session._id)

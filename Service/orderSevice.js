@@ -6,6 +6,7 @@ import cartModel from '../Models/cartSchema.js'
 import addressModel from '../Models/addressSchema.js'
 
 
+
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount)=>{
 
 
@@ -130,7 +131,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
 
 const getSingleOrder = async(orderId)=>{
     
-    return await orderModel.find({_id:orderId});
+    return await orderModel.find({orderId:orderId});
 }
 
 const getOrders = async(userId,skip,limit)=>{
@@ -140,8 +141,52 @@ const countOrders = async(userId)=>{
     return await orderModel.countDocuments({userId});
 }
 
-const getAllOrders = async (skip,limit)=>{
-    return await orderModel.find().sort({"createdAt":-1}).skip(skip).limit(limit)
+const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
+    let pipeline = [];
+    pipeline.push({$skip:skip},{$limit:limit})
+    if(sort){
+        switch(sort){
+           case "ltoH":
+            pipeline.push({$sort:{"pricing.totalAmout":-1}})
+            break;
+           case 'htoL':
+            pipeline.push({$sort:{"pricing.totalAmount":1}})
+            break;
+           case "new":
+            pipeline.push({$sort:{'createdAt':-1}})
+            break;
+           case 'old':
+            pipeline.push({$sort:{"createAt":1}})
+            break;
+
+        }
+    }
+    else{
+        pipeline.push({$sort:{"createdAt":-1}})
+    }
+    if(filter){
+        switch(filter){
+           case 'processing':
+            pipeline.push({$match:{orderStatus:"placed"}})
+            break; 
+           case 'shipped':
+            pipeline.push({$match:{orderStatus:"shipped"}})
+            break;
+           case 'delivered':
+            pipeline.push({$match:{orderStatus:'delivered'}})
+            break;
+           case 'canceled':
+            pipeline.push({$match:{orderStatus:'canceled'}})
+            break;
+        }
+    }
+
+    if(orderId){
+        pipeline.push({$match:{orderId:orderId}})
+    }
+
+    return await orderModel.aggregate(pipeline)
+    // return await orderModel.find().sort({"createdAt":-1}).skip(skip).limit(limit)
 }
 
 const getAllOrdersCount = async() =>{
@@ -161,9 +206,31 @@ const updateData = async(orderId,orderStatus) =>{
     await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:orderStatus}})
 }
 
-const getOrderById = async(orderId)=>{
+const getOrderById = async(orderId,sort)=>{
+    let pipeline = [];
     
-    return await orderModel.find({orderId:orderId});
+    if(sort){
+        switch(sort){
+           case "ltoH":
+            pipeline.puhs({$sort:{"totalAmout":-1}})
+            break;
+           case 'htoL':
+            pipeline.puhs({$sort:{"totalAmount":1}})
+            break;
+           case "new":
+            pipeline.push({$sort:{'createdAt':-1}})
+            break;
+           case 'old':
+            pipeline.push({$sort:{"createAt":-1}})
+            break;
+
+        }
+    }
+
+    if(orderId){
+        pipeline.push({$match:{orderId:orderId}})
+    }
+    return await orderModel.aggregate(pipeline)
 }
 
 const updateOrderCancel = async(orderId)=>{

@@ -5,10 +5,13 @@ import mongoose from 'mongoose'
 const loadOrderPage = async(req,res)=>{
     const page = req.query.page||1
     const limit = 8;
+    const sort = req.query.sort
+    const search = req.query.search
+    const filter = req.query.filter
     const skip = helpers.paginationSkip(page,limit)
     const count = await orderService.getAllOrdersCount()
-    const orders = await orderService.getAllOrders(skip,limit)
-   res.render('Admin/orderPage',{orders,skip,limit,page,count})
+    const orders = await orderService.getAllOrders(skip,limit,sort,search,filter)
+   res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter})
 }
 
 const loadEditOrderPage = async (req,res)=>{
@@ -38,8 +41,10 @@ const updateOrderStatus = async(req,res)=>{
 
 const search = async(req,res)=>{
     const search = req.query.value
-  const data =  await orderSevice.getOrderById(search)
-  res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null});
+    const sort = req.query.sort
+    console.log("this is sort",sort)
+  const data =  await orderSevice.getOrderById(search,sort)
+  res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null,sort});
 }
 
 export default {

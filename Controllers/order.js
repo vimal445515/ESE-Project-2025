@@ -15,7 +15,7 @@ const loadOrdersHistory = async(req,res)=>{
 
 const loadOrderDetailPage = async(req,res)=>{
     const order = await orderSevice.getSingleOrder(req.params.id)
-    console.log(order)
+   
     res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0]})
 }
 
@@ -52,8 +52,8 @@ const placeOrder = async(req,res)=>{
         order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
 
       }
-      const orderId = order._id;
-      res.redirect(`/orders/orderDetails/${orderId}`)
+      const orderId = order.orderId;
+      res.render('User/orderPlacedPage',{userName:req.session.userName,profile:req.session.profile,orderId})
 }
 
 const returnOrder = (req,res)=>{
@@ -68,11 +68,19 @@ const search = async(req,res)=>{
   res.render('User/orders',{userName:req.session.userName,profile:req.session.profile,orders:data,page:1,count:null,limit:null});
 }
 
+
+const loadOrderScucessPage = (req,res)=>{
+  const orderId = req.params.orderId
+  console.log(orderId)
+  res.render('User/orderPlacedPage');
+}
+
 export default {
     loadOrdersHistory,
     loadOrderDetailPage,
     placeOrder,
     cancelOrder,
     returnOrder,
-    search
+    search,
+    loadOrderScucessPage
 }

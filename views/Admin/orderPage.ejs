@@ -23,19 +23,19 @@
             overflow-x: hidden; 
         }
 
-        /* Content Offset for Fixed Sidebar */
+        
         #page-content-wrapper {
             margin-left: var(--sidebar-width);
             width: calc(100% - var(--sidebar-width));
             min-height: 100vh;
         }
 
-        /* Order Table Styling */
+        
         .order-card { border: none; border-radius: 15px; overflow: hidden; background: #fff; }
         .table thead th { background-color: #fcfcfc; color: #888; font-weight: 500; font-size: 0.8rem; border-bottom: 1px solid #f1f1f1; padding: 15px; }
         .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f8f8f8; font-size: 0.85rem; }
 
-        /* Status & Payment Pills */
+ 
         .status-pill {
             padding: 5px 12px;
             border-radius: 6px;
@@ -56,7 +56,7 @@
         .pay-online { background: #E9FAF7; color: #1A9882; border-color: #1A9882; }
         .pay-cod { background: #FEECEE; color: #EB3D4D; border-color: #EB3D4D; }
 
-        /* Pagination Styling */
+        
         .page-link { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50% !important; margin: 0 3px; font-size: 0.8rem; border: 1px solid #eee; color: #666; }
         .active-page { background-color: var(--primary-blue) !important; color: white !important; border: none !important; }
     </style>
@@ -80,14 +80,41 @@
             
             <%- include('../partials/adminNavBar.ejs') %>
             <div class="container-fluid px-4">
+                <div class="d-flex justify-content-between">
                   <div class=" ms-2  input-group d-flex " style="max-width: 400px;">
-                    <form action="/admin/order/search" class="d-flex">
+                  
                     <input type="text" id="searchInput" name="value" class="form-control" placeholder="Search..." aria-label="Search" required>
-                    <button type="submit" id="search" class="btn btn-light">Search</button>
-                    </form>
-                    
-                    <a id="clear" href="/admin/order" class="btn btn-light">Clear</a>
+                    <button type="button" onclick="searchText()" id="search" class="btn btn-light">Search</button>
+                
+      
             </div>
+
+             <div class="d-flex align-items-center small text-muted me-2">
+                     <a id="clear" href="/admin/order" class="btn btn-light me-2">Clear</a>
+                    <label for="sortPrice" class="me-2 text-nowrap">Sort By:</label>
+                    <select class="form-select form-select-sm" id="sort" style="width: auto;">
+                        <option value="" selected>sort</option>
+                        <option value="ltoH">Low to high</option>
+                        <option value="htoL">High to low</option>
+                        <option value="new">New to old</option>
+                        <option value="old">old to New</option>
+                    </select>
+
+
+                      <label for="sortPrice" class="mx-2 text-nowrap">filter:</label>
+                    <select class="form-select form-select-sm" id="filter" style="width: auto;">
+                        <option value="" selected>filter</option>
+                        <option value="processing"> Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="canceled">canceled</option>
+                    </select>
+                </div>
+                </div>
+
+
+
+
             <div class="container-fluid px-4 mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
@@ -190,9 +217,12 @@
     </div>
     <script>
          let correntPage = '<%= page%>';
+         let sort = "<%= sort%>"
+         let searchValue = "<%= search%>"
+         let filter  = "<%= filter%>"
          function search(page){
           correntPage = page
-          window.location.href = `/admin/order?page=${correntPage}`
+          window.location.href = `/admin/order?page=${correntPage}&sort=${sort}&search=${searchValue}&filter=${filter}`
         }
          function nextPage(correntPgae){
            correntPgae++;
@@ -205,6 +235,20 @@
                      search(page)
                 }
              }
+        function searchText(){
+          searchValue =   document.getElementById("searchInput").value
+          search(1)
+        }
+
+         document.getElementById('sort').addEventListener('change',()=>{
+        sort = document.getElementById('sort').value
+        search(1)
+        })
+
+      document.getElementById('filter').addEventListener('change',()=>{
+        filter = document.getElementById('filter').value
+        search(1)
+        })
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
