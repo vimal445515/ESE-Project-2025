@@ -182,7 +182,7 @@
                                 <div class="info-icon-box me-3"><i class="far fa-file-alt"></i></div>
                                 <div>
                                     <small class="text-muted d-block">Invoice</small>
-                                    <a href="#" class="small fw-bold text-decoration-none">Invoice</a>
+                                    <a onclick="downloadInvoice(`<%= order[0]._id%>`) " class="small fw-bold text-decoration-none">Invoice</a>
                                 </div>
                             </div>
                         </div>
@@ -279,6 +279,34 @@
             })
             })
         })
+
+        
+        async function downloadInvoice(orderId) {
+        try {
+            const response = await fetch(`/invoice/${orderId}`);
+
+            if (!response.ok) {
+            throw new Error("Invoice download failed");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `invoice-${orderId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            alert("Unable to download invoice");
+            console.error(error);
+        }
+        }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

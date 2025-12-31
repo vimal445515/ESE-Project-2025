@@ -85,6 +85,9 @@ const storeReturOrder  = async(req,res)=>{
     res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'}})
   }
 }
+
+
+
 export default {
     loadOrdersHistory,
     loadOrderDetailPage,
@@ -93,5 +96,6 @@ export default {
     returnOrder,
     search,
     loadOrderScucessPage,
-    storeReturOrder
+    storeReturOrder,
+
 }

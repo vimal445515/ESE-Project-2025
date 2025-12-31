@@ -13,15 +13,14 @@ const findUserFromDB= async (email) =>
 
 
 const storeOtpInDb = async (email,otp) =>{
-    const data = await OtpModel.insertOne({email:email,otp:otp,createdAt:new Date()})
-    await data.save();
+    const data = await OtpModel.create({email:email,otp:otp})
+  
 }
 
 const checkOtp = async(otp,email) =>{
     
     const data = await OtpModel.findOne({email})
-    console.log(" new "+otp,email+" old "+data.otp)
-    if(otp == data.otp) return true;
+    if(otp == data?.otp) return true;
     return false;
 
 }

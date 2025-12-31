@@ -13,6 +13,9 @@ import cartRoutere  from './Routers/cartRouter.js'
 import wishListRouter from "./Routers/whislistRouter.js"
 import checkoutRouter from './Routers/checkoutRouter.js'
 import orderRouter from './Routers/orderRouter.js'
+import invoiceRoutes from "./Routers/invoiceRouter.js";
+
+
 env.config()
 let app = express();
 let __filename = fileURLToPath(import.meta.url);
@@ -35,6 +38,7 @@ app.use(cartRoutere)
 app.use(wishListRouter)
 app.use(checkoutRouter)
 app.use("/orders",orderRouter)
+app.use(invoiceRoutes);
 
 
 app.listen(process.env.PORT,()=>{

@@ -161,14 +161,14 @@ const editProfile=(req,res)=>{
 }
 
  const sendData = async(req,res,next)=>{
-        
+        console.log("this is wrking")
       const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)
         if(data === "error"){
            return res.status(409).json({status:"error",message:"User alredy exists"});
         }
        
        if(data)
-       {
+       { console.log("email also wrking")
          const {email} = req.body
          const OTP = otp.otpGenerator();
          await user.clearOtp(email)    
@@ -178,7 +178,6 @@ const editProfile=(req,res)=>{
        }
        else{
          await userService.updateUserData(req)
-         console.log("befor render:",req.session.profile)
         res.status(200).json({status:"updated",message:"Data updated",href:"/EditUser"})
         
        }

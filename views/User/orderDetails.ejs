@@ -136,6 +136,7 @@ This action cannot be undone.
                     <a href="/orders" class="text-dark me-2"><i class="bi bi-arrow-left"></i></a>
                     <h5 class="mb-0 fw-bold">ORDER DETAILS</h5>
                 </div>
+                  <button onclick="downloadInvoice(`<%= order._id%>`)"  class=" btn text-primary text-decoration-none fw-bold small me-2">Download invoice</button>
                 <%if(order.orderStatus !=="delivered"){%>
                 <a href="" data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small">Cancel Order</a>
                 <%}%>
@@ -252,6 +253,31 @@ if("<%= order.orderStatus %>" ==='delivered'){
     document.querySelector('#delivered').classList.add('completed')
 }
 
+        async function downloadInvoice(orderId) {
+        try {
+            const response = await fetch(`/invoice/${orderId}`);
+
+            if (!response.ok) {
+            throw new Error("Invoice download failed");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `invoice-${orderId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            alert("Unable to download invoice");
+            console.error(error);
+        }
+        }
 
 
 </script>
