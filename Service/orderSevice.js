@@ -4,6 +4,7 @@ import {productModel} from '../Models/productSchema.js'
 import helper from '../helpers/helpers.js'
 import cartModel from '../Models/cartSchema.js'
 import addressModel from '../Models/addressSchema.js'
+import orderReturnModel from "../Models/orderReturnSchema.js"
 
 
 
@@ -134,6 +135,11 @@ const getSingleOrder = async(orderId)=>{
     return await orderModel.find({orderId:orderId});
 }
 
+const getSingleOrderById = async(orderId)=>{
+    
+    return await orderModel.find({_id:orderId});
+}
+
 const getOrders = async(userId,skip,limit)=>{
   return (await orderModel.find({userId:userId,isDeleted:false}).sort({"createdAt":-1}).skip(skip).limit(limit))
 }
@@ -143,7 +149,10 @@ const countOrders = async(userId)=>{
 
 const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
     let pipeline = [];
-    pipeline.push({$skip:skip},{$limit:limit})
+     if(orderId){
+        pipeline.push({$match:{orderId:orderId}})
+    }
+    
     if(sort){
         switch(sort){
            case "ltoH":
@@ -153,10 +162,10 @@ const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
             pipeline.push({$sort:{"pricing.totalAmount":1}})
             break;
            case "new":
-            pipeline.push({$sort:{'createdAt':-1}})
+            pipeline.push({$sort:{'createdAt':1}})
             break;
            case 'old':
-            pipeline.push({$sort:{"createAt":1}})
+            pipeline.push({$sort:{"createAt":-1}})
             break;
 
         }
@@ -181,9 +190,7 @@ const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
         }
     }
 
-    if(orderId){
-        pipeline.push({$match:{orderId:orderId}})
-    }
+   pipeline.push({$skip:skip},{$limit:limit})
 
     return await orderModel.aggregate(pipeline)
     // return await orderModel.find().sort({"createdAt":-1}).skip(skip).limit(limit)
@@ -241,12 +248,40 @@ const searchByUser = async (userId,orderId)=>{
     return await orderModel.find({userId:userId,orderId:orderId})
 }
 
+
+const storeReturnOrderData = async(orderId,reason)=>{
+    if(!await orderReturnModel.findOne({orderId:orderId})){
+      return  await orderReturnModel.create({orderId,reason});
+    }
+    throw new Error("Canot request more than one time !")
+    
+}
+
+const getAllReturnNotifications = async()=>{
+   return await orderReturnModel.find({status:"pending"})
+}
+
+const deletereturnOrder = async(orderId)=>{
+    
+       await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"rejected"}})
+
+ ;
+}
+
+const acceptOrderReturn = async(orderId) =>{
+     console.log("accepted succussfuly",orderId)
+     await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"accept"}})
+     await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"return"}})
+
+}
+
 export default {
     orderSingleProduct,
     orderCartItmes,
     getOrders,
     countOrders,
     getSingleOrder,
+    getSingleOrderById,
     getAllOrders,
     getAllOrdersCount,
     unlistOrder,
@@ -254,5 +289,9 @@ export default {
     updateData,
     getOrderById,
     updateOrderCancel,
-    searchByUser
+    searchByUser,
+    storeReturnOrderData,
+    getAllReturnNotifications,
+    deletereturnOrder,
+    acceptOrderReturn
 }

@@ -44,6 +44,8 @@ router.get('/order',adminOrderController.loadOrderPage)
 router.get('/order/edit/:id',adminOrderController.loadEditOrderPage)
 router.post('/order/delete',adminOrderController.deleteOrder)
 router.patch('/order/edit',adminOrderController.updateOrderStatus)
+router.get('/order/reject/:orderId',adminOrderController.rejectReturnOrder)
+router.get('/order/accept/:orderId',adminOrderController.updateOrderReturnstatus)
 
 router.get('/order/search',adminOrderController.search)
 

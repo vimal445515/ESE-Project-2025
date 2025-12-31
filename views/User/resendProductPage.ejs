@@ -85,8 +85,9 @@
                     <div class="cancel-subtitle">Why do you Resend the product?</div>
                 </div>
                 
-                <form action="/orders/Resend" method="POST">
+                <form action="/orders/return" method="POST">
                     <div class="mb-4">
+                        <input type="hidden" name="orderId" value="<%= orderId%>">
                         <label class="form-label fw-bold mb-2">Reason</label>
                         <textarea name="reason" class="form-control reason-box" placeholder="Please describe why you are cancelling your order..."></textarea>
                     </div>
@@ -129,6 +130,29 @@
         </div>
     </div>
 </div>
+
+<% if (popup) { %>
+<div class="modal fade" id="popupModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-<%= popup.type === 'success' ? 'success' : 'danger' %> text-white">
+        <h5 class="modal-title">Message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><%= popup.message %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = new bootstrap.Modal(document.getElementById('popupModal'));
+  modal.show();
+</script>
+<% } %>
+
+
 
 <%- include("../partials/footer.ejs") %>
 

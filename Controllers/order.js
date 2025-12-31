@@ -57,7 +57,8 @@ const placeOrder = async(req,res)=>{
 }
 
 const returnOrder = (req,res)=>{
-  res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile});
+  const orderId = req.query.orderId;
+  res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId,popup:null});
 }
 
 const search = async(req,res)=>{
@@ -75,6 +76,15 @@ const loadOrderScucessPage = (req,res)=>{
   res.render('User/orderPlacedPage');
 }
 
+
+const storeReturOrder  = async(req,res)=>{
+  try{
+     await orderSevice.storeReturnOrderData(req.body.orderId,req.body.reason)
+   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'}})
+  }catch(error){
+    res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'}})
+  }
+}
 export default {
     loadOrdersHistory,
     loadOrderDetailPage,
@@ -82,5 +92,6 @@ export default {
     cancelOrder,
     returnOrder,
     search,
-    loadOrderScucessPage
+    loadOrderScucessPage,
+    storeReturOrder
 }

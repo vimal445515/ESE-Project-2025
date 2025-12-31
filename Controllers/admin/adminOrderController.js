@@ -11,12 +11,14 @@ const loadOrderPage = async(req,res)=>{
     const skip = helpers.paginationSkip(page,limit)
     const count = await orderService.getAllOrdersCount()
     const orders = await orderService.getAllOrders(skip,limit,sort,search,filter)
-   res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter})
+    const notifications = await orderSevice.getAllReturnNotifications()
+    console.log("console.log(",notifications)
+   res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter,notifications:notifications||[]})
 }
 
 const loadEditOrderPage = async (req,res)=>{
     const {id:orderId}=req.params
-    const order = await orderService.getSingleOrder(orderId)
+    const order = await orderService.getSingleOrderById(orderId)
     res.render('Admin/editOrder',{order})
 }
 
@@ -44,13 +46,35 @@ const search = async(req,res)=>{
     const sort = req.query.sort
     console.log("this is sort",sort)
   const data =  await orderSevice.getOrderById(search,sort)
-  res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null,sort});
+  const notifications = await orderSevice.getAllReturnNotifications()
+  
+  res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null,sort,notifications:notifications||[]});
 }
 
+
+const rejectReturnOrder = async(req,res)=>{
+    const orderId = req.params.orderId
+    
+    await orderSevice.deletereturnOrder(orderId)
+    res.json({type:"success"})
+}
+
+
+const updateOrderReturnstatus = async(req,res) =>{
+   try{
+     const orderId = req.params.orderId
+    await orderSevice.acceptOrderReturn(orderId)
+    res.json({type:"success",message:"Order return accepted success fully"})
+   }catch(error){
+    res.json({type:"error",message:" oops somthing was wrong!"})
+   }
+}
 export default {
     loadOrderPage,
     loadEditOrderPage,
     deleteOrder,
     updateOrderStatus,
-    search
+    search,
+    rejectReturnOrder,
+    updateOrderReturnstatus
 }

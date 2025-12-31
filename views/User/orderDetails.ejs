@@ -140,7 +140,7 @@ This action cannot be undone.
                 <a href="" data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small">Cancel Order</a>
                 <%}%>
                 <%if(order.orderStatus ==="delivered"){%>
-                <a href="/orders/return"  class="text-primary text-decoration-none fw-bold small">Return order</a>
+                <a href="/orders/return?orderId=<%=order._id%>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
                 <%}%>
             </div>
 
@@ -155,8 +155,6 @@ This action cannot be undone.
                     </div>
                 </div>
             </div>
-
-            <p class="small fw-bold mb-4 text-muted">Order expected arrival <span class="text-dark">23 nov, 2025</span></p>
                 <div class="px-5 mb-5">
                     <div class="stepper-wrapper">
                         <div id="placed" class="stepper-item ">
