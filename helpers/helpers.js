@@ -47,11 +47,18 @@ const generateOrderId = () => {
   return `ORD-${date}-${random}`;
 }
 
+const calculateAvargeRating = (reviews)=>{
+  const sum= reviews.reduce((sum,review)=>{
+      return sum+review.rating;
+  },0)
+   return sum/reviews.length;
+}
 export default {
    otpGenerator,
    sendEmail,
    paginationSkip,
    groupValues,
    deleteProfile,
-  generateOrderId
+  generateOrderId,
+  calculateAvargeRating
 }

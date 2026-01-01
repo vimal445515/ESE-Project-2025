@@ -16,7 +16,7 @@ const loadOrdersHistory = async(req,res)=>{
 const loadOrderDetailPage = async(req,res)=>{
     const order = await orderSevice.getSingleOrder(req.params.id)
    
-    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0]})
+    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0],type:null})
 }
 
 const cancelOrder = async(req,res)=>{

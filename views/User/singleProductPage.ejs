@@ -92,6 +92,19 @@
             border-color: var(--primary-color);
             background-color: #fff;
         }
+        .btn-disabled {
+            
+            background-color: #f2f2f2;
+            color: #333;
+            text-decoration: line-through;
+            font-weight: 600;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 140px;
+            cursor: not-allowed !important;
+        }
         
         /* --- Related Items Specific Styles --- */
         .related-card {
@@ -135,6 +148,16 @@
   cursor: zoom-in;
    
    
+}
+    .userProfile {
+  width: 39px;          
+  height: 39px;
+  border-radius: 50%;   
+  overflow: hidden;    
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eee; 
 }
 
     </style>
@@ -230,8 +253,12 @@
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
                     <input type="hidden" name="productId" value="<%= productData._id%>"> 
                     <input type="hidden" id="quantityforCheckout" name="quantity">
-                    <input type="hidden" name="categoryId" value="<%= productData.categoryId%>"> 
-                <button id="addToCheckout" type="submit" class="btn buy-now-btn btn-primary  px-5 flex-grow-1 rounded-pill">Buy Now</button>
+                    <input type="hidden" name="categoryId" value="<%= productData.categoryId%>">
+                    <% if(productData.variants.stock < 1){%>
+                    <button class=" btn-disabled">Buy Now</button>
+                    <%}else{%>
+                    <button id="addToCheckout" type="submit" class="btn buy-now-btn btn-primary  px-5 flex-grow-1 rounded-pill">Buy Now</button>
+                   <%}%>
                 </form> 
             </div>
 
@@ -240,7 +267,11 @@
                     <input type="hidden" id="quantity" value="1" name="quantity" >
                     <input type="hidden" name="productId" value="<%= productData._id%>">
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
-                     <button  type="submit" id="addToCart" class="btn btn-outline-secondary"><i class="bi bi-cart-plus-fill fs-5"></i> Add to Cart</button>
+                     <% if(productData.variants.stock < 1){%>
+                        <button class="btn-disabled">Add to Cart</button>
+                    <%}else{%>
+                    <button  type="submit" id="addToCart" class="btn btn-outline-secondary"><i class="bi bi-cart-plus-fill fs-5"></i> Add to Cart</button>
+                      <%}%>
                 </form>
                
                 </div>
@@ -268,7 +299,110 @@
                                     </p>
                         </div>
                         <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                           <% if(review.length ===0){%>
                             <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                            <%}else{%>
+                            <!-- starting -->
+
+
+                             <div class="review-section">
+                                <div class="row align-items-center mb-5 p-4 border rounded shadow-sm bg-white">
+                                    <div class="col-md-3 text-center border-end py-3" style="background-color: #fffde7; border-radius: 8px 0 0 8px;">
+                                        <h1 class="display-4 fw-bold mb-0"><%= avarageRating%></h1>
+                                        <div class="text-warning fs-4 mb-2">
+                   
+                         
+                                            <% if(avarageRating > 4.5) {%>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                           <i class="bi bi-star-fill"></i>
+
+                                            <%}else if(avarageRating >4){%>
+                                             <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-half"></i>
+                                                <%}else if(avarageRating >3.5){%>
+                                                <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                           <i class="bi bi-star"></i>
+
+                                           <%}else if(avarageRating >3){%>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                           <i class="bi bi-star-half"></i>
+                                           <i class="bi bi-star"></i>
+                                           <%}else if(avarageRating >2.5){%>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                           <i class="bi bi-star"></i>
+                                           <i class="bi bi-star"></i>
+
+                                            <%}else if(avarageRating >2){%>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                           <i class="bi bi-star-half"></i>
+                                           <i class="bi bi-star"></i>
+                                           <i class="bi bi-star"></i>
+
+                                            <%}else if(avarageRating >1.5){%>
+                                           <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                             <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <%}else if(avarageRating >1){%>
+                                             <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-half"></i>
+                                             <i class="bi bi-star"></i>
+                                             <i class="bi bi-star"></i>
+                                             <i class="bi bi-star"></i>
+
+                                                <%}else{%>
+                                                     <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star"></i>
+                                                    <i class="bi bi-star"></i>
+                                                    <i class="bi bi-star"></i>
+                                                    <i class="bi bi-star"></i>
+                                                    <%}%>
+
+
+                                        </div>
+                                    </div>
+                                    
+                                <div class="customer-feedback border rounded p-4 shadow-sm bg-white">
+                                    <h5 class="fw-bold mb-4">Customer Feedback</h5>
+                                    <%review.forEach((feedback)=>{%>
+                                    <div class="review-item border-bottom mb-4 pb-4">
+                                        <p><%= feedback.userName%></p>
+                                        <div class="d-flex align-items-center mb-2 ">
+                                            <div class="userProfile me-2">
+                                            <img src="/upload/<%= feedback.profile%>"  alt="User">
+                                            </div>
+                                            <div>
+                                                <div class="text-warning small">
+                                                    <% for(let i = 0; i < feedback.rating; i++){%>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <%}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-secondary small mb-0">
+                                           <%= feedback.command%>
+                                        </p>
+                                    </div> 
+                                    <%})%>
+                                </div>
+                            </div>
+                            <!-- end -->
+                             <%}%>
                         </div>
                     </div>
                 </div>
@@ -292,6 +426,7 @@
             <%})%>
         </div>
         </div>
+    </div>
     </div>
 <%- include("../partials/footer.ejs") %>
 <script>

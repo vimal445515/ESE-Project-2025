@@ -4,6 +4,7 @@ import helpers from '../helpers/helpers.js'
 import adminService from '../Service/adminService.js'
 import wishlistService from '../Service/wishlistService.js'
 import categoryService from '../Service/categoryService.js'
+import reviewService from '../Service/reviewService.js'
 const storeProducts = async (req,res)=>{
     const {productName,basePrice,description,category,discound} = req.body
     const generalPhoto = productHelper.extractGeneralImage(req.files)
@@ -106,6 +107,8 @@ const loadUserSideProductsPage = async(req,res)=>{
     let wishlistId = null
   const productArray = await productService.getSingleProduct(id, storage, ram);
   const getVariants = await productService.getVariants(id);
+  const review = await reviewService.getReview(id)
+  const average = helpers.calculateAvargeRating(review)
 
   try{
 
@@ -135,7 +138,9 @@ const loadUserSideProductsPage = async(req,res)=>{
     storage,
     profile:req.session.profile,
     isLiked:isLiked,
-    wishlistId:wishlistId
+    wishlistId:wishlistId,
+    review,
+    avarageRating:average.toFixed(1)
   });
 };
 
