@@ -7,6 +7,7 @@ import userService from "../../Service/userService.js";
 import productService from "../../Service/productService.js";
 import product from "../product.js";
 import passport from 'passport'
+import addressService from "../../Service/addressService.js";
 
 
 
@@ -149,9 +150,9 @@ const resetPassword = async(req,res) =>{
  }
 
 
-const loadUserProfile=(req,res)=>{
-  
-    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile})
+const loadUserProfile= async(req,res)=>{
+   const address = await addressService.getUserAddress(req.session._id)
+    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile,address})
 }
 
 const editProfile=(req,res)=>{
@@ -160,14 +161,14 @@ const editProfile=(req,res)=>{
 }
 
  const sendData = async(req,res,next)=>{
-        console.log("this is wrking")
+        
       const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)
         if(data === "error"){
            return res.status(409).json({status:"error",message:"User alredy exists"});
         }
        
        if(data)
-       { console.log("email also wrking")
+       { 
          const {email} = req.body
          const OTP = otp.otpGenerator();
          await user.clearOtp(email)    
@@ -183,12 +184,26 @@ const editProfile=(req,res)=>{
    
 }
 
+const resendOtp = async(req,res)=>{
+  console.log("this is eail",req.session.newEmail)
+         
+    
+         const OTP = otp.otpGenerator();
+         await user.clearOtp(req.session.newEmail) 
+         console.log("email is wrking",req.session.newEmail)   
+         await user.storeOtpInDb(req.session.newEmail,OTP)
+         otp.sendEmail(req.session.newEmail,OTP);
+          res.render('User/emailUpdateOtpPage',{status:"success",message:null})
+     
+}
+
 const loadOtpPageForUpdateEmail = (req,res)=>{
    res.render('User/emailUpdateOtpPage',{status:"success",message:null})
 }
 
 const verifyOptforUpdateEmail = async (req,res,next)=>{
   const email =req.session.newEmail
+
    const result = await user.checkOtp(req.body.otp,email);
    console.log("otp resllt",result)
    if(result){
@@ -236,6 +251,7 @@ export default {
     sendData,
     loadOtpPageForUpdateEmail,
     verifyOptforUpdateEmail,
-    userProfileResetPassword
+    userProfileResetPassword,
+     resendOtp
     
 }

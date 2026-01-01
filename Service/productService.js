@@ -32,7 +32,8 @@ const getAllProducts = async (skip,limit,search) =>{
     $addFields:{totalStock:{$sum:"$variants.stock"}}
   },
   {$skip:skip},
-  {$limit:limit}
+  {$limit:limit},
+  
 )
   return await productModel.aggregate(pipeline)
 }

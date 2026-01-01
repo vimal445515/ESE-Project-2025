@@ -31,6 +31,7 @@ router.get('/EditUser',Auth.isUser,Auth.checkUser,userControllers.editProfile)
 
 router.patch('/Profile/edit',Auth.isUser,Auth.checkUser,image.single('image'),userControllers.sendData)
 router.get("/profile/otp",Auth.isUser,Auth.checkUser,userControllers.loadOtpPageForUpdateEmail)
+router.get('/profile/resendOtp',Auth.isUser,Auth.checkUser,userControllers.resendOtp)
 router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
 router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 

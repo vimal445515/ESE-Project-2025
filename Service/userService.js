@@ -62,7 +62,10 @@ const verifyData = async(session,userName,email,phoneNumber,image) =>{
        
         session.newPhoneNumber = phoneNumber;
     }
-     if(image){
+
+    console.log("this is image",image)
+     if(image ){
+
         session.newImage = image.filename;
      }
 
@@ -94,7 +97,7 @@ const updateUserData = async (req)=>{
         data.phoneNumber = req.session.newPhoneNumber
         
     }
-    
+    console.log("this is new image",req.session.newImage)
     if(req.session.newImage)
     {
         data.profile = req.session.newImage
@@ -108,6 +111,7 @@ const updateUserData = async (req)=>{
     delete req.session?.newEmail
     delete req.session?.newUserName
     delete req.session?.newPhoneNumber
+    delete req.session?.newImage
      data =  await User.findOneAndUpdate({email:req.session.email},{$set:data},{new:true})
      if(profile)
      {

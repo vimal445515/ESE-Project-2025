@@ -35,7 +35,7 @@
             </div>
 
           <div class="text-end mb-3">
-                <button type="button" href="/resetPassword" onclick="sendEmail()" class="text-primary small">Forgot password?</button>
+                <button type="button" onclick="sendEmail()" class="text-primary small">Forgot password?</button>
             </div>
 
             <!-- Login button -->
@@ -56,18 +56,19 @@
     } else {
         console.log("hello")
         emailError.classList.add("d-none");
-        const formData = new FormData()
-        const data = JSON.stringify({email})
+        const data = JSON.stringify({email:email})
+       
         fetch('/admin/resetPassword',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:data
-        }).then(data=>data.json())
-
+        }) 
+        .then((data)=>data.json())
         .then((data)=>{
-            if(data.status === "error") return  document.getElementById("error").innerHTML=`<div  class="alert alert-danger" role="alert">${data.message}</div>`
-            window.location.href = data.href
-        }).catch(error=>console.log(error))
+            
+            if(data.status === "error") return  document.getElementById("error").innerHTML=`<div  class="alert alert-danger" role="alert">${data.message}</div>`;
+             window.location.href = data.href
+        }).catch(error=>console.error(error))
     }
 }
 </script>

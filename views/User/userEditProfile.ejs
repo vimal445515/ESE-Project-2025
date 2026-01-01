@@ -141,14 +141,14 @@
 
 
 
-            </div> </div> </div> <%- include("../partials/footer") %>
+ </div> </div> </div> <%- include("../partials/footer") %>
 
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
             <script>
                  let cropper;
                     let croppedBlob;
-
+                   
                     function sendUserData(){
                         const data = new FormData()
                         const userName = document.querySelector("#userName").value;
@@ -173,7 +173,7 @@
                           let image = new File([croppedBlob],"profile.jpg",{
                             type:'image/jpeg'
                           })
-
+                          console.log(image)
                           data.append("image",image)
                         }
                         data.append("userName",userName)
@@ -212,7 +212,7 @@
                     
    
 
-                     // Open modal on image select
+     // Open modal on image select
     inputImage.addEventListener('change', (e) => {
 
       const file = e.target.files[0];
@@ -279,29 +279,29 @@
 
     let isValid = true;
 
-    // 1️⃣ Current password empty
+    //  Current password empty
     if (currentPassword.value.trim() === "") {
       currentPasswordError.innerText = "Current password is required";
       isValid = false;
     }
 
-    // 2️⃣ New password empty
+    //  New password empty
     if (newPassword.value.trim() === "") {
       newPasswordError.innerText = "New password is required";
       isValid = false;
     }
-    // 3️⃣ New password length
+    //  New password length
     else if (newPassword.value.length < 8) {
       newPasswordError.innerText = "Password must be at least 8 characters";
       isValid = false;
     }
-    // 4️⃣ New password same as current
+    //  New password same as current
     else if (currentPassword.value === newPassword.value) {
       newPasswordError.innerText = "New password cannot be same as current password";
       isValid = false;
     }
 
-    // 5️⃣ Confirm password check
+    //  Confirm password check
     if (confirmPassword.value.trim() === "") {
       confirmPasswordError.innerText = "Confirm password is required";
       isValid = false;

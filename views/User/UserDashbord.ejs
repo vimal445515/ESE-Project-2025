@@ -204,13 +204,12 @@
                     <div class="content-card">
                         <div class="card-header-custom">Address</div>
                         <div class="card-body-custom">
-                            <h6 class="fw-bold mb-2">Vimal V</h6>
+                            <h6 class="fw-bold mb-2"><%= address.userName%></h6>
                             <p class="text-muted small mb-2">
-                                karayoor, h(2), marayoor, idukki<br>
-                                Pin: 685620
+                                <%= address.address%> <%= address.state%> <%= address.district%> <%= address.pinCode%>
                             </p>
-                            <p class="text-muted small mb-2">Phone Number: +91 9999999999</p>
-                            <p class="text-muted small mb-4">Email: vimal@gmail.com</p>
+                            <p class="text-muted small mb-2">Phone Number: +91 <%= address.phoneNumber%></p>
+                            <p class="text-muted small mb-4">Email:<%= address.email%></p>
                             
                             <a href="/address" class="btn btn-outline-custom w-100">Edit Address</a>
                         </div>

@@ -6,6 +6,7 @@ import userService from "../../Service/userService.js"
 
 const findEmail= async (req,res,next)=>{
    const {email} = req.body
+   console.log("this is wrking")
    const data = await adminService.getAdminFromDB(email)
   if(!data) return res.status(404).json({status:"error",message:"User not found"});
   next()
