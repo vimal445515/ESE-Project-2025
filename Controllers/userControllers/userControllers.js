@@ -42,7 +42,7 @@ const authentication = async (req,res)=>{
   const data = await user.findUserFromDB(email)
   if(!data) return res.status(404).render('User/login',{userName:null,status:"error",message:"User Not found"});
   if(!hash.comparePassword(password,data.password)) return res.status(401).render("User/login",{userName:null,status:'error',message:"invaid password"});
-  console.log(data)
+
   req.session.userName = data.userName
   req.session.email = data.email
   req.session.role = data.role
@@ -50,7 +50,6 @@ const authentication = async (req,res)=>{
   req.session.referralCode = data.referralId;
   req.session.profile = data.profile
   req.session._id = data._id
-
   console.log(req.session.userName);
   return res.status(200).redirect("/home");
 }

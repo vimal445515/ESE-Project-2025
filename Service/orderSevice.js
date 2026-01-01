@@ -5,6 +5,7 @@ import helper from '../helpers/helpers.js'
 import cartModel from '../Models/cartSchema.js'
 import addressModel from '../Models/addressSchema.js'
 import orderReturnModel from "../Models/orderReturnSchema.js"
+import wishlistModel from '../Models/wishlistSchema.js'
 
 
 
@@ -91,7 +92,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
 
         )
 
-
+        await wishlistModel.deleteOne({productId:product.productId,variantId:product.variantId})
 
     })
 
@@ -241,6 +242,18 @@ const getOrderById = async(orderId,sort)=>{
 }
 
 const updateOrderCancel = async(orderId)=>{
+   const items =  await orderModel.findOne({_id:orderId},{items:1,_id:0})
+   console.log("this is items",items[0])
+    items.items.forEach(async(item)=>{
+        await productModel.findOneAndUpdate(
+            {_id:item.productId},
+            {$inc:{'variants.$[variant].stock':item.quantity}},
+            {arrayFilters:[
+                {'variant._id':item.variantId}
+            ]}
+        )
+    })
+
     return await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"canceled"}})
 }
 
