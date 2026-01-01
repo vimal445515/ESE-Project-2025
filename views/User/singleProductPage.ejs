@@ -255,7 +255,7 @@
                     <input type="hidden" id="quantityforCheckout" name="quantity">
                     <input type="hidden" name="categoryId" value="<%= productData.categoryId%>">
                     <% if(productData.variants.stock < 1){%>
-                    <button class=" btn-disabled">Buy Now</button>
+                    <button  class=" btn-disabled">Buy Now</button>
                     <%}else{%>
                     <button id="addToCheckout" type="submit" class="btn buy-now-btn btn-primary  px-5 flex-grow-1 rounded-pill">Buy Now</button>
                    <%}%>
@@ -268,7 +268,7 @@
                     <input type="hidden" name="productId" value="<%= productData._id%>">
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
                      <% if(productData.variants.stock < 1){%>
-                        <button class="btn-disabled">Add to Cart</button>
+                        <button type="button" class="btn-disabled">Add to Cart</button>
                     <%}else{%>
                     <button  type="submit" id="addToCart" class="btn btn-outline-secondary"><i class="bi bi-cart-plus-fill fs-5"></i> Add to Cart</button>
                       <%}%>

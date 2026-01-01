@@ -35,7 +35,7 @@ const loadCheckOutPage = async (req,res)=>{
      const defaultAddress  = await address.getUserAddress(req.session._id)
      const allAddress = await address.getAllAddressForCheckout(req.session._id)
             
-     res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,variantId:req?.query?.variantId});
+     res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,variantId:req?.query?.variantId,type:null,message:null});
    
 }
 

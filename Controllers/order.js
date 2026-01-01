@@ -29,10 +29,13 @@ const placeOrder = async(req,res)=>{
 
     // single product order
 
-
+ 
     let order;
       if(req.body?.productId){
         let products;
+              if( !await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
+              return res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:null,allAddress:null,products:null,orderDetails:null,productId:null,variantId:null,type:"error",message:"!Oops sorry product is out of stock"});
+        }
 
                 const data = await checkoutService.getProduct(req.body.productId,req.body.variantId)
         
@@ -48,6 +51,10 @@ const placeOrder = async(req,res)=>{
       else{
         //cart itme order page
         const products =  await cartService.getCartItems(req.session._id)
+        console.log("this is products",products);
+        if(!await orderSevice.checkOrderStockForCart(products)){
+          return res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:null,allAddress:null,products:null,orderDetails:null,productId:null,variantId:null,type:"error",message:"!Oops sorry product is out of stock"});
+        }
         const orderDetails =  cartService.cartSummary(products)
         order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
 

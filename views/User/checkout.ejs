@@ -40,6 +40,15 @@
 </head>
 <body>
 <%- include('../partials/navbar.ejs')%>
+<% if(type){%>
+   <div  class="alert alert-<%= type===`error`?`danger`:`success`%> d-flex align-items-center" role="alert">
+  <i class="bi bi-check-circle-fill me-2"></i>
+  <div>
+   <%= message%>
+
+  </div>
+</div>
+    <%}%>
 <form  action="/orders" method="post" class="container checkout-container">
     <div class="row g-4">
         
@@ -163,9 +172,11 @@
                             <label class="form-label">Address</label>
                             <select id="address" class="form-select">
                                 <option selected>Select...</option>
+                                <%if(!type){%>
                                 <% allAddress.forEach(address=>{%>
                                 <option value="<%= address._id%>"><%= address.address%></option>
                                  <%})%>
+                                 <%}%>
                             </select>
                         </div>
                     </div>
@@ -208,6 +219,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm p-4 summary-card">
                 <h5 class="fw-bold mb-4">Order Summery</h5>
+                 <%if(!type){%>
                 <% products.forEach(product=>{%>
                 <div class="product-item d-flex align-items-center mb-3">
                     <img src="/upload/<%= product.product.generalPhoto%>" class="me-3">
@@ -218,11 +230,12 @@
                     </div>
                 </div>
                 <%})%>
+                <%}%>
 
                 <div class="summary-details small">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Sub-total</span>
-                        <span class="fw-bold">₹<%= orderDetails.totalPriceCartItem%></span>
+                        <span class="fw-bold">₹<%= orderDetails?.totalPriceCartItem%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Shipping</span>
@@ -230,17 +243,17 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Discount</span>
-                        <span class="fw-bold">₹<%=orderDetails.totalDiscountPrice%></span>
+                        <span class="fw-bold">₹<%=orderDetails?.totalDiscountPrice%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="text-muted">Tax</span>
-                        <span class="fw-bold">₹<%= orderDetails.tax%></span>
+                        <span class="fw-bold">₹<%= orderDetails?.tax%></span>
                     </div>
                 </div>
 
                 <div class="total-row d-flex justify-content-between align-items-center mb-4">
                     <span class="h6 fw-bold mb-0">Total</span>
-                    <span class="h5 fw-bold mb-0">₹<%= orderDetails.total%> INR</span>
+                    <span class="h5 fw-bold mb-0">₹<%= orderDetails?.total%> INR</span>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>

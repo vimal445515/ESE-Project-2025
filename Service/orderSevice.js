@@ -130,6 +130,43 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
 
 }
 
+const checkOrderStock= async(productId,variantId)=>{
+    console.log("product",productId,variantId)
+   const product = await productModel.aggregate([
+        {$match:{_id:new mongoose.Types.ObjectId(productId)}},
+        {$unwind:"$variants"},
+        {$match:{"variants._id": new mongoose.Types.ObjectId(variantId)}}
+    ])
+        
+     console.log("this is ansers",product)
+        if(product[0].variants.stock < 1){
+            return false;
+        }
+
+    return true;
+
+
+}
+
+
+const checkOrderStockForCart= async(products)=>{
+   
+    for(let item of products){
+        const product = await productModel.aggregate([
+        {$match:{_id:new mongoose.Types.ObjectId(item.productId)}},
+        {$unwind:"$variants"},
+        {$match:{"variants._id": new mongoose.Types.ObjectId(item.variantId)}}
+    ])
+        
+     console.log("this is ansers",product)
+        if(product[0].variants.stock < 1){
+            return false;
+        }
+
+
+    }
+    return true;
+}
 
 const getSingleOrder = async(orderId)=>{
     
@@ -310,5 +347,7 @@ export default {
     getAllReturnNotifications,
     deletereturnOrder,
     acceptOrderReturn,
+    checkOrderStock,
+    checkOrderStockForCart
    
 }
