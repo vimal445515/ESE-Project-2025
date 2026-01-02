@@ -35,6 +35,19 @@
         .coupon-card { border: none; border-radius: 8px; }
         .btn-apply { border: 1px solid #4054d2; color: #4054d2; font-weight: 500; }
         .btn-apply:hover { background-color: #4054d2; color: #fff; }
+         .btn-disabled {
+            
+            background-color: #f2f2f2;
+            color: #333;
+            text-decoration: line-through;
+            font-weight: 600;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 140px;
+            cursor: not-allowed !important;
+        }
     </style>
 </head>
 <body>
@@ -127,7 +140,11 @@
                         <span class="h5 fw-bold mb-0">Total</span>
                         <span class="h5 fw-bold mb-0">₹<%= subTotal.total%> INR</span>
                     </div>
+                       <%if(cartItems.length < 1 ){%>
+                     <a href="" class="btn btn-disabled w-100 text-decoration-line-through ">PROCEED TO CHECKOUT</a>
+                     <%}else{%>
                     <a href="/checkout" class="btn btn-primary w-100 btn-checkout">PROCEED TO CHECKOUT</a>
+                    <%}%>
                 </div>
             </div>
 
