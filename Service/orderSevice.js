@@ -325,8 +325,12 @@ const acceptOrderReturn = async(orderId) =>{
 
 }
 
-
-
+const getOrderDataForDashbord = async(userId)=>{
+  const pending =  await orderModel.countDocuments({userId,$or:[{orderStatus:{$eq:'placed'}},{orderStatus:{$eq:"shippend"}}]});
+  const totalOrder = await orderModel.countDocuments({userId});
+  const completed = await orderModel.countDocuments({userId,orderStatus:"delivered"});
+  return {pending,totalOrder,completed}
+}
 
 export default {
     orderSingleProduct,
@@ -348,6 +352,7 @@ export default {
     deletereturnOrder,
     acceptOrderReturn,
     checkOrderStock,
-    checkOrderStockForCart
+    checkOrderStockForCart,
+    getOrderDataForDashbord
    
 }

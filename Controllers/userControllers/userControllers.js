@@ -8,6 +8,7 @@ import productService from "../../Service/productService.js";
 import product from "../product.js";
 import passport from 'passport'
 import addressService from "../../Service/addressService.js";
+import orderSevice from "../../Service/orderSevice.js";
 
 
 
@@ -152,7 +153,8 @@ const resetPassword = async(req,res) =>{
 
 const loadUserProfile= async(req,res)=>{
    const address = await addressService.getUserAddress(req.session._id)
-    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile,address})
+   const orderData = await orderSevice.getOrderDataForDashbord(req.session._id); 
+    res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile,address,orderData})
 }
 
 const editProfile=(req,res)=>{
