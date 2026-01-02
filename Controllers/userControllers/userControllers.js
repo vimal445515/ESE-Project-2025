@@ -161,7 +161,11 @@ const editProfile=(req,res)=>{
 }
 
  const sendData = async(req,res,next)=>{
-        
+        delete req.session.newUserName
+        delete req.session.newPhoneNumber
+        delete req.session.newImage  
+        delete req.session.newEmail
+
       const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)
         if(data === "error"){
            return res.status(409).json({status:"error",message:"User alredy exists"});

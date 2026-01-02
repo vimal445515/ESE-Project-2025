@@ -98,7 +98,7 @@ const getWatches = async ()=>{
 }
 
 const getNewProducts= async ()=>{
-  return await productModel.find().sort({createdAt:-1}).limit(10)
+  return await productModel.find({isDeleted:false}).sort({createdAt:-1}).limit(10)
 }
 
 

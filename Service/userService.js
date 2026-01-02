@@ -61,12 +61,14 @@ const verifyData = async(session,userName,email,phoneNumber,image) =>{
      {
        
         session.newPhoneNumber = phoneNumber;
+        
     }
 
     console.log("this is image",image)
      if(image ){
 
         session.newImage = image.filename;
+          
      }
 
      if(email !== session.email ){

@@ -28,7 +28,7 @@
         <h2 class="section-heading mb-5">Samsung Echo System</h2>
         <div class="d-flex justify-content-center gap-5 flex-wrap">
           <% data.forEach((category)=>{ %>
-              <div class="eco-item">
+              <div class="eco-item" onclick="window.location.href=`/products?page=1&sort=&category=<%= category.categoryName%>`">
                 <div class="icon-box"><img src="<%= category.thumbnail%>" alt="Phone"></div>
                 <span><%= category.categoryName %></span>
             </div>
@@ -41,9 +41,9 @@
         <div class="mid-hero-overlay">
             <div class="promo-text">
                 <h3><i class="fa-solid fa-arrow-right-long me-2"></i> SES</h3>
-                <p class="small-text">From ₹3000 to ₹10,000. Every product</p>
+                <p class="small-text">From ₹20,000 to ₹30,000. Every product</p>
                 <div class="mt-3">
-                    <button class="btn btn-primary me-3">Buy</button>
+                    <button onclick="window.location.href=`/products?page=1&category=all&priceRange=price20k30k`" class="btn btn-primary me-3">Buy</button>
                 </div>
             </div>
             
@@ -53,10 +53,10 @@
 
     <section class="product-collection py-5 bg-white">
         <div class="container position-relative">
-            <h2 class="section-heading text-center mb-5">Newest Ses Collection</h2>
+            <h2 class="section-heading text-center mb-5">Newest SES Collection</h2>
             
-           <button id="left" class="nav-arrow prev-arrow"><i class="fa-solid fa-chevron-left"></i></button>
-            <button id="right" class="nav-arrow next-arrow"><i class="fa-solid fa-chevron-right"></i></button>
+           <button  class="nav-arrow prev-arrow"><i class="fa-solid fa-chevron-left"></i></button>
+            <button  class="nav-arrow next-arrow"><i class="fa-solid fa-chevron-right"></i></button>
            
             <div class="product-slider">
                 <%newProducts.forEach((product)=>{%>
@@ -65,7 +65,7 @@
                     <img src="upload/<%= product.generalPhoto%>" alt="<%= product.productName%>" class="img-fluid product-img">
                     <h5><%= product.productName%></h5>
                     <p class="price">₹<%= product.basePrice %></p>
-                    <button class="btn-buy-full">Buy</button>
+                    <button onclick="window.location.href=`/productDetails/<%= product._id%>`" class="btn-buy-full">Buy</button>
                 </div> 
                 <%})%>
             </div>
@@ -87,13 +87,13 @@
             <button id="left" class="nav-arrow prev-arrow"><i class="fa-solid fa-chevron-left"></i></button>
             <button id="right" class="nav-arrow next-arrow"><i class="fa-solid fa-chevron-right"></i></button>
 
-            <div class="product-slider">
+            <div class="product-slider " id="watch-slide">
                 <% watches.forEach((watch)=>{%>
                 <div class="product-card">
                     <img src="upload/<%= watch.generalPhoto%>" alt="<%= watch.productName%>" class="img-fluid product-img rounded-circle">
                     <h5><%= watch.productName%></h5>
                     <p class="price">₹<%= watch.basePrice%></p>
-                    <button class="btn-buy-full">Buy</button>
+                    <button onclick="window.location.href=`/productDetails/<%= watch._id%>`" class="btn-buy-full">Buy</button>
                 </div>
                 <%})%>
             </div>
@@ -106,6 +106,10 @@
     const nextBtn = document.querySelector(".next-arrow");
     const prevBtn = document.querySelector(".prev-arrow");
 
+    const watchSlide =  document.getElementById("watch-slide");
+    const watchNextBtn = document.getElementById("right")
+    const watchPrevBtn = document.getElementById("left")
+
     const scrollAmount = 250;
 
     nextBtn.addEventListener("click", () => {
@@ -115,6 +119,16 @@
     prevBtn.addEventListener("click", () => {
         slider.scrollLeft -= scrollAmount;
     });
+
+    watchNextBtn.addEventListener('click',()=>{
+        console.log("this button is working")
+        watchSlide.scrollLeft+=scrollAmount;
+    })
+
+    watchPrevBtn.addEventListener('click',()=>{
+        watchSlide.scrollLeft -=scrollAmount;
+    })
+
 </script>
 
     </script>

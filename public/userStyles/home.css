@@ -1,6 +1,4 @@
-/* =========================================
-   1. GLOBAL STYLES & FONTS
-   ========================================= */
+
 :root {
     --samsung-blue: #1428a0;
     --samsung-black: #000000;
@@ -24,14 +22,12 @@ a {
     text-decoration: none;
 }
 
-/* =========================================
-   2. TOP HERO SECTION
-   ========================================= */
+
 .top-hero {
-    /* Deep blue gradient based on the top screenshot */
+  
     background: linear-gradient(135deg, #021B79 0%, #0575E6 100%);
     color: white;
-    padding: 80px 0 0 0; /* Adjust padding for navbar */
+    padding: 80px 0 0 0; 
     min-height: 500px;
     position: relative;
     overflow: hidden;
@@ -219,7 +215,7 @@ a {
 }
 
 .product-slider::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none; 
 }
 
 /* Individual Product Card */
@@ -291,9 +287,7 @@ a {
     background-color: #2b49f5;
 }
 
-/* =========================================
-   6. BLACK BANNER (Galaxy Watch)
-   ========================================= */
+
 .black-banner {
     background-color: #000;
     color: white;
@@ -311,23 +305,21 @@ a {
     margin: 0;
 }
 
-/* =========================================
-   7. FOOTER ADJUSTMENTS (Optional)
-   ========================================= */
+
 footer {
     background-color: #000;
     color: white;
     padding-top: 50px;
 }
 
-/* Mobile Responsiveness */
+
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 2.5rem;
     }
     
     .hero-image-placeholder img {
-        display: none; /* Hide huge phone on mobile or adjust sizing */
+        display: none; 
     }
 
     .promo-text h3 {
