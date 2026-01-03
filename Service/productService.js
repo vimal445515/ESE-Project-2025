@@ -64,8 +64,18 @@ const getCategory = async(_id) =>{
 }
 
 const editProductInDB = async(productName,basePrice,description,category,discound,generalPhoto,variantsData,_id)=>
-{ 
-  return await productModel.findOneAndUpdate({_id},{$set:{productName,basePrice,description,categoryId:category,discound,generalPhoto,'variants.0':variantsData}})    
+{ const variantId = await productModel.find({_id})
+    await productModel.findOneAndUpdate({_id},{$set:{productName,basePrice,description,categoryId:category,discound,generalPhoto,
+      
+      'variants.$[variant].price':variantsData[0].price,
+      'variants.$[variant].stock':variantsData[0].stock,
+      'variants.$[variant].storage':variantsData[0].storage,
+      'variants.$[variant].ram':variantsData[0].ram,
+      'variants.$[variant].images':variantsData[0].images
+
+    }},{arrayFilters:[{'variant._id':variantId[0].variants[0]._id}]})
+   const data =  await productModel.findOne({_id})
+   return data
 }
 
 const deleteProductFromDB = async(_id)=>{

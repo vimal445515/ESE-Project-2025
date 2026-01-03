@@ -131,15 +131,15 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
 }
 
 const checkOrderStock= async(productId,variantId)=>{
-    console.log("product",productId,variantId)
+    console.log("this is wrking",productId,variantId)
    const product = await productModel.aggregate([
         {$match:{_id:new mongoose.Types.ObjectId(productId)}},
         {$unwind:"$variants"},
         {$match:{"variants._id": new mongoose.Types.ObjectId(variantId)}}
     ])
         
-     console.log("this is ansers",product)
-        if(product[0].variants.stock < 1){
+     console.log("this is new prodduct",product)
+        if(product.length===0 || product[0]?.variants?.stock < 1){
             return false;
         }
 
@@ -150,22 +150,24 @@ const checkOrderStock= async(productId,variantId)=>{
 
 
 const checkOrderStockForCart= async(products)=>{
-   
-    for(let item of products){
+    let flag = true
+        for(let item of products){
         const product = await productModel.aggregate([
-        {$match:{_id:new mongoose.Types.ObjectId(item.productId)}},
+        {$match:{_id:item.productId}},
         {$unwind:"$variants"},
-        {$match:{"variants._id": new mongoose.Types.ObjectId(item.variantId)}}
+        {$match:{"variants._id":item.variantId}}
     ])
         
-     console.log("this is ansers",product)
         if(product[0].variants.stock < 1){
-            return false;
+            console.log("this  is wrking")
+            return  false
+             
         }
 
 
     }
-    return true;
+    console.log(flag)
+    return flag;
 }
 
 const getSingleOrder = async(orderId)=>{

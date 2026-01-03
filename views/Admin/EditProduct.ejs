@@ -486,7 +486,9 @@
             window.location.href= `/admin/editProduct/${data._id}`
             alert("updated ")
         })
-        .catch("Somthing was worng")
+        .catch(()=>{
+            window.location.href="/admin/login"
+        })
     }
 
     function clean(){

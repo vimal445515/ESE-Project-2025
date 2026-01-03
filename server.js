@@ -15,6 +15,7 @@ import checkoutRouter from './Routers/checkoutRouter.js'
 import orderRouter from './Routers/orderRouter.js'
 import invoiceRoutes from "./Routers/invoiceRouter.js";
 import reviewRouter from "./Routers/reviewRouter.js"
+import flash from 'connect-flash'
 
 
 env.config()
@@ -22,6 +23,8 @@ let app = express();
 let __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename)
 connectDb()
+
+app.use(flash())
 
 app.use(nocache())
 app.use(sessionMiddleware)
@@ -32,6 +35,14 @@ app.use(express.urlencoded({extended:true}))
 app.set("views",path.join(__dirname,"views"))
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+app.use((req,res,next)=>{
+    res.locals.error = req.flash("error")
+    res.locals.success  = req.flash("success")
+    next()
+})
+
 app.use("/admin",adminRouter);
 app.use(userRouter)
 app.use("/address",addressRouter)

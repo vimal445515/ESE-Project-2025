@@ -161,7 +161,9 @@ This action cannot be undone.
                         <p class="text-muted small mb-0"><%= order.items.length%> Products  •  Order Placed in <%= order.createdAt.toISOString().slice(0,10)%></p>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <h3 class="fw-bold mb-0">₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
+                        <p>SubTotal: <%= order.items[0].price%></p>
+                        <p>GST :<%= order.pricing.tax%></p>
+                        <h3 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
                     </div>
                 </div>
             </div>

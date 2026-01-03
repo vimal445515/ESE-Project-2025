@@ -1,15 +1,21 @@
 import cartService from '../service/cartService.js'
 import productService from '../Service/productService.js'
 import categoryService from '../Service/categoryService.js'
+import orderSevice from '../Service/orderSevice.js'
 const leadCartPage = async(req,res) =>{
    
    const cartItems = await  cartService.getCartItems(req.session._id)
+ 
    const subTotal = cartService.cartSummary(cartItems)
     res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:null,message:null,cartItems:cartItems,subTotal});
 }
 const addToCart = async (req,res) =>{
    const isBlock = await productService.isBlocked(req.body.productId)
- 
+    if(!await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
+                   req.flash('error','product is out of stock!')
+                   return res.redirect(`/productDetails/${req.body.productId}`)
+      }
+
    if(req.body.categoryId !== undefined){
       if(await categoryService.isBlocked(req.body.categoryId)) return res.redirect('/products');
    }

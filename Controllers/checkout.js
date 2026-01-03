@@ -3,6 +3,7 @@ import cartService from "../Service/cartService.js"
 import checkoutService from "../Service/checkoutService.js";
 import productService from '../Service/productService.js'
 import categoryService from '../Service/categoryService.js'
+import orderSevice from "../Service/orderSevice.js";
 
 
 const loadCheckOutPage = async (req,res)=>{
@@ -11,9 +12,20 @@ const loadCheckOutPage = async (req,res)=>{
     let products;
     if(path ==="cart"){
            products =  await cartService.getCartItems(req.session._id)
+        
+            if(!await orderSevice.checkOrderStockForCart(products) || products.length ==0){
+                console.log("this is working")
+                req.flash('error','Product out of stock!')
+                return res.redirect('/cart');
+            }
            
     }
     else{
+            if(!await orderSevice.checkOrderStock(req.query.productId,req.query.variantId)){
+                req.flash('error','product is out of stock!')
+                return res.redirect(`/productDetails/${req.query.productId}`)
+            }
+
         const data = await checkoutService.getProduct(req.query.productId,req.query.variantId)
         products =[{product:{...data[0]}}]
         products[0].quantity = Number(req.query.quantity);

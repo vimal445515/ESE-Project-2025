@@ -63,8 +63,6 @@ const editProduct = async  (req,res) =>{
     
     data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variantsData,req.params.id)
     console.log(data.variants[0].images[0]);
-    const productCategory = await productService.getCategory(category);
-    const categories = await adminService.getCategories()
     res.status(200).json({_id:data._id})
 }
 

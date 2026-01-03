@@ -18,7 +18,6 @@ const findCategoryByName = async (name)=>{
 const isBlocked = async (categoryId) =>{
     
     const data = await categoryModel.findOne({_id:categoryId,isBlocked:false});
-    console.log("this is data",data)
     if(data){
         return false
     }

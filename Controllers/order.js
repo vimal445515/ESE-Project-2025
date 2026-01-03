@@ -33,30 +33,36 @@ const placeOrder = async(req,res)=>{
     let order;
       if(req.body?.productId){
         let products;
+              
               if( !await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
-              return res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:null,allAddress:null,products:null,orderDetails:null,productId:null,variantId:null,type:"error",message:"!Oops sorry product is out of stock"});
+               req.flash("error","This product is out of stock now");
+               return res.redirect(`/productDetails/${req.body.productId}`)
         }
 
                 const data = await checkoutService.getProduct(req.body.productId,req.body.variantId)
         
                 products =[{product:{...data[0]}}]
                 products[0].quantity = Number(req.body.quantity);
-                const orderDetails =  cartService.cartSummary(products)
                 
+                const orderDetails =  cartService.cartSummary(products)
+                // console.log("product data",orderDetails,products[0].product,data)
                 const [{product,quantity}] = products
                 
-              order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants.price,product.discound)
+              order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
 
       }
       else{
         //cart itme order page
         const products =  await cartService.getCartItems(req.session._id)
         console.log("this is products",products);
-        if(!await orderSevice.checkOrderStockForCart(products)){
-          return res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:null,allAddress:null,products:null,orderDetails:null,productId:null,variantId:null,type:"error",message:"!Oops sorry product is out of stock"});
+        if(!await orderSevice.checkOrderStockForCart(products) || products.length ===0){
+          req.flash('error','! Oops product out of stock');
+         return res.redirect('/cart')
         }
+        else{
         const orderDetails =  cartService.cartSummary(products)
         order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+        }
 
       }
       const orderId = order.orderId;
