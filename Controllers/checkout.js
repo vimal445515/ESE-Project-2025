@@ -18,6 +18,11 @@ const loadCheckOutPage = async (req,res)=>{
                 req.flash('error','Product out of stock!')
                 return res.redirect('/cart');
             }
+
+        if(await cartService.cartItemsBlocked(req.session._id)){
+            req.flash("error","product is unavailable")
+            return res.redirect("/cart");
+        }
            
     }
     else{
@@ -30,11 +35,15 @@ const loadCheckOutPage = async (req,res)=>{
         products =[{product:{...data[0]}}]
         products[0].quantity = Number(req.query.quantity);
           const isBlock = await productService.isBlocked(req.query.productId)
-          if(isBlock.length === 0) return res.redirect('/');
-         if(await categoryService.isBlocked(req.query.categoryId)){
+          if(isBlock.length === 0) {
+            req.flash("error","This product currently unavailable")
+        return res.redirect(`/productDetails/${req.query.productId}`);
+          };
 
-        console.log("this is working",req.query.categoryId)
-        return res.redirect('/products');
+          
+        if(await categoryService.isBlocked(req.query.categoryId)){
+        req.flash("error","This product currently unavailable")
+        return res.redirect(`/productDetails/${req.query.productId}`);
      } 
         
     }
@@ -47,7 +56,7 @@ const loadCheckOutPage = async (req,res)=>{
      const defaultAddress  = await address.getUserAddress(req.session._id)
      const allAddress = await address.getAllAddressForCheckout(req.session._id)
             
-     res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,variantId:req?.query?.variantId,type:null,message:null});
+     res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,categoryId:req.query.categoryId,variantId:req?.query?.variantId,type:null,message:null});
    
 }
 

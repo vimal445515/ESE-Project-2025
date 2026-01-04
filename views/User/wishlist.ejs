@@ -136,19 +136,24 @@
                                         <span class="price-new">₹<%= item.product.variants.price-parseInt((item.product.discound/100)*item.product.variants.price)%></span>
                                     </td>
                                      
-                                    <td><% if(item.product.variants.stock === 0){%>
+                                    <td>
+                                        <% if(item.category.isBlocked || item.product.isDeleted){%>
+                                        <span class="status-out-stock">Unavailable</span>
+                                        
+                                        <%}else if(item.product.variants.stock === 0){%>
                                         <span class="status-out-stock">Out of Stock</span><%}else{%>
                                             <span class="status-in-stock">In Stock</span>
                                              <%}%>
                                     </td>
-                                    <td class="d-flex text-end">
-                                        <% if(item.product.variants.stock === 0){%>
+                                    <td class="d-flex text-end"> 
+                                        <% if(item.product.variants.stock === 0 || item.category.isBlocked || item.product.isDeleted){%>
                                         <button class=" btn-disabled " >Add to Cart</button>
                                         <%}else{%>
                                         <form action="/cart" method="post">
                                         <input type="hidden" name="productId" value="<%= item.productId%>">
                                         <input type="hidden" name="variantId" value="<%= item.variantId%>">
                                         <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="categoryId" value="<%= item.product.categoryId%>">
                                         <button type="submit" class="btn-add-cart">Add to Cart</button>
                                         </form>
                                             <%}%>

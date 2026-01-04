@@ -124,8 +124,10 @@ const loadUserSideProductsPage = async(req,res)=>{
    wishlistId = wishlist._id;
   } 
 }catch(error){
-  return res.redirect('/products')
+  
+  return res.redirect(`/productDetails/${productData._id}`)
 }
+const categoryIsBlocked = await categoryService.isBlocked(productData.categoryId);
   const relateditems = await productService.getRelateditems(productData.categoryId);
   res.render("User/singleProductPage", {
     userName: req.session.userName,
@@ -138,7 +140,8 @@ const loadUserSideProductsPage = async(req,res)=>{
     isLiked:isLiked,
     wishlistId:wishlistId,
     review,
-    avarageRating:average.toFixed(1)
+    avarageRating:average.toFixed(1),
+    categoryIsBlocked
   });
 };
 

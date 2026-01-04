@@ -16,12 +16,9 @@ const findCategoryByName = async (name)=>{
 }
 
 const isBlocked = async (categoryId) =>{
-    
-    const data = await categoryModel.findOne({_id:categoryId,isBlocked:false});
-    if(data){
-        return false
-    }
-    return true
+    const data = await categoryModel.find({_id:categoryId});
+    console.log("working this category",data,categoryId)
+    return data[0].isBlocked;
 }
 
 const getAllCategory = async()=>{

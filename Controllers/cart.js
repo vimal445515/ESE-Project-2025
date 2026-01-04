@@ -16,11 +16,28 @@ const addToCart = async (req,res) =>{
                    return res.redirect(`/productDetails/${req.body.productId}`)
       }
 
-   if(req.body.categoryId !== undefined){
-      if(await categoryService.isBlocked(req.body.categoryId)) return res.redirect('/products');
-   }
+
+
+      if(req.body.categoryId !== undefined){
+         console.log(req.body.categoryId)
+         if(await categoryService.isBlocked(req.body.categoryId)){
+         console.log("this is working")
+         req.flash("error","This product 1 is unavailable now");
+         return res.redirect(`productDetails/${req.body.productId}`)
+        }
+        }
+
+  
    
+   
+   if(isBlock.length === 0){
+      req.flash("error","This product is unavailable now");
+      return res.redirect(`productDetails/${req.body.productId}`)
+   }
+
+
 if(req.body.categoryId !== undefined){
+   
     if(isBlock.length === 0) return res.redirect('/');
   }
   

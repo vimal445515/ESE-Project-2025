@@ -2,6 +2,8 @@ import orderSevice from "../Service/orderSevice.js"
 import checkoutService from "../Service/checkoutService.js"
 import cartService from "../Service/cartService.js"
 import helpers from '../helpers/helpers.js'
+import categoryService from "../Service/categoryService.js"
+import productService from "../Service/productService.js"
 
 const loadOrdersHistory = async(req,res)=>{
     
@@ -37,7 +39,18 @@ const placeOrder = async(req,res)=>{
               if( !await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
                req.flash("error","This product is out of stock now");
                return res.redirect(`/productDetails/${req.body.productId}`)
-        }
+              }
+
+               if(await categoryService.isBlocked(req.body.categoryId)){
+                      req.flash("error","This product currently unavailable")
+                      return res.redirect(`/productDetails/${req.body.productId}`);
+              }
+
+              const isBlock = await productService.isBlocked(req.body.productId)
+            if(isBlock.length === 0) {
+             req.flash("error","This product currently unavailable")
+               return res.redirect(`/productDetails/${req.body.productId}`);
+                        };
 
                 const data = await checkoutService.getProduct(req.body.productId,req.body.variantId)
         
@@ -53,8 +66,11 @@ const placeOrder = async(req,res)=>{
       }
       else{
         //cart itme order page
+        if(await cartService.cartItemsBlocked(req.session._id)){
+          req.flash("error","product is unavailable");
+          return res.redirect('/cart')
+        }
         const products =  await cartService.getCartItems(req.session._id)
-        console.log("this is products",products);
         if(!await orderSevice.checkOrderStockForCart(products) || products.length ===0){
           req.flash('error','! Oops product out of stock');
          return res.redirect('/cart')

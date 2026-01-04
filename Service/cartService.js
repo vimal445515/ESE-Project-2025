@@ -39,6 +39,8 @@ const getCartItems = async (id) =>{
             productName: 1,
             basePrice: 1,
             discound:1,
+            categoryId:1,
+            isDeleted:1,
             generalPhoto: 1,
             variants: 1
           }
@@ -47,10 +49,17 @@ const getCartItems = async (id) =>{
       as: "product"
     }
   },
-  { $unwind: "$product" }
+  { $unwind: "$product" },
+  {
+    $lookup:{
+      from:"categories",
+      localField:"product.categoryId",
+      foreignField:"_id",
+      as:"category"
+    }
+  },
+  {$unwind:"$category"}
 ]);
-
-   
 return data;
 
     
@@ -118,6 +127,18 @@ const cartSummary = (items)=>{
   
 }
 
+const cartItemsBlocked = async (userId)=>{
+const cartItems = await getCartItems(userId);
+ let flag = false;
+ cartItems.forEach((item)=>{
+  if(item.product.isDeleted || item.category.isBlocked){
+    flag = true;
+  }
+ })
+
+ return flag;
+}
+
 
 
 
@@ -129,5 +150,6 @@ export default {
     checkcartItem,
     decrementQuantity,
     incrementQuantity,
-    cartSummary
+    cartSummary,
+    cartItemsBlocked
 }

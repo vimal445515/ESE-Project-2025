@@ -179,14 +179,13 @@ const getSingleProduct= async (_id,storage,ram) =>{
   let pipeline =[]
   pipeline.push(
        {$match:{_id:new mongoose.Types.ObjectId(_id)}},
-       {$match:{isDeleted:false}},
+      //  {$match:{isDeleted:false}},
       {$lookup:{
         from:"categories",
         localField:"categoryId",
         foreignField:"_id",
         as:"category"
       }},
-      {$match:{"category.isBlocked":false}},
       {$unwind:'$variants'}      
     )
     if (storage !== undefined ) {

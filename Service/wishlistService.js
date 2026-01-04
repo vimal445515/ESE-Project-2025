@@ -26,6 +26,8 @@ const getWishlistItems = async(userId) =>{
                 {$project:{
                     productName:1,
                     generalPhoto:1,
+                    categoryId:1,
+                    isDeleted:1,
                     discound:1,
                     variants:1
                 }}
@@ -33,7 +35,17 @@ const getWishlistItems = async(userId) =>{
             as:"product",
         }
     },
-    {$unwind:"$product"}
+    {$unwind:"$product"},
+
+    {
+        $lookup:{
+            from:"categories",
+            localField:"product.categoryId",
+            foreignField:"_id",
+            as:"category"
+        }
+    },
+    {$unwind:"$category"}
    ])
    if(data.length > 0){
     return data

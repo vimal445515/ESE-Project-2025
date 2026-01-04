@@ -1,6 +1,7 @@
 import wishlistService from "../Service/wishlistService.js"
 const loadWishListPage= async(req,res)=>{
       const data  = await wishlistService.getWishlistItems(req.session._id)
+      console.log(data)
       if(data){
         res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile,data,noData:false})
       }
