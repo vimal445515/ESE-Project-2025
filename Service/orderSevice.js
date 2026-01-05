@@ -117,7 +117,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
             phoneNumber:reqObj.phoneNumber
         },
         pricing:{
-            subTotal:orderDetails.otalPriceCartItem,
+            subTotal:orderDetails.totalPriceCartItem,
             discount:orderDetails.totalDiscountPrice,
             tax:orderDetails.tax,
             totalAmount:orderDetails.total

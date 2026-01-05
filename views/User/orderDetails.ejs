@@ -161,9 +161,7 @@ This action cannot be undone.
                         <p class="text-muted small mb-0"><%= order.items.length%> Products  •  Order Placed in <%= order.createdAt.toISOString().slice(0,10)%></p>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <p>SubTotal: <%= order.items[0].price%></p>
-                        <p>GST :<%= order.pricing.tax%></p>
-                        <h3 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
+                        <h3 class="fw-bold mb-0">₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
                     </div>
                 </div>
             </div>
@@ -274,7 +272,7 @@ This action cannot be undone.
                                 </div>
                             </td>
                             <td class="text-muted"><%= item.quantity%></td>
-                            <td class="fw-bold">₹<%= item.price%>
+                            <td class="fw-bold">₹<%= item.price.toLocaleString("en-IN")%>
                                  <%if(order.orderStatus ==="delivered"){%>
                              <button type="button" class=" ms-5 btn text-primary text-decoration-none fw-bold small" onclick="showReviewModal('<%= item.productId%>','<%= item.variantId%>')">
                               Write a Review
@@ -283,6 +281,15 @@ This action cannot be undone.
                               </td>
                         </tr>
                         <%})%>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')%></p>
+                        <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
+                        <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
+                        </td>
+                    </tr>
                        
                     </tbody>
                 </table>
