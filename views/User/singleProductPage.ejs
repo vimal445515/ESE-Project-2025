@@ -314,7 +314,7 @@
                 <%}else{%>
                     <div class="input-group" style="width: 120px;">
                     <button id="decrementButton" class="btn btn-outline-secondary counter-btn rounded-start" type="button">-</button>
-                    <input type="text" id="quantityInput" value="1" class="form-control text-center p-0"  style="height: 40px; width: 40px;">
+                    <input type="text" id="quantityInput"   class="form-control text-center p-0"  style="height: 40px; width: 40px;">
                     <button id="incrementButton" class="btn btn-outline-secondary counter-btn rounded-end" type="button">+</button>
                 </div>
                 <%}%>
@@ -499,7 +499,10 @@
     </div>
 <%- include("../partials/footer.ejs") %>
 <script>
-    let quantity = 1;
+    let quantity = sessionStorage.getItem("quantity")?sessionStorage.getItem('quantity'):1;
+    document.getElementById('quantity').value = sessionStorage.getItem("quantity")?sessionStorage.getItem('quantity'):1;
+    document.getElementById("quantityforCheckout").value = sessionStorage.getItem("quantity")?sessionStorage.getItem('quantity'):1;
+    document.getElementById('quantityInput').value = sessionStorage.getItem("quantity")?sessionStorage.getItem('quantity'):1;
     let ram = '<%= ram%>'
     document.getElementById("quantityforCheckout").value = quantity;
    
@@ -534,21 +537,21 @@ document.querySelector('.fw-bold').textContent =  `<%= productData.productName%>
  
 document.getElementById('decrementButton').addEventListener("click",()=>{
    
- if(quantity !== 1){
+ if(quantity > 1){
     quantity--;
-    document.getElementById('quantityInput').value = quantity;
-    documen.getElementById('quantity').value = quantity
-     document.getElementById("quantityforCheckout").value = quantity;
+    sessionStorage.setItem('quantity',quantity)
+    document.getElementById('quantityInput').value = sessionStorage.getItem('quantity',quantity);
+    document.getElementById('quantity').value = sessionStorage.getItem('quantity',quantity)
+    document.getElementById("quantityforCheckout").value = sessionStorage.getItem('quantity',quantity);
 
  }
 })
 document.getElementById('incrementButton').addEventListener("click",()=>{
-   
-     if(quantity < 10){
+     const stock = Number('<%= productData.variants.stock%>')
+     if(quantity < stock){
     quantity++;
-    document.getElementById('quantityInput').value = quantity;
-    document.getElementById('quantity').value = quantity
-     document.getElementById("quantityforCheckout").value = quantity;
+    sessionStorage.setItem('quantity',quantity);
+    redirectWithFilters()
 
  }
 })
@@ -576,7 +579,7 @@ document.getElementById('addToCart').addEventListener('click',(e)=>{
  document.querySelector('#remove').addEventListener("click",()=>{
                        
                      let data  = `<%=  wishlistId%>`
-                        console.log(data)
+                    
                         fetch('/wishlist',{
                             method:"DELETE",
                             headers:{"Content-Type":"application/json"},
@@ -585,8 +588,13 @@ document.getElementById('addToCart').addEventListener('click',(e)=>{
                            window.location.reload()
                         })
                     })
-            
 
+                    document.querySelectorAll('form').forEach((e)=>{
+                        e.addEventListener("submit",()=>{
+                            sessionStorage.clear()
+                        })
+                    })
+          
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

@@ -100,6 +100,8 @@ const loadUserSideProductsPage = async(req,res)=>{
  const id = req.params.id;
   const storage = req.query.rom;
   const ram = req.query.ram;
+  
+
   let productData;
     let isLiked = false
     let wishlistId = null

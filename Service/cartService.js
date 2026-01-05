@@ -1,5 +1,6 @@
 import cartModel from '../Models/cartSchema.js'
 import mongoose from 'mongoose'
+import {productModel} from '../Models/productSchema.js'
 const addProduct = async(productId,variantId,userId,quantity) =>{
     try{
         await cartModel.create({
@@ -97,7 +98,7 @@ const decrementQuantity = async(productId,variantId) =>{
 
 const incrementQuantity = async(productId,variantId,quantity) =>{
   try{
-    await cartModel.findOneAndUpdate({productId:productId,variantId:variantId},{$inc:{quantity:1}})
+    await cartModel.findOneAndUpdate({productId:productId,variantId:variantId},{$inc:{quantity:quantity}})
   }
   catch(error){
 
@@ -140,6 +141,20 @@ const cartItems = await getCartItems(userId);
 }
 
 
+const getCartSingleItem = async(productId,variantId)=>{
+  
+ return await productModel.aggregate([
+    {$match:{_id:new mongoose.Types.ObjectId(productId)}},
+    {$unwind:"$variants"},
+    {$match:{"variants._id":new mongoose.Types.ObjectId(variantId)}}
+    
+  ])
+}
+
+const getCartQuantity = async(productId,variantId)=>{
+  return await cartModel.findOne({productId,variantId},{_id:0,quantity:1});
+}
+
 
 
 
@@ -151,5 +166,7 @@ export default {
     decrementQuantity,
     incrementQuantity,
     cartSummary,
-    cartItemsBlocked
+    cartItemsBlocked,
+    getCartSingleItem,
+    getCartQuantity 
 }

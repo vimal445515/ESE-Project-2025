@@ -27,9 +27,6 @@ const addToCart = async (req,res) =>{
         }
         }
 
-  
-   
-   
    if(isBlock.length === 0){
       req.flash("error","This product is unavailable now");
       return res.redirect(`productDetails/${req.body.productId}`)
@@ -53,10 +50,20 @@ if(req.body.categoryId !== undefined){
        return res.redirect("/cart")
       }
 
-      console.log(req.body?.quantity)
-      if(req.body?.quantity < 10){
-         
-          await cartService.incrementQuantity(req.body.productId,req.body.variantId,req.body?.quantity)
+     
+      const stock = await cartService.getCartSingleItem(req.body.productId,req.body.variantId)
+      const cartData = await cartService.getCartQuantity(req.body.productId,req.body.variantId)
+       let quantity =req.body?.quantity
+       if(req.headers.referer.split('/').pop().trim()==="cart"){
+            quantity = 1
+         }
+      if(cartData.quantity + Number(quantity) > stock[0].variants.stock){
+         req.flash("error",`Only ${stock[0].variants.stock} items available`)
+         return res.redirect('/cart');
+      }
+     
+      if(req.body?.quantity < stock[0].variants.stock){
+          await cartService.incrementQuantity(req.body.productId,req.body.variantId,quantity)
       return res.redirect('/cart');
       }
       else{
@@ -69,6 +76,7 @@ if(req.body.categoryId !== undefined){
     await cartService.addProduct(req.body.productId,req.body.variantId,req.session._id,parseInt(req.body.quantity))
     res.redirect('/cart')
  }catch(error){
+      console.log(error)
       res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:"error",message:error.message});
  }
     
