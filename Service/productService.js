@@ -56,24 +56,45 @@ const countPages = async () =>{
 }
 
 
-const getProduct = async (_id) =>{
-  return await productModel.findOne({_id});
+const getProduct = async (_id,index) =>{
+  console.log("this is wrking")
+ const oldData = await productModel.findOne({_id});
+ const data = await productModel.aggregate([
+    {$match:{_id:new mongoose.Types.ObjectId(_id)}},
+    {$unwind:'$variants'},
+    {$skip:index},
+    {$limit:1}
+  ])
+  
+  console.log(data[0],"and ",oldData)
+  return data[0]
+ 
 }
+
+const variantCount = async (productId)=>{
+ const value =  await productModel.aggregate([
+    {$match:{_id:new mongoose.Types.ObjectId(productId)}},
+    {$project:{'variants':1,'_id':0}}
+  ])
+  
+  return value[0]
+}
+
 const getCategory = async(_id) =>{
   return await categoryModel.findOne({_id})
 }
 
-const editProductInDB = async(productName,basePrice,description,category,discound,generalPhoto,variantsData,_id)=>
+const editProductInDB = async(productName,basePrice,description,category,discound,generalPhoto,variantsData,_id,index)=>
 { const variantId = await productModel.find({_id})
     await productModel.findOneAndUpdate({_id},{$set:{productName,basePrice,description,categoryId:category,discound,generalPhoto,
       
-      'variants.$[variant].price':variantsData[0].price,
-      'variants.$[variant].stock':variantsData[0].stock,
-      'variants.$[variant].storage':variantsData[0].storage,
-      'variants.$[variant].ram':variantsData[0].ram,
-      'variants.$[variant].images':variantsData[0].images
+      'variants.$[variant].price':variantsData.price,
+      'variants.$[variant].stock':variantsData.stock,
+      'variants.$[variant].storage':variantsData.storage,
+      'variants.$[variant].ram':variantsData.ram,
+      'variants.$[variant].images':variantsData.images
 
-    }},{arrayFilters:[{'variant._id':variantId[0].variants[0]._id}]})
+    }},{arrayFilters:[{'variant._id':variantId[0].variants[Number(index)]._id}]})
    const data =  await productModel.findOne({_id})
    return data
 }
@@ -241,7 +262,8 @@ export default {
  getVariants,
  getRelateditems,
  isBlocked,
- unDeleteProductFromDB
+ unDeleteProductFromDB,
+ variantCount
 
 
 }

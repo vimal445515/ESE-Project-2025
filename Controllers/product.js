@@ -25,45 +25,57 @@ const storeProducts = async (req,res)=>{
 
 
  const loadEditProductPage = async (req,res)=>{
-   const id =  req.params.id
-    const product =  await productService.getProduct(id)
+    const id =  req.params.id
+    const index = Number(req.query.variant)?Number(req.query.variant):0;
+    console.log(index,req.query.variant)
+    const product =  await productService.getProduct(id,index)
+    const variantsData = await productService.variantCount(id);
     const productCategory = await productService.getCategory(product.categoryId);
     const categories = await adminService.getCategoriesForProductEdit()
-    res.render("Admin/editProduct",{product,categories,productCategory})
+    res.render("Admin/editProduct",{product,categories,productCategory,variantsData,index})
 }
 const editProduct = async  (req,res) =>{
-     let  data = await productService.getProduct(req.params.id);
+  try{
+    let index = req.query.variant?Number(req.query.variant):0;
+     let  data = await productService.getProduct(req.params.id,index);
     
         let  productName = req.body.productName||data.productName;
         let  basePrice = req.body.basePrice||data.basePrice;
         let  description = req.body.description||data.description;
         let  category = req.body.category||data.categoryId;
-        let  discound = req.body.discound|data.discound;
+        let  discound = req.body.discound||data.discound;
     
-     let variantsData = productHelper.structureProductData(req.files,req.body)
+     let variantsData = productHelper.structureProductDataForEdit(req.files,req.body,0)
      let generalPhoto = productHelper.extractGeneralImage(req?.files)
-       
+     console.log("price this ist",data.variants.price)
 
     
 
     
      generalPhoto = generalPhoto||data.generalPhoto;
-    
-     variantsData[0].price = variantsData[0]?.price||data.variants[0].price
-     variantsData[0].stock = variantsData[0]?.stock||data.variants[0].stock
-     variantsData[0].storage= variantsData[0]?.storage||data.variants[0].storage
-     variantsData[0].ram = variantsData[0].ram||data.variants[0].ram
-    
-     variantsData[0].images[0] = variantsData[0]?.images[0]||data.variants[0].images[0]
-     variantsData[0].images[1] = variantsData[0]?.images[1]||data.variants[0].images[1]
-     variantsData[0].images[2] = variantsData[0]?.images[2]||data.variants[0].images[2]
-     variantsData[0].images[3] = variantsData[0]?.images[3]||data.variants[0].images[3]
+    let variant = {};
+   
+     variant.price = variantsData[0]?.price||data.variants.price
+     variant.stock = variantsData[0]?.stock||data.variants.stock
+     variant.storage= variantsData[0]?.storage||data.variants.storage
+     variant.ram = variantsData[0].ram||data.variants.ram
+     console.log(variantsData,data)
+     variant.images = [
+      variantsData[0]?.images[0]?variantsData[0]?.images[0]:data.variants.images[0],
+      variantsData[0]?.images[1]?variantsData[0]?.images[1]:data.variants.images[1],
+      variantsData[0]?.images[2]?variantsData[0]?.images[2]:data.variants.images[2],
+      variantsData[0]?.images[3]?variantsData[0]?.images[3]:data.variants.images[3],
+     ]
+      
 
      productHelper.deleteExeistingImage(generalPhoto,variantsData[0]?.images[0],variantsData[0]?.images[1],variantsData[0]?.images[2],variantsData[0]?.images[3],data);
     
-    data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variantsData,req.params.id)
+    data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variant,req.params.id,index)
     console.log(data.variants[0].images[0]);
     res.status(200).json({_id:data._id})
+    }catch(error){
+      console.log(error)
+    }
 }
 
 

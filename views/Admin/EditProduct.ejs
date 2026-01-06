@@ -119,6 +119,8 @@
 <body>
 
 <div class="content-body container-fluid">
+<%- include('../partials/notification.ejs')%>
+
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -217,7 +219,7 @@
                 <div class="mb-0">
                     <label for="productCategory" class="form-label">Product Category</label>
                     <select class="form-select" id="productCategory">
-                        <option value="<%= productCategory._Id %>" selected><%= productCategory.categoryName %></option>
+                        <option value="<%= productCategory._id %>" selected><%= productCategory.categoryName %></option>
                         <% categories.forEach((category)=>{ %>
                             <option name="categoryId" value="<%= category._id%>" id="category"><%= category.categoryName%><%= category.Id%></option>
                        <% })%>
@@ -232,29 +234,31 @@
                 <h3 class="section-title">Variant</h3>
 
                 <div class="d-flex align-items-center mb-3">
-                    <div class="variant-pill bg-success me-2 text-white">1</div>
-                    <div class="variant-pill bg-danger me-2 text-white">2</div>
+                    <% for(let i =0; i < variantsData.variants.length; i++){%>
+                    <a href="/admin/editProduct/<%= product._id%>?variant=<%=i%>" class="variant-pill bg-success me-2 text-white"><%= i+1%></a>
+                    <%}%>
+                   
                 </div>
 
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
-                    <input type="text" value="<%= product.variants[0].storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
+                    <input type="text" value="<%= product.variants.storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
                     <p id="storageError" class="text-danger small"></p>
                      <p id="categoryError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="ram" class="form-label">Enter Ram</label>
-                    <input type="text" name="ram" value="<%= product.variants[0].ram %>" class="form-control" id="ram" placeholder="Enter Ram">
+                    <input type="text" name="ram" value="<%= product.variants.ram %>" class="form-control" id="ram" placeholder="Enter Ram">
                     <p id="ramError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="stock" class="form-label">Stock</label>
-                    <input type="number" name="stock" value="<%= product.variants[0].stock %>" class="form-control" id="stock" placeholder="Stock">
+                    <input type="number" name="stock" value="<%= product.variants.stock %>" class="form-control" id="stock" placeholder="Stock">
                     <p id="stockError" class="text-danger small"></p>
                 </div>
                 <div class="mb-0">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" value="<%= product.variants[0].price %>" class="form-control" id="price" placeholder="price">
+                    <input type="text" name="price" value="<%= product.variants.price %>" class="form-control" id="price" placeholder="price">
                     <p id="variantPriceError" class="text-danger small"></p>
                 </div>
             </div>
@@ -293,7 +297,7 @@
 <script>
 
      
-     document.getElementById('cropModal')
+    document.getElementById('cropModal')
   .addEventListener('shown.bs.modal', () => {
     if (cropper) {
       cropper.resize();
@@ -477,12 +481,15 @@
         formData.append(`generalPhoto`,croppedBlob);
         formData.append(`category`,category);
 
-        fetch('/admin/product/edit/<%= product._id %>',{
+        fetch('/admin/product/edit/<%= product._id%>?variant=<%=index%>',{
             method:'PATCH',
             body:formData
         })
         .then(data =>data.json())
         .then(data =>{
+            if(data?.href){
+                window.location.href=data.href;
+            }
             window.location.href= `/admin/editProduct/${data._id}`
             alert("updated ")
         })

@@ -38,6 +38,7 @@ app.use(passport.session());
 
 
 app.use((req,res,next)=>{
+    
     res.locals.error = req.flash("error")
     res.locals.success  = req.flash("success")
     next()
@@ -53,6 +54,21 @@ app.use("/orders",orderRouter)
 app.use(invoiceRoutes);
 app.use(reviewRouter);
 
+// app.use((error,req,res,next)=>{
+//     const isFetch = req.headers["content-type"]?.includes("application/json") || req.headers["x-requested-with"] === "XMLHttpRequest";
+//     if(isFetch){
+//          if(error?.code==="LIMIT_FILE_SIZE"){
+//             req.flash("error",'File have a limit 2MB')
+//             res.status(415).json({href:req.originalUrl})
+//          }
+//     }else{
+        
+//     }
+//     if(error?.code==="LIMIT_FILE_SIZE"){
+//         req.flash("error",'File have a limit 2MB')
+//         res.status(415).redirect("back")
+//     }
+// })
 
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}`);
