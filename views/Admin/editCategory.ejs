@@ -103,6 +103,7 @@
  <% if(status === "error"){%>
             <p class="alert alert-danger">Error! <%= message%></p>
            <%} %>
+ <%- include("../partials/notification.ejs") %>
 <div class="container-fluid">
 <div class="modal fade" id="offerModal" tabindex="-1" aria-labelledby="offerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

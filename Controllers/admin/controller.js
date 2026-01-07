@@ -160,7 +160,11 @@ export const handleEditImage = (req,res,next)=>{
         
     }
     if(error?.message ==='only image file are allowed'){
-        return res.status(400).json(error.message);
+       req.flash("error",error.message);
+       let url = req.originalUrl.split("/")
+        let id = url.pop()
+       
+       res.redirect(`/admin/editCategory/${id}`);
     }
       next()
     })

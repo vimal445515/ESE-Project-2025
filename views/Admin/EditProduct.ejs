@@ -487,8 +487,11 @@
         })
         .then(data =>data.json())
         .then(data =>{
-            if(data?.href){
-                window.location.href=data.href;
+            console.log(data)
+            if(data?.obj){
+              data =  data.obj.split('/')
+              data = data[data.length-1]
+              return  window.location.href = `/admin/editProduct/${data }`;
             }
             window.location.href= `/admin/editProduct/${data._id}`
             alert("updated ")

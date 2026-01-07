@@ -47,7 +47,7 @@
         <div class="row">
             
             <%- include('../partials/userSideBar.ejs',{page:'account'}) %>
-
+            <%- include("../partials/notification.ejs") %>
             <div class="col-lg-9">
                 
                 <div class="card settings-card">
@@ -185,18 +185,19 @@
                         body:data
                        }).then(data=>data.json())
                        .then(data=>{
-                         console.log("datacomming ",data.href,data.status)
-                        if(data.status=='success'){
-                            console.log("datacomming this  ",data.href)
+                        
+                        if(data?.status=='success'){
+                           
                             window.location.href=data.href
                         }
+                      
                         else if(data.status=='updated'){
 
                           window.location.href=data.href
                         }
                         if(data.status=="error")
                         {
-                            console.log(data.status,data.message)
+                            
                         }
                        })
                  

@@ -16,6 +16,7 @@ import orderRouter from './Routers/orderRouter.js'
 import invoiceRoutes from "./Routers/invoiceRouter.js";
 import reviewRouter from "./Routers/reviewRouter.js"
 import flash from 'connect-flash'
+import errorHandlingMiddleware from './middleware/errorHandlingMiddleware.js'
 
 
 env.config()
@@ -35,15 +36,7 @@ app.use(express.urlencoded({extended:true}))
 app.set("views",path.join(__dirname,"views"))
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-app.use((req,res,next)=>{
-    
-    res.locals.error = req.flash("error")
-    res.locals.success  = req.flash("success")
-    next()
-})
-
+app.use(errorHandlingMiddleware.notifications)
 app.use("/admin",adminRouter);
 app.use(userRouter)
 app.use("/address",addressRouter)
@@ -53,23 +46,7 @@ app.use(checkoutRouter)
 app.use("/orders",orderRouter)
 app.use(invoiceRoutes);
 app.use(reviewRouter);
-
-// app.use((error,req,res,next)=>{
-//     const isFetch = req.headers["content-type"]?.includes("application/json") || req.headers["x-requested-with"] === "XMLHttpRequest";
-//     if(isFetch){
-//          if(error?.code==="LIMIT_FILE_SIZE"){
-//             req.flash("error",'File have a limit 2MB')
-//             res.status(415).json({href:req.originalUrl})
-//          }
-//     }else{
-        
-//     }
-//     if(error?.code==="LIMIT_FILE_SIZE"){
-//         req.flash("error",'File have a limit 2MB')
-//         res.status(415).redirect("back")
-//     }
-// })
-
+app.use(errorHandlingMiddleware.error)
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}`);
 })
