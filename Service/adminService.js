@@ -35,8 +35,9 @@ const findBlockedUsers =  async (skip,limit)=>{
   return  await User.find({isBlocked:true,deleted:false}).skip(skip).limit(limit)
 }
 
-const addCategorInDB = async (categoryName,imageUrl) =>{
-  return await categoryModel.insertOne({categoryName,thumbnail:imageUrl,createdAt:Date.now(),isBlocked:false})
+const addCategorInDB = async (categoryName,publicId,url) =>{
+  const imageObj = {publicId,url}
+  return await categoryModel.insertOne({categoryName,thumbnail:imageObj,createdAt:Date.now(),isBlocked:false})
   
 }
 
@@ -48,7 +49,11 @@ const blockCategoryFromDB = async(_id,blockOrActive)=>
 }
 const getCategoryFromDB = async(_id)=>
 {
-  return await categoryModel.findOne({_id})
+
+ 
+     return await categoryModel.findOne({_id})
+
+ 
 }
 
 const getCategories = async (skip,limit,search)=>{
@@ -70,10 +75,10 @@ const getCategoriesForProductEdit = async ()=>{
 const getAllCategoriesCount = async ()=>{
   return await categoryModel.countDocuments();
 }
-const updateCategory = async (_id,name=null,image=null)=>{
+const updateCategory = async (_id,name=null,url=null,publicId=null)=>{
 
-   if(image){
-    await categoryModel.findOneAndUpdate({_id},{$set:{thumbnail:image}})
+   if(publicId){
+    await categoryModel.findOneAndUpdate({_id},{$set:{thumbnail:{url:url,publicId:publicId}}})
    };
    if(name)await categoryModel.findOneAndUpdate({_id},{$set:{categoryName:name}});
 }

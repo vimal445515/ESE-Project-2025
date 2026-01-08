@@ -1,6 +1,7 @@
 import fs from 'fs'
 import {fileURLToPath} from 'url'
 import path from 'path'
+import cloudinary from '../config/cloudinary.js'
 
 const structureProductData = (image,info) =>{
 let imageObj = {...image}
@@ -31,16 +32,18 @@ let imgObj = {}
 for(let i = 0; i < length/4;i++){
   
   imgObj[`img1${i}`] = imageObj[`${i}`]?.filename
+  imgObj[`url1${i}`] = imageObj[`${i}`].path
+
   imgObj[`img2${i}`] = imageObj[`${i+1}`]?.filename
+  imgObj[`url2${i}`] = imageObj[`${i+1}`].path
+
   imgObj[`img3${i}`] = imageObj[`${i+2}`]?.filename
+  imgObj[`url3${i}`] = imageObj[`${i+2}`].path
+
   imgObj[`img4${i}`] = imageObj[`${i+3}`]?.filename
+  imgObj[`url4${i}`] = imageObj[`${i+3}`].path
 }
 
-
-
-
-
- 
 
 for(let i = 0; i < objArray.length/4; i++)
 {
@@ -49,8 +52,8 @@ for(let i = 0; i < objArray.length/4; i++)
      stock: obj[`stock${i}`],
      storage:obj[`storage${i}`],
      ram:obj[`ram${i}`],
-     images:[imgObj[`img1${i}`],imgObj[`img2${i}`],imgObj[`img3${i}`],imgObj[`img4${i}`]]
-   })
+     images:[{publicId:imgObj[`img1${i}`],url:imgObj[`url1${i}`]}  ,  {publicId:imgObj[`img2${i}`],url:imgObj[`url2${i}`]}  ,  {publicId:imgObj[`img3${i}`],url:imgObj[`url3${i}`]} ,  {publicId:imgObj[`img4${i}`],url:imgObj[`url4${i}`]}]
+   }) 
 }
 
 
@@ -60,7 +63,7 @@ const extractGeneralImage=(files)=>
 {  const imagesObj = files
    let length = Object.keys(imagesObj).length
    if( imagesObj[`${length-1}`]?.fieldname ==="generalPhoto"){
-    return imagesObj[`${length-1}`]?.filename;
+    return {publicId:imagesObj[`${length-1}`]?.filename,url:imagesObj[`${length-1}`].path}
    }
    return undefined
 }
@@ -68,41 +71,62 @@ const extractGeneralImage=(files)=>
 
 const deleteExeistingImage = (generalPhoto,img1,img2,img3,img4,data) =>{
   
-  let __filename = fileURLToPath(import.meta.url);
-  let __dirname =path.dirname(path.dirname(__filename))
-  let root = __dirname.split("\\").join('/')
-  console.log(data.generalPhoto, generalPhoto)
-  if(fs.existsSync(`${root}/public/upload/${data.generalPhoto}`) && data.generalPhoto !== generalPhoto){
-    fs.unlink(`${root}/public/upload/${data.generalPhoto}`,(error)=>{
-        console.log("general image deleted")
-    });
-  
-  } 
-  if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[0]}`) && data.variants.images[0] !== img1) 
-  {
-    fs.unlink(`${root}/public/upload/${data.variants.images[0]}`,(error)=>{
-      console.log("img1 deleted")
-    })
-    
+  if(generalPhoto){
+      cloudinary.uploader.destroy(generalPhoto.publicId)
   }
-     if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[1]}`) && data.variants.images[1] !== img1) {
-      fs.unlink(`${root}/public/upload/${data.variants.images[1]}`,(error)=>{
-        console.log("img2 deleted")
-      })
+  if(img1){
+   cloudinary.uploader.destroy(img1.publicId)
+  }
+
+  if(img2){
+    cloudinary.uploader.destroy(img2.publicId)
+  }
+
+  if(img3){
+    cloudinary.uploader.destroy(img3.publicId)
+  }
+
+  if(img4){
+    cloudinary.uploader.destroy(img4.publicId)
+  }
+
+  
+
+  // let __filename = fileURLToPath(import.meta.url);
+  // let __dirname =path.dirname(path.dirname(__filename))
+  // let root = __dirname.split("\\").join('/')
+  // console.log(data.generalPhoto, generalPhoto)
+  // if(fs.existsSync(`${root}/public/upload/${data.generalPhoto}`) && data.generalPhoto !== generalPhoto){
+  //   fs.unlink(`${root}/public/upload/${data.generalPhoto}`,(error)=>{
+  //       console.log("general image deleted")
+  //   });
+  
+  // } 
+  // if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[0]}`) && data.variants.images[0] !== img1) 
+  // {
+  //   fs.unlink(`${root}/public/upload/${data.variants.images[0]}`,(error)=>{
+  //     console.log("img1 deleted")
+  //   })
+    
+  // }
+  //    if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[1]}`) && data.variants.images[1] !== img1) {
+  //     fs.unlink(`${root}/public/upload/${data.variants.images[1]}`,(error)=>{
+  //       console.log("img2 deleted")
+  //     })
       
-     }
-       if(fs.existsSync(`${root}/pubilc/upload/${ data.variants.images[2]}`) && data.variants.images[2] !== img1) {
-        fs.unlink(`${root}/public/upload/${data.variants.images[2]}`,(error)=>{
-           console.log("img2 deleted")
-        })
+  //    }
+  //      if(fs.existsSync(`${root}/pubilc/upload/${ data.variants.images[2]}`) && data.variants.images[2] !== img1) {
+  //       fs.unlink(`${root}/public/upload/${data.variants.images[2]}`,(error)=>{
+  //          console.log("img2 deleted")
+  //       })
        
-       }
-        if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[3]}`) && data.variants.images[3] === img1){
-           fs.unlink(`${root}/public/upload/${data.variants.images[3]}`,(error)=>{
-              console.log("img2 deleted")
-           })
+  //      }
+  //       if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[3]}`) && data.variants.images[3] === img1){
+  //          fs.unlink(`${root}/public/upload/${data.variants.images[3]}`,(error)=>{
+  //             console.log("img2 deleted")
+  //          })
          
-        }
+  //       }
  
 }
 
@@ -141,9 +165,16 @@ for(let i = 0; i < length/4; i++){
 
   
   imgObj[`img1${index}`] = imageObj[`img1${index}`]?.filename
+  imgObj[`url1${index}`] = imageObj[`img1${index}`]?.path
+
   imgObj[`img2${index}`] = imageObj[`img2${index}`]?.filename
+  imgObj[`url2${index}`] = imageObj[`img2${index}`]?.path
+
   imgObj[`img3${index}`] = imageObj[`img3${index}`]?.filename
+  imgObj[`url3${index}`] = imageObj[`img3${index}`]?.path
+
   imgObj[`img4${index}`] = imageObj[`img4${index}`]?.filename
+  imgObj[`url4${index}`] = imageObj[`img4${index}`]?.path
 
 
  
@@ -155,8 +186,7 @@ for(let i = 0; i < objArray.length/4; i++)
      stock: obj[`stock${i}`],
      storage:obj[`storage${i}`],
      ram:obj[`ram${i}`],
-     images:[imgObj[`img1${i}`],imgObj[`img2${i}`],imgObj[`img3${i}`],imgObj[`img4${i}`]]
-   })
+     images:[{publicId:imgObj[`img1${i}`],url:imgObj[`url1${i}`]}  ,  {publicId:imgObj[`img2${i}`],url:imgObj[`url2${i}`]}  ,  {publicId:imgObj[`img3${i}`],url:imgObj[`url3${i}`]} ,  {publicId:imgObj[`img4${i}`],url:imgObj[`url4${i}`]}]   })
 }
 
 

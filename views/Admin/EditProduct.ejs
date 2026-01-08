@@ -173,7 +173,7 @@
             <label for="imageInput" class="icon-box mb-2">
               
             </label>
-            <img id="generalPhotoShow" src="/upload/<%= product.generalPhoto %>" 
+            <img id="generalPhotoShow" src="<%= product.generalPhoto.url %>" 
             alt="Current Image" 
             style="width: 120px; height: auto; margin-bottom: 10px;">
                     <input type="file" name="mainImage" value="upload/<%= product.generalPhoto %>" class="form-control w-auto text-center" id="inputImage">
@@ -491,7 +491,7 @@
             if(data?.obj){
               data =  data.obj.split('/')
               data = data[data.length-1]
-              return  window.location.href = `/admin/editProduct/${data }`;
+              return  window.location.href = `/admin/editProduct/${data}`;
             }
             window.location.href= `/admin/editProduct/${data._id}`
             alert("updated ")

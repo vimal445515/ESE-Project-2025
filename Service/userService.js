@@ -65,9 +65,11 @@ const verifyData = async(session,userName,email,phoneNumber,image) =>{
     }
 
     console.log("this is image",image)
+    
      if(image ){
 
-        session.newImage = image.filename;
+        session.newImageId = image.filename;
+        session.newImageUrl = image.path
           
      }
 
@@ -99,12 +101,14 @@ const updateUserData = async (req)=>{
         data.phoneNumber = req.session.newPhoneNumber
         
     }
-    console.log("this is new image",req.session.newImage)
-    if(req.session.newImage)
+    console.log("this is new image",req.session.newImageUrl)
+    if(req.session?.newImageUrl)
     {
-        data.profile = req.session.newImage
+        data.profile = {};
+        data.profile.publicId = req.session.newImageId
+        data.profile.url = req.session.newImageUrl
         profile =  await User.findOne({email:req.session.email},{_id:0,profile:1})
-         console.log("profileSide working",profile+"  "+data.profile)
+        //  console.log("profileSide working",profile+"  "+data.profile)
 
     }
     if(req.session.newUserName){
@@ -113,11 +117,12 @@ const updateUserData = async (req)=>{
     delete req.session?.newEmail
     delete req.session?.newUserName
     delete req.session?.newPhoneNumber
-    delete req.session?.newImage
+    delete req.session?.newImageUrl
+    delete req.session?.newImageId
      data =  await User.findOneAndUpdate({email:req.session.email},{$set:data},{new:true})
      if(profile)
      {
-        helpers.deleteProfile(profile.profile)
+       helpers.deleteProfile(profile.profile)
      }
     req.session.userName = data.userName;
     req.session.email = data.email

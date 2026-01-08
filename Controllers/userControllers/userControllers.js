@@ -50,7 +50,7 @@ const authentication = async (req,res)=>{
   req.session.role = data.role
   req.session.phoneNumber  = data.phoneNumber;
   req.session.referralCode = data.referralId;
-  req.session.profile = data.profile
+  req.session.profile = data.profile.url; 
   req.session._id = data._id
   console.log(req.session.userName);
   return res.status(200).redirect("/home");
@@ -143,7 +143,7 @@ const resetPassword = async(req,res) =>{
  })
 
  const storeUserDataInSession=(req,res)=>{
-    req.session.userName = req.user.userName
+  req.session.userName = req.user.userName
   req.session.email = req.user.email
   req.session.role = req.user.role
   req.session.phoneNumber  = req.user.phoneNumber;
@@ -165,7 +165,8 @@ const editProfile=(req,res)=>{
  const sendData = async(req,res,next)=>{
         delete req.session.newUserName
         delete req.session.newPhoneNumber
-        delete req.session.newImage  
+        delete req.session.newImageId
+        delete req.session.newImageUrl  
         delete req.session.newEmail
 
       const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)

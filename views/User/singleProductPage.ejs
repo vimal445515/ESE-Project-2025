@@ -171,15 +171,15 @@
         <div class="col-md-6  ">
             
             <div class=" mb-3  zoom-box ">
-                <img src="/upload/<%= productData.variants.images[0]%>" id="bigimg" class="  main-image shadow-sm bg-light" alt="Main Product Image">
+                <img src="<%= productData.variants.images[0].url%>" id="bigimg" class="  main-image shadow-sm bg-light" alt="Main Product Image">
             </div>
           
             <p></p>
             <div class="d-flex gap-3 justify-content-center">
-                <img src="/upload/<%= productData.variants.images[0]%>" class="thumbnail active" alt="Thumbnail 1">
-                <img src="/upload/<%= productData.variants.images[1]%>" class="thumbnail" alt="Thumbnail 2">
-                <img src="/upload/<%= productData.variants.images[2]%>" class="thumbnail" alt="Thumbnail 3">
-                <img src="/upload/<%= productData.variants.images[3]%>" class="thumbnail" alt="Thumbnail 4">
+                <img src="<%= productData.variants.images[0].url%>" class="thumbnail active" alt="Thumbnail 1">
+                <img src="<%= productData.variants.images[1].url%>" class="thumbnail" alt="Thumbnail 2">
+                <img src="<%= productData.variants.images[2].url%>" class="thumbnail" alt="Thumbnail 3">
+                <img src="<%= productData.variants.images[3].url%>" class="thumbnail" alt="Thumbnail 4">
                 
             </div>
         </div>
@@ -453,7 +453,7 @@
                                         <p><%= feedback.userName%></p>
                                         <div class="d-flex align-items-center mb-2 ">
                                             <div class="userProfile me-2">
-                                            <img src="/upload/<%= feedback.profile%>"  alt="User">
+                                            <img src="<%= feedback.profile%>"  alt="User">
                                             </div>
                                             <div>
                                                 <div class="text-warning small">
@@ -486,7 +486,7 @@
            <% relateditems.forEach((product)=>{%>
                 <div class="related-card-wrapper">
                     <div class="related-card bg-white shadow-sm">
-                        <img src="/upload/<%= product.generalPhoto%>" class="related-img" alt="Related Product ">
+                        <img src="<%= product.generalPhoto.url%>" class="related-img" alt="Related Product ">
                         <p class="fw-bold text-truncate mb-1"><%= product.productName%></p>
                         <p class="text-primary fw-bold mb-2">₹<%= product.basePrice %></p>
                         <a onclick='window.location.href=`/productDetails/<%= product._id%>`' class="btn btn-sm btn-outline-primary w-100">View</a>

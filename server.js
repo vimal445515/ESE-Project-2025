@@ -17,6 +17,10 @@ import invoiceRoutes from "./Routers/invoiceRouter.js";
 import reviewRouter from "./Routers/reviewRouter.js"
 import flash from 'connect-flash'
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware.js'
+import cloudinary from "./config/cloudinary.js";
+
+
+
 
 
 env.config()
@@ -24,9 +28,11 @@ let app = express();
 let __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename)
 connectDb()
+cloudinary.api.ping()
+  .then(() => console.log("Cloudinary connected ✅"))
+  .catch(err => console.error("Cloudinary error ❌", err));
 
 app.use(flash())
-
 app.use(nocache())
 app.use(sessionMiddleware)
 app.use(express.static(path.join(__dirname,"public")))

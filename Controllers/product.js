@@ -52,7 +52,7 @@ const editProduct = async  (req,res) =>{
     
 
     
-     generalPhoto = generalPhoto||data.generalPhoto;
+     generalPhoto = generalPhoto?.publicId?generalPhoto:data.generalPhoto;
     let variant = {};
    
      variant.price = variantsData[0]?.price||data.variants.price
@@ -61,14 +61,14 @@ const editProduct = async  (req,res) =>{
      variant.ram = variantsData[0].ram||data.variants.ram
      console.log(variantsData,data)
      variant.images = [
-      variantsData[0]?.images[0]?variantsData[0]?.images[0]:data.variants.images[0],
-      variantsData[0]?.images[1]?variantsData[0]?.images[1]:data.variants.images[1],
-      variantsData[0]?.images[2]?variantsData[0]?.images[2]:data.variants.images[2],
-      variantsData[0]?.images[3]?variantsData[0]?.images[3]:data.variants.images[3],
+      variantsData[0]?.images[0]?.publicId?variantsData[0]?.images[0]:data.variants.images[0],
+      variantsData[0]?.images[1]?.publicId?variantsData[0]?.images[1]:data.variants.images[1],
+      variantsData[0]?.images[2]?.publicId?variantsData[0]?.images[2]:data.variants.images[2],
+      variantsData[0]?.images[3]?.publicId?variantsData[0]?.images[3]:data.variants.images[3],
      ]
       
 
-     productHelper.deleteExeistingImage(generalPhoto,variantsData[0]?.images[0],variantsData[0]?.images[1],variantsData[0]?.images[2],variantsData[0]?.images[3],data);
+    productHelper.deleteExeistingImage(data.generalPhoto,data.variants.images[0],data.variants.images[1],data.variants.images[2],data.variants.images[0]);
     
     data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variant,req.params.id,index)
     console.log(data.variants[0].images[0]);

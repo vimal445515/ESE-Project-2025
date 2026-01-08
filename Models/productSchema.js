@@ -17,7 +17,9 @@ const variantSchema = new mongoose.Schema({
         type:Number,
         require:false
     },
-    images:[{type:String}]
+    images:{
+        type:Array
+    }
 })
 
 
@@ -45,7 +47,8 @@ const productSchema = new mongoose.Schema({
     type:Number
    },
    generalPhoto:{
-    type:String
+     url:String,
+     publicId:String
    },
    isDeleted:{
     type:Boolean,

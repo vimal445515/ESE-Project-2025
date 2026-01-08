@@ -4,6 +4,7 @@ import hash from '../../helpers/passwordHash.js'
 import categoryThumbnail from '../../Config/categoryThumbnail.js'
 import fs from 'fs'
 import categoryService from '../../Service/categoryService.js'
+import cloudinary from '../../Config/cloudinary.js'
 export const loadLoginPage=(req,res)=>{
     res.status(200).render('Admin/login',{status:"success",message:"login page loaded successfully"})
 }
@@ -79,7 +80,7 @@ export const LoadAddCategoriesPage =(req,res)=>{
 }
 export const loadEditCategoriesPage = async (req,res) => {
     const data = await adminService.getCategoryFromDB(req.params.id)
-    res.render("Admin/editCategory",{data,status:"null",message:"null"})
+    return res.render("Admin/editCategory",{data,status:"null",message:"null"})
 }
 
 export const loadAddProductPage = async (req,res)=>{
@@ -115,9 +116,10 @@ export const handleImage = (req,res,next)=>{
 
 export const saveCategoryData =async (req,res)=>{
     if(!req.file) res.status(400).render("Admin/addCategory",{status:"error",message:"invalid image upload"})
-    const imgPath = '/upload/'+req.file.filename
+    const publicId = req.file.filename
+    const url = req.file.path
     if( await categoryService.findCategoryByName(req.body.categoryName)) return res.status(401).render("Admin/addCategory",{status:"error",message:"category already exists"});
-    adminService.addCategorInDB(req.body.categoryName,imgPath)
+    adminService.addCategorInDB(req.body.categoryName,publicId,url)
     res.redirect('/admin/categories')
 }
 
@@ -159,8 +161,12 @@ export const handleEditImage = (req,res,next)=>{
                 
         
     }
-    if(error?.message ==='only image file are allowed'){
-       req.flash("error",error.message);
+    if (
+    error.message.includes("Invalid image file") ||
+    error.message.includes("allowed formats") ||
+    error.message.includes("format")
+  ){
+       req.flash("error","Please upload a valid image file.");
        let url = req.originalUrl.split("/")
         let id = url.pop()
        
@@ -172,13 +178,13 @@ export const handleEditImage = (req,res,next)=>{
 }
 export const editCategory = async (req,res)=>{
     const data = await adminService.getCategoryFromDB({_id:req.params.id})
-    const imagePath = req.file?.filename?'/upload/'+req.file.filename :data.thumbnail
-    if( req.file?.filename)
-    { console.log(data.thumbnail)
-        fs.unlink(`./public/${data.thumbnail}`,(error)=>console.log(error));
-       
+    const url = req.file?req.file.path :data.thumbnail.url;
+    const publicId = req.file?req.file.filename:data.thumbnail.publicId;
+    if( req?.file)
+    { 
+       cloudinary.uploader.destroy(data.thumbnail.publicId)
     }
-    adminService.updateCategory(req.params.id,req.body.categoryName,imagePath)
+    adminService.updateCategory(req.params.id,req.body.categoryName,url,publicId)
     return res.redirect('/admin/categories')
 }
 

@@ -115,7 +115,7 @@
             </div>
             
             <div class="modal-body pt-0 px-4 pb-4">
-                <form>
+                <!-- <form> -->
                     <div class="mb-3">
                         <label class="form-label text-muted small mb-1">Label for doing moal-distro-lg sthadhow</label>
                     </div>
@@ -133,7 +133,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-3">Save</button>
-                </form>
+                <!-- </form> -->
             </div>
 
         </div>
@@ -170,7 +170,7 @@
                             
                             <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                                
-                                <img class="bi bi-image fs-3 text-muted" style="width: 100px; height: 100px; "src="<%= data.thumbnail %>">
+                                <img class="bi bi-image fs-3 text-muted" style="width: 100px; height: 100px; "src="<%= data.thumbnail.url %>">
                             </div>
                             <p class="text-muted small mb-1">Drag and drop image here, or</p>
                             <p class="text-muted small mb-3">click change image </p>
@@ -188,7 +188,7 @@
                     
                     <h5 class="fw-bold mb-3 text-muted">Offers</h5>
                     <div class="d-flex gap-3">
-                        <button class="btn offer-btn-primary" data-bs-toggle="modal" data-bs-target="#offerModal">Add offer</button>
+                        <button type="button" class="btn offer-btn-primary" data-bs-toggle="modal" data-bs-target="#offerModal">Add offer</button>
                     </div>
                 </div>
             </div>

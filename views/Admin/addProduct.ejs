@@ -116,7 +116,7 @@
     </style>
 </head>
 <body>
-
+<%- include("../partials/notification.ejs")%>
 <div class="content-body container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -227,10 +227,10 @@
             <div class="form-card">
                 <h3 class="section-title">Variant</h3>
 
-                <div class="d-flex align-items-center mb-3">
+                <!-- <div class="d-flex align-items-center mb-3">
                     <div class="variant-pill bg-success me-2 text-white">1</div>
                     <div class="variant-pill bg-danger me-2 text-white">2</div>
-                </div>
+                </div> -->
 
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
@@ -478,7 +478,15 @@
             method:'POST',
             body:formData
         }).then(data =>data.json())
-        .then(data =>alert(data))
+        .then(data =>{
+             if(data?.obj){
+              data =  data.obj.split('/')
+              data = data[data.length-1]
+              return  window.location.href = `/admin/addProduct`;
+            }else{
+                alert(data)
+            }
+        })
         .catch("Somthing was worng")
     }
 

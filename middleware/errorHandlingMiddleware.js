@@ -1,12 +1,13 @@
 const error =(error,req,res,next)=>{
-    const isFetch = req.headers["content-type"]?.includes("application/json") ||req.headers["content-type"]?.includes("multipart/form-data") || req.headers["x-requested-with"] === "XMLHttpRequest";
+    console.error(error)
+    const isFetch = req. headers["content-type"]?.includes("application/json") ||req.headers["content-type"]?.includes("multipart/form-data") || req.headers["x-requested-with"] === "XMLHttpRequest";
     if(isFetch){
          if(error?.code==="LIMIT_FILE_SIZE"){
             req.flash("error",'File have a limit 2MB')
             res.status(415).json({obj:req.originalUrl})
          }
-         else if(error.message === "only image file are allowed"){
-            req.flash("error",error.message)
+         else if(error.message === "Image file format ogg not allowed"){
+            req.flash("error","Please upload a valid image file.")
             res.status(415).json({obj:req.originalUrl})
          }
 
@@ -14,11 +15,11 @@ const error =(error,req,res,next)=>{
     }else{
          if(error?.code==="LIMIT_FILE_SIZE"){
         req.flash("error",'File have a limit 2MB')
-        res.status(415).redirect("back")
+        res.status(415).redirect(req.originalUrl)
     }
-    else if(error.message === "only image file are allowed"){
-            req.flash("error",error.message)
-             res.status(415).redirect("back")
+    else if(error.message === 'Image file format ogg not allowed'){
+            req.flash("error","Please upload a valid image file.")
+             res.status(415).redirect(req.originalUrl)
          }
     }
     next()
