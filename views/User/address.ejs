@@ -219,12 +219,19 @@
 
             </form> </div> </div> <%- include("../partials/footer") %>
             <script>
-                
+             let  tempState ='';
+             let  tempCountry='';
+              let  tempDistrict='';
   const form = document.querySelector("form");
 
-  form.addEventListener("submit", function (e) {
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault()
     let isValid = true;
 
+     
+  
+
+  console.log( tempState )
     // helper functions
     const showError = (id, msg) => {
       document.getElementById(id).innerText = msg;
@@ -238,14 +245,31 @@
     // get values
     const userName = form.userName.value.trim();
     const address = form.address.value.trim();
-    const country = form.country.value;
-    const state = form.state.value;
-    const city = form.city.value;
+    const country = form.country.value.trim();
+    const state = form.state.value.trim();
+    const city = form.city.value.trim();
     const pinCode = form.pinCode.value.trim();
     const email = form.email.value.trim();
     const phoneNumber = form.phoneNumber.value.trim();
 
+
+       
+    const isCorrect = await validatePincodeMapping(
+      pinCode,
+      state,
+      country,
+      city
+    );
+
+ 
+
+
+
+
    
+
+   
+
     clearError("userNameError");
     if (!userName) {
       showError("userNameError", "User name is required");
@@ -257,20 +281,24 @@
       showError("addressError", "Address is required");
     }
 
+
+   
     
     clearError("countryError");
     if (!country) {
       showError("countryError", "Please select a country");
     }
+   
 
     
     clearError("stateError");
     if (!state) {
       showError("stateError", "Please select a state");
     }
+    
 
    
-    clearError("cityError");
+  
     if (!city) {
       showError("cityError", "Please select a city");
     }
@@ -295,17 +323,23 @@
     }
 
 
-     
+        if (!isCorrect) {
+      showError("pinCodeError", "State / Country / City does not match PIN code");
+      showError("stateError", "Invalid state for this PIN code");
+      showError("countryError", "Invalid country for this PIN code");
+      showError("cityError", "Invalid city for this PIN code");
+    }
 
 
-    // stop submit if invalid
-    if (!isValid) {
-      e.preventDefault();
+   
+    if (isValid) {
+       form.submit();
     }
   });
 
 document.getElementById('pinCode').addEventListener('input',(e)=>{
       if(e.target.value.length ===6){
+
         fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
         .then(data=>data.json())
         .then(data=>{
@@ -317,6 +351,10 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
                 form.state.value = data[0].PostOffice[0].State
                 form.country.value = data[0].PostOffice[0].Country
                 form.city.value = data[0].PostOffice[0].District
+
+                tempState = data[0].PostOffice[0].State
+                tempCountry = data[0].PostOffice[0].Country
+                tempDistrict = data[0].PostOffice[0].District
             }
      })
       }
@@ -380,6 +418,27 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
     }
   
  }
+
+
+ async function validatePincodeMapping(pinCode, state, country, city) {
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${pinCode}`);
+    const data = await res.json();
+
+    if (data[0].Status !== "Success") return false;
+
+    const postOffice = data[0].PostOffice[0];
+
+    return (
+      postOffice.State === state &&
+      postOffice.Country === country &&
+      postOffice.District === city
+    );
+  } catch (err) {
+    console.error("Pincode validation error", err);
+    return false;
+  }
+}
 
 
   

@@ -270,7 +270,7 @@
   
   const form = document.querySelector(".checkout-container");
 
-  form.addEventListener("submit", function (e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     // Inputs
@@ -366,7 +366,22 @@
       setError("phoneNumberError", "Enter valid 10-digit phone number");
       isValid = false;
     }
-   
+       const isCorrect = await validatePincodeMapping(
+      pinCode,
+      state,
+      country,
+      city
+    );
+
+
+        if (!isCorrect) {
+                isValid = false;
+       setError("pinCodeError", "State / Country / City does not match PIN code");
+       setError("stateError", "Invalid state for this PIN code");
+       setError("countryError", "Invalid country for this PIN code");
+        setError("cityError", "Invalid city for this PIN code");
+    }
+
 
     // Payment
     if (!payment) {
@@ -424,8 +439,8 @@
         }).then(data=>data.json())
                 .then(data=>{
                     console.log(data)
-                   userName.value = data.userName 
-                   companyName.value = data.companyName
+                    userName.value = data.userName 
+                    companyName.value = data.companyName
                    address.value  = data.address
                    city.value = data.city
                    email.value = data.email
@@ -481,6 +496,27 @@
       }
 
    })
+
+
+async function validatePincodeMapping(pinCode, state, country, city) {
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${pinCode}`);
+    const data = await res.json();
+
+    if (data[0].Status !== "Success") return false;
+
+    const postOffice = data[0].PostOffice[0];
+
+    return (
+      postOffice.State === state &&
+      postOffice.Country === country &&
+      postOffice.District === city
+    );
+  } catch (err) {
+    console.error("Pincode validation error", err);
+    return false;
+  }
+}
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
