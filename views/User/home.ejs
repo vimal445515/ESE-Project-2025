@@ -29,7 +29,7 @@
         <div class="d-flex justify-content-center gap-5 flex-wrap">
           <% data.forEach((category)=>{ %>
               <div class="eco-item" onclick="window.location.href=`/products?page=1&sort=&category=<%= category.categoryName%>`">
-                <div class="icon-box"><img src="<%= category.thumbnail%>" alt="Phone"></div>
+                <div class="icon-box"><img src="<%= category.thumbnail.url%>" alt="Phone"></div>
                 <span><%= category.categoryName %></span>
             </div>
         <%})%>
@@ -62,7 +62,7 @@
                 <%newProducts.forEach((product)=>{%>
                 <div class="product-card">
                     <span class="badge-new">New</span>
-                    <img src="upload/<%= product.generalPhoto%>" alt="<%= product.productName%>" class="img-fluid product-img">
+                    <img src="<%= product.generalPhoto.url%>" alt="<%= product.productName%>" class="img-fluid product-img">
                     <h5><%= product.productName%></h5>
                     <p class="price">₹<%= product.basePrice %></p>
                     <button onclick="window.location.href=`/productDetails/<%= product._id%>`" class="btn-buy-full">Buy</button>
@@ -90,7 +90,7 @@
             <div class="product-slider " id="watch-slide">
                 <% watches.forEach((watch)=>{%>
                 <div class="product-card">
-                    <img src="upload/<%= watch.generalPhoto%>" alt="<%= watch.productName%>" class="img-fluid product-img rounded-circle">
+                    <img src="<%= watch.generalPhoto.url%>" alt="<%= watch.productName%>" class="img-fluid product-img rounded-circle">
                     <h5><%= watch.productName%></h5>
                     <p class="price">₹<%= watch.basePrice%></p>
                     <button onclick="window.location.href=`/productDetails/<%= watch._id%>`" class="btn-buy-full">Buy</button>

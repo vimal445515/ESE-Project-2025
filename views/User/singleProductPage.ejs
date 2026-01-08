@@ -548,7 +548,7 @@ document.getElementById('decrementButton').addEventListener("click",()=>{
 })
 document.getElementById('incrementButton').addEventListener("click",()=>{
      const stock = Number('<%= productData.variants.stock%>')
-     if(quantity < stock){
+     if(quantity < stock && sessionStorage.getItem('quantity') < 5){
     quantity++;
     sessionStorage.setItem('quantity',quantity);
     redirectWithFilters()
@@ -559,9 +559,9 @@ document.getElementById('incrementButton').addEventListener("click",()=>{
 
 
 document.getElementById('addToCart').addEventListener('click',(e)=>{
-    if(document.getElementById('quantityInput').value > 10){
+    if(document.getElementById('quantityInput').value > 5){
          e.preventDefault()
-        alert("! Sorry Maximum qunatity allowed 10");
+        alert("! Sorry Maximum qunatity allowed 5");
        
     }
     else if(document.getElementById('quantityInput').value <1){

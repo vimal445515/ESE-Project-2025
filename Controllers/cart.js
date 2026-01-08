@@ -62,7 +62,8 @@ if(req.body.categoryId !== undefined){
          return res.redirect('/cart');
       }
      
-      if(req.body?.quantity < stock[0].variants.stock){
+      if(req.body?.quantity < stock[0].variants.stock & req.body?.quantity <5){
+       
           await cartService.incrementQuantity(req.body.productId,req.body.variantId,quantity)
       return res.redirect('/cart');
       }

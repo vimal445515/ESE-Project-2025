@@ -37,7 +37,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
                 quantity:quantity,
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
-                image:generalPhoto,
+                image:generalPhoto.url,
                 
             }
         ],
@@ -78,7 +78,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
             productName:product.product.productName,
             quantity:product.quantity,
             price:parseInt(product.product.variants.price-((product.product.discound/100)*product.product.variants.price)),
-            image:product.product.generalPhoto
+            image:product.product.generalPhoto.url
         })
 
         await productModel.findOneAndUpdate(
@@ -303,6 +303,7 @@ const searchByUser = async (userId,orderId)=>{
 
 const storeReturnOrderData = async(orderId,reason)=>{
     if(!await orderReturnModel.findOne({orderId:orderId})){
+        await orderModel.findOneAndUpdate({orderId:orderId},{$set:{orderStatus:"return"}})
       return  await orderReturnModel.create({orderId,reason});
     }
     throw new Error("Canot request more than one time !")

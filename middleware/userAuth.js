@@ -6,6 +6,8 @@ const checkEmailExists= async (req,res,next)=>{
     const {email} = req.body;
     const isTrue = await user.findUserFromDB(email)
     if(!isTrue) return next();
+    req.flash("error","User already exeists")
+    res.redirect(req.originalUrl)
    return res.status(409).json({status:"error",message:"User already exeists"});
 }
 

@@ -162,9 +162,9 @@ export const handleEditImage = (req,res,next)=>{
         
     }
     if (
-    error.message.includes("Invalid image file") ||
-    error.message.includes("allowed formats") ||
-    error.message.includes("format")
+    error?.message.includes("Invalid image file") ||
+    error?.message.includes("allowed formats") ||
+    error?.message.includes("format")
   ){
        req.flash("error","Please upload a valid image file.");
        let url = req.originalUrl.split("/")

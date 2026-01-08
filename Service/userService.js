@@ -127,7 +127,7 @@ const updateUserData = async (req)=>{
     req.session.userName = data.userName;
     req.session.email = data.email
     req.session.phoneNumber = data.phoneNumber
-    req.session.profile = data.profile 
+    req.session.profile = data.profile.url 
 }
 
 const getCorrentPassword = async (email)=>{

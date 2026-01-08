@@ -5,6 +5,6 @@ import mongoose from 'mongoose'
         console.log("Database connected successfully")
     }catch(error)
     {
-        console.log("Error in mongodb connection in admin side");
+        console.log(error);
     }
 }

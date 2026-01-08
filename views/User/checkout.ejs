@@ -49,7 +49,7 @@
   </div>
 </div>
     <%}%>
-<form  action="/orders" method="post" class="container checkout-container">
+<form  action="/orders/" method="post" class="container checkout-container">
     <div class="row g-4">
         
         <div class="col-lg-8">
@@ -222,7 +222,7 @@
                  <%if(!type){%>
                 <% products.forEach(product=>{%>
                 <div class="product-item d-flex align-items-center mb-3">
-                    <img src="/upload/<%= product.product.generalPhoto%>" class="me-3">
+                    <img src="<%= product.product.generalPhoto.url%>" class="me-3">
                     <div class="flex-grow-1">
                       <input type="hidden" name="quantity" value="<%=product.quantity%>">
                         <p class="mb-0 small fw-bold"><%= product.product.productName%></p>

@@ -27,7 +27,7 @@ const cancelOrder = async(req,res)=>{
   res.redirect('/orders');
 }
 
-const placeOrder = async(req,res)=>{
+const placeOrder =  async(req,res)=>{
 
     // single product order
 
