@@ -1,6 +1,7 @@
 import cartModel from '../Models/cartSchema.js'
 import mongoose from 'mongoose'
 import {productModel} from '../Models/productSchema.js'
+import wishlistModel from '../Models/wishlistSchema.js'
 const addProduct = async(productId,variantId,userId,quantity) =>{
     try{
         await cartModel.create({
@@ -9,6 +10,7 @@ const addProduct = async(productId,variantId,userId,quantity) =>{
         userId:userId,
         quantity:quantity
      })
+      await wishlistModel.deleteOne({productId:productId,variantId:variantId})
     }catch(error){
         throw new Error("Somthing wrong to store cart items!");
     }

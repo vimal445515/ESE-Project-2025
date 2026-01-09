@@ -285,7 +285,7 @@ This action cannot be undone.
                         <td></td>
                         <td></td>
                         <td>
-                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')%></p>
+                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
                         <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
                         <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
                         </td>

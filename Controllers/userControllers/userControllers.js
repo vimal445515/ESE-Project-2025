@@ -216,6 +216,9 @@ const verifyOptforUpdateEmail = async (req,res,next)=>{
    if(result){
    await userService.updateUserData(req)
     res.redirect("/userProfile");
+   }else{
+    req.flash("error","invalid otp");
+    res.redirect('/profile/otp')
    }
 }
 

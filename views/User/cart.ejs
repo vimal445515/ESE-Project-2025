@@ -91,7 +91,7 @@
                                                 <input type="hidden" name="productId" value="<%= value.productId %>">
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
-                                               
+                                             
                                             <button  type="submit" class="decrementButton btn btn-qty">-</button>
                                             </form>
                                             <input type="text" class="form-control text-center bg-white" value="<%= value.quantity%>" readonly>
@@ -105,11 +105,15 @@
                                             </form>
                                         </div>
                                     </td>
+                                     
                                     <td class="fw-bold border-bottom-0">₹<%=  (value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price))*value.quantity%></td>
                                 </tr>
                                 <% })%>
                             </tbody>
+
+
                         </table>
+                         <a href="/deleteCartItems" class="btn btn-danger">Clear</a>
                     </div>
                 </div>
             </div>

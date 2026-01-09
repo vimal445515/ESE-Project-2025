@@ -98,24 +98,7 @@
                                 <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>" class="form-control">
                             </div>
 
-                            <div class="  col-lg-3">
-                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end">Delete</button>
-                                <div class="d-flex my-4 justify-content-between ">
-                                <button type="submit" class="btn btn-primary ">Save Address</button>
-                                <button type="button" onclick="addNewAddress()" class="btn btn-success py-0">New</button>
-                                <input type="hidden" id="new" name="isNew">
-                                </div>
-                                 <label class="form-label">select addresses</label>
-                                <select name="addresses" id="addressSelect" class="form-select">
-                                    <% if(allAddress){%>
-                                    <% allAddress.forEach(address=>{%>
-                                    <option value="<%= address?._id||``%>"><%= address?.address||``%></option>
-                                    <%})%>
-                                    <%}%>
-                                
-                                </select>
-                                
-                            </div>
+                            
                         </div>
 
                         <div class="mb-4">
@@ -217,6 +200,34 @@
                     </div>
                 </div>
 
+                <div class=" row mb-5">
+                   <div class="col-md-7 ">
+                                 <label class="form-label">select addresses</label>
+                                <select name="addresses" id="addressSelect" class="form-select">
+                                    <% if(allAddress){%>
+                                    <% allAddress.forEach(address=>{%>
+                                    <option value="<%= address?._id||``%>"><%= address?.address||``%></option>
+                                    <%})%>
+                                    <%}%>
+                                
+                                </select>
+                                </div>
+
+                                <div class="col-md-2 mt-4">
+                                <button type="submit" class="btn btn-primary ">Save Address</button>
+                                 </div>
+
+                                 <div class="col-md-1 mt-4">
+                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end">Delete</button>
+                                </div>
+
+
+                                 <div class="col-md-1 mt-4 ">
+                                <button type="button" onclick="addNewAddress()" class="btn btn-success ">New</button>
+                                <input type="hidden" id="new" name="isNew">
+                               </div>
+                               
+                            </div>
             </form> </div> </div> <%- include("../partials/footer") %>
             <script>
              let  tempState ='';
@@ -323,13 +334,20 @@
     }
 
 
-        if (!isCorrect) {
+        if (!isCorrect.state) {
       showError("pinCodeError", "State / Country / City does not match PIN code");
       showError("stateError", "Invalid state for this PIN code");
-      showError("countryError", "Invalid country for this PIN code");
-      showError("cityError", "Invalid city for this PIN code");
+      // showError("countryError", "Invalid country for this PIN code");
+      // showError("cityError", "Invalid city for this PIN code");
     }
+ 
+    if (!isCorrect.country) {
+      showError("countryError", "Invalid country for this PIN code");
+      }
 
+      if(!isCorrect.district){
+        showError("cityError", "Invalid district for this PIN code");
+      }
 
    
     if (isValid) {
@@ -429,11 +447,11 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
 
     const postOffice = data[0].PostOffice[0];
 
-    return (
-      postOffice.State === state &&
-      postOffice.Country === country &&
-      postOffice.District === city
-    );
+    return {
+    state:postOffice.State === state,
+    country:postOffice.Country === country,
+    district: postOffice.District === city
+    }
   } catch (err) {
     console.error("Pincode validation error", err);
     return false;
