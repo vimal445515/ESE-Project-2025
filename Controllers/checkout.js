@@ -12,17 +12,18 @@ const loadCheckOutPage = async (req,res)=>{
     let products;
     if(path ==="cart"){
            products =  await cartService.getCartItems(req.session._id)
-        
-            if(!await orderSevice.checkOrderStockForCart(products) || products.length ==0){
+         const status =  await orderSevice.checkOrderStockForCart(products)
+            if(! status.flag || products.length ==0){
                 console.log("this is working")
-                req.flash('error','Product out of stock!')
+                req.flash('error',`[${status.outOfStockProducts}] out of stock!`)
                 return res.redirect('/cart');
             }
 
-        if(await cartService.cartItemsBlocked(req.session._id)){
-            req.flash("error","product is unavailable")
-            return res.redirect("/cart");
-        }
+                 const signal = await cartService.cartItemsBlocked(req.session._id)
+                 if(signal.flag){
+                 req.flash("error",`[${signal.message}] is unavailable`);
+                 return res.redirect('/cart')
+               }
            
     }
     else{

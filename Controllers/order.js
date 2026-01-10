@@ -4,6 +4,7 @@ import cartService from "../Service/cartService.js"
 import helpers from '../helpers/helpers.js'
 import categoryService from "../Service/categoryService.js"
 import productService from "../Service/productService.js"
+import { startSession } from "mongoose"
 
 const loadOrdersHistory = async(req,res)=>{
     
@@ -65,13 +66,15 @@ const placeOrder =  async(req,res)=>{
       }
       else{
         //cart itme order page
-        if(await cartService.cartItemsBlocked(req.session._id)){
-          req.flash("error","product is unavailable");
+        const signal = await cartService.cartItemsBlocked(req.session._id)
+        if(signal.flag){
+          req.flash("error",`[${signal.message}] unavailable`);
           return res.redirect('/cart')
         }
         const products =  await cartService.getCartItems(req.session._id)
-        if(!await orderSevice.checkOrderStockForCart(products) || products.length === 0){
-          req.flash('error','! Oops product out of stock');
+        const status = await orderSevice.checkOrderStockForCart(products)
+        if(! status.flag || products.length === 0){
+          req.flash('error',`!Oops [${status.outOfStockProducts}]  out of stock`);
          return res.redirect('/cart')
         }
         else{

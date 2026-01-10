@@ -151,6 +151,7 @@ const checkOrderStock= async(productId,variantId)=>{
 
 const checkOrderStockForCart= async(products)=>{
     let flag = true
+    let outOfStockProducts ='';
         for(let item of products){
         const product = await productModel.aggregate([
         {$match:{_id:item.productId}},
@@ -159,15 +160,14 @@ const checkOrderStockForCart= async(products)=>{
     ])
         
         if(product[0].variants.stock < 1){
-            console.log("this  is wrking")
-            return  false
-             
+            flag = false;
+           outOfStockProducts += " "+product[0].productName;     
         }
 
 
     }
     console.log(flag)
-    return flag;
+    return {flag,outOfStockProducts}
 }
 
 const getSingleOrder = async(orderId)=>{

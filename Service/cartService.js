@@ -133,13 +133,15 @@ const cartSummary = (items)=>{
 const cartItemsBlocked = async (userId)=>{
 const cartItems = await getCartItems(userId);
  let flag = false;
+ let message = ""
  cartItems.forEach((item)=>{
   if(item.product.isDeleted || item.category.isBlocked){
+    message += " "+item.product.productName;
     flag = true;
   }
  })
 
- return flag;
+ return {flag,message}
 }
 
 
