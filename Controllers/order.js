@@ -70,7 +70,7 @@ const placeOrder =  async(req,res)=>{
           return res.redirect('/cart')
         }
         const products =  await cartService.getCartItems(req.session._id)
-        if(!await orderSevice.checkOrderStockForCart(products) || products.length ===0){
+        if(!await orderSevice.checkOrderStockForCart(products) || products.length === 0){
           req.flash('error','! Oops product out of stock');
          return res.redirect('/cart')
         }
