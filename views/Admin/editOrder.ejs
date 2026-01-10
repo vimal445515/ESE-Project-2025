@@ -228,8 +228,13 @@
                                                 </div>
                                             </td>
                                             <td class="small"><%= item.quantity%></td>
+                                             <%if(item.status ==="placed"){%>
                                             <td class="small">₹<%= item.price%></td>
                                             <td class="small fw-bold">₹<%= item.quantity+item.price%></td>
+                                            <%}else{%>
+                                            <td class="small"><del>₹<%= item.price%></del></td>
+                                            <td class="small fw-bold"><del>₹<%= item.quantity+item.price%></del></td>
+                                            <%}%>
                                         </tr>
                                         <%})%>
                                     </tbody>
@@ -238,10 +243,7 @@
                                             <td colspan="3" class="text-end text-muted small py-3">Subtotal</td>
                                             <td class="fw-bold small py-3">₹<%= order[0].pricing.subTotal%></td>
                                         </tr> -->
-                                         <tr>
-                                            <td colspan="3" class="text-end text-muted small py-3">Discount</td>
-                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.discount%></td>
-                                        </tr>
+                                        
                                          <tr>
                                             <td colspan="3" class="text-end text-muted small py-3">Tax</td>
                                             <td class="fw-bold small py-3">₹<%= order[0].pricing.tax%></td>

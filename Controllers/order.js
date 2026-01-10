@@ -58,7 +58,6 @@ const placeOrder =  async(req,res)=>{
                 products[0].quantity = Number(req.body.quantity);
                 
                 const orderDetails =  cartService.cartSummary(products)
-                // console.log("product data",orderDetails,products[0].product,data)
                 const [{product,quantity}] = products
                 
               order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
@@ -115,6 +114,12 @@ const storeReturOrder  = async(req,res)=>{
   }
 }
 
+const cancelProduct = async(req,res)=>{
+   const orderId = await orderSevice.cancelSingleProduct(req.body.orderId,req.body.productId,req.body.variantId,req.body.quantity);
+   
+    res.redirect(`/orders/orderDetails/${orderId.orderId}`)
+}
+
 
 
 export default {
@@ -126,5 +131,6 @@ export default {
     search,
     loadOrderScucessPage,
     storeReturOrder,
+    cancelProduct
 
 }

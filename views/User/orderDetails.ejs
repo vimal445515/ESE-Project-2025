@@ -201,6 +201,7 @@ This action cannot be undone.
                             <th style="width: 40%;">PRODUCTS</th>
                             <th>QUANTITY</th>
                             <th>PRICE</th>
+                            <th>Option</th>
                         </tr>
                     </thead>
 
@@ -260,6 +261,37 @@ This action cannot be undone.
 
 
 
+
+                     
+                    <!-- This is single product modal -->
+                     <div class="modal fade" id="cancleSingleProductModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Product Cancel</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                       Are you sure you want to cancel this product?
+                            This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="/orders/cancleSingleProduct" method="post">
+                        <input type="hidden" name="orderId" value="<%= order._id%>">
+                        <input type="hidden" name="productId" id="productidInput" value="">
+                        <input type="hidden" name="variantId" id="variantIdInput" value="">
+                        <input type="hidden" name="quantity" id="quantityInput" value=" ">
+                        <button type="submit" class="btn btn-primary">Cancel order</button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                    <!-- End of single product model -->
+
                     <tbody>
                         <% order.items.forEach(item=>{%>
                         <tr>
@@ -271,14 +303,40 @@ This action cannot be undone.
                                     </div>
                                 </div>
                             </td>
+                            <% if(item.status === 'placed'){%>
                             <td class="text-muted"><%= item.quantity%></td>
                             <td class="fw-bold">₹<%= item.price.toLocaleString("en-IN")%>
+                                <%}else{%>
+
+                            <td class="text-muted"><%= item.quantity%></td>
+                            <td class="fw-bold"><del>₹<%= item.price.toLocaleString("en-IN")%></del>
+                                    
+                                    
+                                    <%}%>
+
                                  <%if(order.orderStatus ==="delivered"){%>
                              <button type="button" class=" ms-5 btn text-primary text-decoration-none fw-bold small" onclick="showReviewModal('<%= item.productId%>','<%= item.variantId%>')">
                               Write a Review
                               </button>
                               <%}%>
                               </td>
+
+
+                            <td>
+                                <%if(item.status ==="cancelled"){%>
+                                    <button href="" data-toggle="modal" class=" btn  text-danger text-decoration-none fw-bold small"> Order cancelled</button>
+                                <%}else{%>
+                                      <%if(order.orderStatus !=="delivered"){%>
+                                <button href="" data-toggle="modal" onclick="cancleSingleProductModal('<%= item.productId%>','<%= item.variantId %>','<%= item.quantity%>')"  class=" btn text-primary text-decoration-none fw-bold small">Cancel Order</button>
+                                <%}%>
+                                <%if(order.orderStatus ==="delivered"){%>
+                                <a href="/orders/return?orderId=<%=order._id%>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
+                                <%}%>
+                                    <%}%>
+                               
+
+                            </td>
+
                         </tr>
                         <%})%>
                     <tr>
@@ -401,6 +459,21 @@ if("<%= order.orderStatus %>" ==='delivered'){
             }, 3000);
         }
         };
+
+
+       function cancleSingleProductModal(productId,variantId,quantity){
+        document.getElementById('cancleSingleProductModal')
+        const modal =   new bootstrap.Modal(document.getElementById('cancleSingleProductModal'))
+       let productIdElement =  document.getElementById('productidInput')
+       let variatnIdElement = document.getElementById("variantIdInput")
+       productIdElement.value = productId;
+       variatnIdElement.value = variantId;
+       let quantityInput = document.getElementById('quantityInput')
+       quantityInput.value = Number(quantity);
+       modal.show()
+       }
+        
+
 
 
 

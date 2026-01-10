@@ -6,7 +6,7 @@ import cartModel from '../Models/cartSchema.js'
 import addressModel from '../Models/addressSchema.js'
 import orderReturnModel from "../Models/orderReturnSchema.js"
 import wishlistModel from '../Models/wishlistSchema.js'
-
+import cartService from './cartService.js'
 
 
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount)=>{
@@ -328,11 +328,54 @@ const acceptOrderReturn = async(orderId) =>{
 
 }
 
+
+
+
 const getOrderDataForDashbord = async(userId)=>{
   const pending =  await orderModel.countDocuments({userId,$or:[{orderStatus:{$eq:'placed'}},{orderStatus:{$eq:"shippend"}}]});
   const totalOrder = await orderModel.countDocuments({userId});
   const completed = await orderModel.countDocuments({userId,orderStatus:"delivered"});
   return {pending,totalOrder,completed}
+}
+
+const cancelSingleProduct = async(orderId,productId,variantId,quantity) =>{
+   await orderModel.findOneAndUpdate({_id:orderId},
+        {
+            $set:{'items.$[product].status':"cancelled"}
+        },
+        {
+            arrayFilters:[
+                {'product.variantId':variantId}
+            ]
+        }
+    )
+
+   await productModel.findOneAndUpdate(
+            {_id:productId},
+            {$inc:{'variants.$[variant].stock':quantity}},
+            {arrayFilters:[
+                {'variant._id':variantId}
+            ]}
+        )
+    let order = await orderModel.findOne({_id:orderId});
+        console.log("this is order ",order)
+        let subTotal = 0;
+        for( let item of order.items){
+            if(item.status === "placed"){
+                 subTotal += item.price;   
+            }
+        }
+        let tax = (subTotal * 18) / 100;
+        let totalAmount = subTotal+tax;
+         
+
+     order =  await orderModel.findOneAndUpdate({_id:orderId},{$set:{
+            'pricing.subTotal':subTotal,
+             'pricing.tax':tax,
+             "pricing.totalAmount":totalAmount
+        }})
+
+        return order
 }
 
 export default {
@@ -356,6 +399,7 @@ export default {
     acceptOrderReturn,
     checkOrderStock,
     checkOrderStockForCart,
-    getOrderDataForDashbord
+    getOrderDataForDashbord,
+    cancelSingleProduct
    
 }

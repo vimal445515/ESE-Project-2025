@@ -21,7 +21,11 @@ const orderSchema = new mongoose.Schema({
             price:{type:Number},
             productName:{type:String},
             quantity:{type:Number},
-            image:{type:String}
+            image:{type:String},
+            status:{
+                type:String,
+                default:"placed"
+            }
         }
     ],  
 
