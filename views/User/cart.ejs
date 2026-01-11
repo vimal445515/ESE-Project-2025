@@ -72,7 +72,7 @@
                             </thead>
                             <tbody>
                                 <% cartItems.forEach((value)=>{ %>
-                                <tr>
+                                <tr id="row">
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
                                             <button onclick="deleteCart(`<%= value._id%>`)" class="btn btn-sm text-muted me-3"><i class="bi bi-x-circle fs-5"></i></button>
@@ -85,28 +85,28 @@
                                         <span class="fw-bold">₹<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%></span>
                                     </td>
                                     <td>
-                                        <div class="input-group quantity-group">
+                                        <div id="cartItem" class="input-group quantity-group">
                                             <form action="/cart" method="post">
-                                                <input type="hidden" name="decrement" value="decrement">
+                                                <!-- <input type="hidden" name="decrement" value="decrement"> -->
                                                 <input type="hidden" name="productId" value="<%= value.productId %>">
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
                                              
-                                            <button  type="submit" class="decrementButton btn btn-qty">-</button>
+                                            <button  type="button" onclick="decrement(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%>`)" class="decrementButton btn btn-qty">-</button>
                                             </form>
-                                            <input type="text" class="form-control text-center bg-white" value="<%= value.quantity%>" readonly>
+                                            <input type="text" class="form-control text-center bg-white quantityInput"  value="<%= value.quantity%>" readonly>
                                             <form action="/cart" method="post">
-                                                <input type="hidden" value="increment">
+                                                <!-- <input type="hidden" value="increment"> -->
                                                 <input type="hidden" name="productId" value="<%= value.productId %>">
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
                                                 
-                                            <button  type="submit" class="incrementButton btn btn-qty ">+</button>
+                                            <button  type="button" onclick="increment(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%>`)" class="incrementButton btn btn-qty ">+</button>
                                             </form>
                                         </div>
                                     </td>
                                      
-                                    <td class="fw-bold border-bottom-0">₹<%=  (value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price))*value.quantity%></td>
+                                    <td class="fw-bold border-bottom-0 subTotalPrice">₹<%=  (value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price))*value.quantity%></td>
                                 </tr>
                                 <% })%>
                             </tbody>
@@ -125,7 +125,7 @@
                     <h5 class="fw-bold mb-4">Cart Totals</h5>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Sub-total</span>
-                        <span class="fw-bold">₹<%= subTotal.totalPriceCartItem%></span>
+                        <span id="subTotal"  class="fw-bold">₹<%= subTotal.totalPriceCartItem%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Shipping</span>
@@ -133,16 +133,16 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Discount</span>
-                        <span class="fw-bold">₹<%= subTotal.totalDiscountPrice%></span>
+                        <span id="discount"  class="fw-bold">₹<%= subTotal.totalDiscountPrice%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="text-muted">GST </span>
-                        <span class="fw-bold">₹<%= subTotal.tax%></span>
+                        <span id="tax" class="fw-bold">₹<%= subTotal.tax%></span>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="h5 fw-bold mb-0">Total</span>
-                        <span class="h5 fw-bold mb-0">₹<%= subTotal.total%> INR</span>
+                        <span id="total" class="h5 fw-bold mb-0">₹<%= subTotal.total%> INR</span>
                     </div>
                        <%if(cartItems.length < 1 ){%>
                      <a href="" class="btn btn-disabled w-100 text-decoration-line-through ">PROCEED TO CHECKOUT</a>
@@ -166,6 +166,98 @@
     </div>
 </div>
 <script>
+    let stockValue;
+    let click;
+     document.getElementById('row').addEventListener('click',(e)=>{
+        click = e;
+        
+     })
+     function decrement(stock,productId,variantId,element,price){
+         const container = element.closest('.quantity-group');
+         const row = element.closest("tr")
+        const qtyInput = container.querySelector('.quantityInput');
+        const subTotalPrice = row.querySelector('.subTotalPrice')
+
+
+        stockValue = stock
+        let quantityInput=  qtyInput.value;
+        if(Number(quantityInput) >1){
+        fetch('/cart',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({quantity:Number(quantityInput),productId,variantId,decrement:"decrement"})
+        }).then(data=>data.json())
+        .then((data)=>{
+            if(data.type === 'error'){
+                window.location.reload();
+            }
+ 
+           qtyInput.value =quantityInput-1;
+            stockValue = data.stock
+            console.log(data)
+            const  total =  Number(quantityInput-1)*Number(price)
+            subTotalPrice.innerText = `₹${total.toLocaleString('en-IN')}`
+            
+             document.getElementById('subTotal').innerText = `₹${data.subTotal.totalPriceCartItem.toLocaleString('en-IN')}`
+             document.getElementById('discount').innerText = `₹${data.subTotal.totalDiscountPrice.toLocaleString('en-IN')}`
+             document.getElementById('tax').innerText = `₹${data.subTotal.tax.toLocaleString('en-IN')}`
+              document.getElementById('total').innerText = `₹${data.subTotal.total.toLocaleString('en-IN')}`
+        })
+        .catch(error=>{
+
+        })
+         }
+    }
+
+
+    function increment(stock,productId,variantId,element,price){
+         const container = element.closest('.quantity-group');
+         const row = element.closest("tr")
+        const qtyInput = container.querySelector('.quantityInput');
+        const subTotalPrice = row.querySelector('.subTotalPrice')
+        stockValue = stock
+        console.log(stockValue)
+       let quantityInput=   qtyInput.value;
+       quantityInput = Number(quantityInput);
+       quantityInput++
+       console.log(quantityInput)
+        if(Number(quantityInput) <= stockValue &&Number(quantityInput) <= 5){
+        fetch('/cart',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({quantity:Number(quantityInput),productId,variantId,increment:"increment"})
+        }).then(data=>data.json())
+        .then((data)=>{
+
+            if(data.type === 'error'){
+                window.location.reload();
+            }
+             qtyInput.value = quantityInput;
+            stockValue = data.stock
+            console.log(data)
+            const  total =  Number(quantityInput)*Number(price)
+            subTotalPrice.innerText = `₹${total.toLocaleString('en-IN')}`
+            document.getElementById('subTotal').innerText = `₹${data.subTotal.totalPriceCartItem.toLocaleString('en-IN')}`
+             document.getElementById('discount').innerText = `₹${data.subTotal.totalDiscountPrice.toLocaleString('en-IN')}`
+             document.getElementById('tax').innerText = `₹${data.subTotal.tax.toLocaleString('en-IN')}`
+              document.getElementById('total').innerText = `₹${data.subTotal.total.toLocaleString('en-IN')}`
+            
+            
+            
+
+        })
+        .catch(error=>{
+
+        })
+         }
+    }
+
+
+
+
+
+
+    
     function deleteCart(_id){
            if(confirm("Are you shure about remove from cart?")) {
             fetch('/cart',{
@@ -186,6 +278,9 @@
             
     }
 
+
+
+   
     // let decrementButton = document.querySelectorAll('.decrementButton')
 
     // decrementButton.forEach((button)=>{

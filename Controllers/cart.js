@@ -5,7 +5,7 @@ import orderSevice from '../Service/orderSevice.js'
 const leadCartPage = async(req,res) =>{
    
    const cartItems = await  cartService.getCartItems(req.session._id)
- 
+
    const subTotal = cartService.cartSummary(cartItems)
     res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:null,message:null,cartItems:cartItems,subTotal});
 }
@@ -44,10 +44,14 @@ if(req.body.categoryId !== undefined){
       if(req.body?.decrement){
        if(req.body?.quantity >1){
           await cartService.decrementQuantity(req.body.productId,req.body.variantId)
-       return res.redirect('/cart')
+          let item = await cartService.getCartSingleItem(req.body.productId,req.body.variantId);
+          const cartItems = await  cartService.getCartItems(req.session._id)
+          const subTotal = cartService.cartSummary(cartItems)
+          return  res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
+         
        }
        
-       return res.redirect("/cart")
+       return res.json({type:"error"});
       }
 
      
@@ -57,19 +61,42 @@ if(req.body.categoryId !== undefined){
        if(req.headers.referer.split('/').pop().trim()==="cart"){
             quantity = 1
          }
+
+         if(cartData.quantity + Number(quantity) > 5){
+               req.flash("error",`Sorry you can only add 5 items`)
+             return res.redirect('cart')
+            }
+            
       if(cartData.quantity + Number(quantity) > stock[0].variants.stock){
+         if(req.body?.increment){
+            req.flash("error",`Only ${stock[0].variants.stock} items available`)
+            return res.json({type:"error"})
+         }
          req.flash("error",`Only ${stock[0].variants.stock} items available`)
          return res.redirect('/cart');
       }
      
-      if(req.body?.quantity < stock[0].variants.stock & req.body?.quantity <5){
+      if(req.body?.quantity <= stock[0].variants.stock & req.body?.quantity <= 5){
        
-          await cartService.incrementQuantity(req.body.productId,req.body.variantId,quantity)
-      return res.redirect('/cart');
+          await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
+          if(req.body?.increment){
+           let item = await cartService.getCartSingleItem(req.body.productId,req.body.variantId);
+            let cartItems = await  cartService.getCartItems(req.session._id)
+            let subTotal = cartService.cartSummary(cartItems)
+            return res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
+          }else{
+            return res.redirect('cart')
+          }
       }
       else{
-       
-         return res.redirect("/cart")
+          if(req.body?.increment){
+          req.flash("error",`Only ${stock[0].variants.stock} items available`)
+          return res.json({type:"error"})
+          }else{
+            
+             req.flash("error",`Only ${stock[0].variants.stock} items available`)
+             return res.redirect('cart')
+          }
       }
       
       
