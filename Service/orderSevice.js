@@ -302,21 +302,35 @@ const searchByUser = async (userId,orderId)=>{
 
 
 const storeReturnOrderData = async(orderId,reason)=>{
-    if(!await orderReturnModel.findOne({orderId:orderId})){
-        await orderModel.findOneAndUpdate({orderId:orderId},{$set:{orderStatus:"return"}})
-      return  await orderReturnModel.create({orderId,reason});
+    if(!await orderReturnModel.findOne({orderId:orderId,type:'all'})){
+        await orderModel.findOneAndUpdate({orderId:orderId,type:"all"},{$set:{orderStatus:"return"}})
+      return  await orderReturnModel.create({orderId,reason,type:"all"});
     }
     throw new Error("Canot request more than one time !")
     
 }
+const storeSingleReturnOrderData = async(orderId,reason,productId,variantId)=>{
+     const productName = await productModel.find({_id:productId},{productName:1,_id:0})
+     console.log(productName)
+     
+      const isPresent = await orderReturnModel.findOne({orderId:new mongoose.Types.ObjectId(orderId),"product.variantId": new mongoose.Types.ObjectId(variantId)})
+     if(isPresent)
+     {
+         throw new Error("Canot request more than one time !")
+     }else{
 
-const getAllReturnNotifications = async()=>{
-   return await orderReturnModel.find({status:"pending"})
+         return await orderReturnModel.create({orderId:new mongoose.Types.ObjectId(orderId),reason,type:'single',product:{productName:productName[0].productName,productId:new mongoose.Types.ObjectId(productId),variantId:new mongoose.Types.ObjectId(variantId)}})
+     }
+
 }
 
-const deletereturnOrder = async(orderId)=>{
+const getAllReturnNotifications = async()=>{
+   return await orderReturnModel.find({status:"pending"}).sort({createdAt:-1})
+}
+
+const deletereturnOrder = async(orderId,type)=>{
     
-       await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"rejected"}})
+       await orderReturnModel.findOneAndUpdate({orderId:orderId,type},{$set:{status:"rejected"}})
 
  ;
 }
@@ -378,6 +392,31 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity) =>{
         return order
 }
 
+
+const rejectSingleReturnProduct= async(orderId,variantId,productId)=>{
+
+    // await orderModel.findOneAndUpdate({_id:orderId},
+    //     {$set:{
+    //         'items.$[item].status':
+    //     }}
+    // )
+
+   const data =  await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"single",'product.variantId':new mongoose.Types.ObjectId(variantId)},{$set:{status:"rejected"}})
+}
+
+const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
+    const data =  await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"single",'product.variantId':new mongoose.Types.ObjectId(variantId)},{$set:{status:"approved"}})
+    console.log(data);
+    await orderModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{
+        $set:{'items.$[item].status':"return"}
+    },
+    {arrayFilters:[
+        {'item.variantId':new mongoose.Types.ObjectId(variantId)}
+    ]}
+
+)
+}
+
 export default {
     orderSingleProduct,
     orderCartItmes,
@@ -400,6 +439,9 @@ export default {
     checkOrderStock,
     checkOrderStockForCart,
     getOrderDataForDashbord,
-    cancelSingleProduct
+    cancelSingleProduct,
+    storeSingleReturnOrderData,
+    rejectSingleReturnProduct,
+    aproveSingleReturnProduct
    
 }

@@ -12,7 +12,6 @@ const loadOrderPage = async(req,res)=>{
     const count = await orderService.getAllOrdersCount()
     const orders = await orderService.getAllOrders(skip,limit,sort,search,filter)
     const notifications = await orderSevice.getAllReturnNotifications()
-    console.log("console.log(",notifications)
    res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter,notifications:notifications||[]})
 }
 
@@ -54,19 +53,35 @@ const search = async(req,res)=>{
 
 const rejectReturnOrder = async(req,res)=>{
     const orderId = req.params.orderId
-    
-    await orderSevice.deletereturnOrder(orderId)
-    res.json({type:"success"})
+    const type = req.query.type
+    if(type ==='all'){
+           await orderSevice.deletereturnOrder(orderId,type)
+           return res.json({type:"success"})
+    }
+    else{
+           await orderSevice.rejectSingleReturnProduct(orderId,req.query.variantId,req.query.productId); 
+         return res.json({type:"success"}) 
+    }
+ 
 }
 
 
 const updateOrderReturnstatus = async(req,res) =>{
+    const orderId = req.params.orderId
+    if(req.query.type === 'all'){
    try{
-     const orderId = req.params.orderId
     await orderSevice.acceptOrderReturn(orderId)
     res.json({type:"success",message:"Order return accepted success fully"})
    }catch(error){
     res.json({type:"error",message:" oops somthing was wrong!"})
+   }
+   }else{
+    try{
+    await orderService.aproveSingleReturnProduct(orderId,req.query.variantId,req.query.productId)
+    res.json({type:"success",message:"Order return accepted success fully"})
+    }catch(error){
+    res.json({type:"error",message:" oops somthing was wrong!"})
+   }
    }
 }
 export default {

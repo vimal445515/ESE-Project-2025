@@ -16,5 +16,8 @@ router.get('/return',auth.isUser,orderController.returnOrder)
 router.post('/return',auth.isUser,orderController.storeReturOrder)
 router.post('/search',auth.isUser,orderController.search)
 router.post('/cancleSingleProduct',orderController.cancelProduct)
+router.post('/returnSingleProduct',orderController.returnSingleProduct)
+
+
 
 export default router

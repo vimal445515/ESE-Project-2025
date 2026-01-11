@@ -89,7 +89,9 @@ const placeOrder =  async(req,res)=>{
 
 const returnOrder = (req,res)=>{
   const orderId = req.query.orderId;
-  res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId,popup:null});
+  const productId = req.query?.productId?req.query?.productId:null;
+  const variantId = req.query?.variantId?req.query?.variantId:null;
+  res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId,popup:null,productId,variantId});
 }
 
 const search = async(req,res)=>{
@@ -111,9 +113,9 @@ const loadOrderScucessPage = (req,res)=>{
 const storeReturOrder  = async(req,res)=>{
   try{
      await orderSevice.storeReturnOrderData(req.body.orderId,req.body.reason)
-   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'}})
+   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'},productId:null})
   }catch(error){
-    res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'}})
+    res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'},productId:null})
   }
 }
 
@@ -121,6 +123,16 @@ const cancelProduct = async(req,res)=>{
    const orderId = await orderSevice.cancelSingleProduct(req.body.orderId,req.body.productId,req.body.variantId,req.body.quantity);
    
     res.redirect(`/orders/orderDetails/${orderId.orderId}`)
+}
+
+
+const returnSingleProduct= async(req,res)=>{
+   try{
+     await orderSevice.storeSingleReturnOrderData(req.body.orderId,req.body.reason,req.body.productId,req.body.variantId)
+   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'},productId:req.body.productId,variantId:req.body.variantId})
+  }catch(error){
+    res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'},productId:req.body.productId,variantId:req.body.variantId})
+  }
 }
 
 
@@ -134,6 +146,6 @@ export default {
     search,
     loadOrderScucessPage,
     storeReturOrder,
-    cancelProduct
-
+    cancelProduct,
+    returnSingleProduct
 }

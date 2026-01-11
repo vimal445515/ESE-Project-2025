@@ -37,6 +37,7 @@
         .table thead th { background-color: #fcfcfc; color: #888; font-weight: 500; font-size: 0.8rem; border-bottom: 1px solid #f1f1f1; padding: 15px; }
         .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f8f8f8; font-size: 0.85rem; }
 
+        
  
         .status-pill {
             padding: 5px 12px;
@@ -95,7 +96,7 @@
 
                                 
                         <div class="modal fade" id="popupModal" tabindex="-1">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                             <div class="modal-header bg text-white">
                                 <h5 class="modal-title">Message</h5>
@@ -104,24 +105,37 @@
                             <div class="modal-body">
                                <h5 class="mb-3">Return requests</h5>
 
-                                <div class="card" style="width: 320px;">
-                                    <div class="card-body p-2">
+                                <div class="card" >
+                                    <div class="card-body ">
 
                                     <!-- Scrollable area -->
                                     <div class="list-group overflow-auto" style="max-height: 250px;">
-                                        <% notifications.forEach((request)=>{%>
-                                       <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <p class="mb-1"><%= request.reason%></p>
-                                                <a href="/admin/order/edit/<%= request.orderId%>" class="small">Order details</a>
-                                            </div>
+                                        <table class="table table-bordered table-hover text-center align-middle">
+                                                <thead class="table-dark">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Product Name</th>
+                                                    <th>Reason</th>
+                                                    <th>Order Details</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                 <tbody>
+                                                 <% notifications.forEach((request)=>{%>  
+                                                <tr>
+                                                    <td><%= request.type%></td>
+                                                    <td><%= request?.product?request.product.productName:'All Products'%></td>
+                                                    <td><p class="mb-1"><%= request.reason%></p></td>
+                                                    <td> <a href="/admin/order/edit/<%= request.orderId%>" class="small">Order details</a></td>
+                                                    <td class="d-flex">
+                                                    <button onclick="accept(`<%= request.orderId%>`,`<%=request.type%>`,`<%= request?.product?.productId%>`,`<%= request?.product?.variantId%>`)" class="btn btn-success btn-sm">Accept</button>
+                                                    <button onclick="reject(`<%= request.orderId%>`,`<%=request.type%>`,`<%= request?.product?.productId%>`,`<%= request?.product?.variantId%>`)" class="btn btn-danger btn-sm">Reject</button>
+                                                    </td>
+                                                </tr>
 
-                                            <div class="d-flex gap-2">
-                                                <button onclick="accept(`<%= request.orderId%>`)" class="btn btn-success btn-sm">Accept</button>
-                                                <button onclick="reject(`<%= request.orderId%>`)" class="btn btn-danger btn-sm">Reject</button>
-                                            </div>
-                                            </div>  
-                                           <% })%>    
+                                           <% })%>   
+                                              </tbody>
+                                                </table> 
                                     </div>
 
                                     </div>
@@ -308,9 +322,9 @@
                         modal.show();
         }
 
-        function reject(orderId){
+        function reject(orderId,type,productId,variantId){
             if(window.confirm("are you shure you what to reject the request!")){
-                fetch(`/admin/order/reject/${orderId}`)
+                fetch(`/admin/order/reject/${orderId}?type=${type}&productId=${productId}&variantId=${variantId}`)
             .then((data)=>{
                 window.location.reload()
             })
@@ -318,9 +332,9 @@
             
         }
 
-        function accept(orderId){
+        function accept(orderId,type,productId,variantId){
             if(window.confirm("are you shure you what to accept the request !")){
-                fetch(`/admin/order/accept/${orderId}`)
+                fetch(`/admin/order/accept/${orderId}?type=${type}&productId=${productId}&variantId=${variantId}`)
                 .then((data)=>{
                     window.location.reload()
                 })

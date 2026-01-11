@@ -228,12 +228,17 @@
                                                 </div>
                                             </td>
                                             <td class="small"><%= item.quantity%></td>
-                                             <%if(item.status ==="placed"){%>
+                                             <%if(item.status !=="cancelled"){%>
                                             <td class="small">₹<%= item.price%></td>
                                             <td class="small fw-bold">₹<%= item.quantity+item.price%></td>
                                             <%}else{%>
                                             <td class="small"><del>₹<%= item.price%></del></td>
                                             <td class="small fw-bold"><del>₹<%= item.quantity+item.price%></del></td>
+                                            <%}%>
+                                           <%if(item.status ==='return'){%>
+                                             <td>
+                                                <p class="text-danger">return</p>
+                                             </td>
                                             <%}%>
                                         </tr>
                                         <%})%>

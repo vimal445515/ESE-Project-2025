@@ -84,7 +84,7 @@
                     <h1 class="cancel-title">Why do you return this product?</h1>
                     <div class="cancel-subtitle">Why do you Resend the product?</div>
                 </div>
-                
+                <% if(!productId){%>
                 <form action="/orders/return" method="POST">
                     <div class="mb-4">
                         <input type="hidden" name="orderId" value="<%= orderId%>">
@@ -93,8 +93,21 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-confirm shadow-sm">Confirm</button>
                 </form>
-            </div>
+                <%}else if(productId){%>
+                    
+                    <form action="/orders/returnSingleProduct" method="POST">
+                    <div class="mb-4">
+                        <input type="hidden" name="orderId" value="<%= orderId%>">
+                        <input type="hidden" name="productId" value="<%= productId%>">
+                        <input type="hidden" name="variantId" value="<%= variantId%>">
+                        <label class="form-label fw-bold mb-2">Reason</label>
+                        <textarea name="reason" class="form-control reason-box" placeholder="Please describe why you are cancelling your order..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-confirm shadow-sm">Confirm</button>
+                </form>
 
+                    <%}%>
+            </div>
             <div class="col-lg-5 order-1 order-lg-2">
                 <div class="contact-card shadow-lg">
                     <h3>Contact Information</h3>

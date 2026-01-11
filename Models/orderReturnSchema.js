@@ -14,6 +14,12 @@ const orderReturnSchema = new mongoose.Schema({
     },
     reason:{
         type:String
+    },
+    product:{
+        type:Object
+    },
+    type:{
+        type:String
     }
 })
 

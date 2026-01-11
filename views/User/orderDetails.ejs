@@ -303,11 +303,10 @@ This action cannot be undone.
                                     </div>
                                 </div>
                             </td>
-                            <% if(item.status === 'placed'){%>
+                            <% if(item.status !== 'cancelled'){%>
                             <td class="text-muted"><%= item.quantity%></td>
                             <td class="fw-bold">₹<%= item.price.toLocaleString("en-IN")%>
                                 <%}else{%>
-
                             <td class="text-muted"><%= item.quantity%></td>
                             <td class="fw-bold"><del>₹<%= item.price.toLocaleString("en-IN")%></del>
                                     
@@ -325,12 +324,14 @@ This action cannot be undone.
                             <td>
                                 <%if(item.status ==="cancelled"){%>
                                     <button href="" data-toggle="modal" class=" btn  text-danger text-decoration-none fw-bold small"> Order cancelled</button>
+                                <%}else if(item.status === "return"){%>
+                                    <p   class=" text-success text-decoration-none fw-bold small"> Return approved</p>
                                 <%}else{%>
                                       <%if(order.orderStatus !=="delivered"){%>
                                 <button href="" data-toggle="modal" onclick="cancleSingleProductModal('<%= item.productId%>','<%= item.variantId %>','<%= item.quantity%>')"  class=" btn text-primary text-decoration-none fw-bold small">Cancel Order</button>
                                 <%}%>
                                 <%if(order.orderStatus ==="delivered"){%>
-                                <a href="/orders/return?orderId=<%=order._id%>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
+                                <a href="/orders/return?orderId=<%=order._id%>&productId=<%= item.productId%>&variantId=<%= item.variantId %>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
                                 <%}%>
                                     <%}%>
                                
