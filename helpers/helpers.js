@@ -57,6 +57,13 @@ const calculateAvargeRating = (reviews)=>{
   },0)
    return sum/reviews.length;
 }
+
+const generateCouponCode = ()=>{
+ const randomNumber  = Math.random().toString(36).substring(2, 8).toUpperCase()
+ const date = new Date().toISOString().slice(0,10).replace(/-/g,'')
+ return `COUPON-${date}-${randomNumber}`
+
+}
 export default {
    otpGenerator,
    sendEmail,
@@ -64,5 +71,6 @@ export default {
    groupValues,
    deleteProfile,
   generateOrderId,
-  calculateAvargeRating
+  calculateAvargeRating,
+  generateCouponCode
 }

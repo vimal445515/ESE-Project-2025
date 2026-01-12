@@ -18,6 +18,7 @@ import reviewRouter from "./Routers/reviewRouter.js"
 import flash from 'connect-flash'
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware.js'
 import cloudinary from "./config/cloudinary.js";
+import couponRouter from './Routers/couponRouter.js';
 
 
 
@@ -52,6 +53,7 @@ app.use(checkoutRouter)
 app.use("/orders",orderRouter)
 app.use(invoiceRoutes);
 app.use(reviewRouter);
+app.use(couponRouter)
 app.use(errorHandlingMiddleware.error)
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}`);

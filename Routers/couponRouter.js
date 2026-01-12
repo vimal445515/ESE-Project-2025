@@ -1,0 +1,8 @@
+import {Router} from 'express'
+import { isAdmin} from '../middleware/adminMiddleware.js'
+import couponController from '../Controllers/couponController.js';
+const router = Router();
+
+router.get('/coupon',couponController.loadCouponPage)
+router.post('/coupon',couponController.createCoupon)
+export default router
