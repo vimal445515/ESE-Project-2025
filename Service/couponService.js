@@ -16,9 +16,20 @@ const storeCouponInDB = async(discount,minimumOrder,maximumDiscount,expiryDate)=
 
 }
 
-const getCoupons = async(page,limit) =>{
+const getCoupons = async(page,limit,search,filter) =>{
     const skip = helpers.paginationSkip(page,limit)
     const pipeline = []
+    if(filter){
+        if(filter === 'active'){
+            pipeline.push({$match:{isActive:true}})
+        }
+        else{
+             pipeline.push({$match:{isActive:false}})
+        }
+    }
+    if(search){
+        pipeline.push({$match:{couponCode:search}});
+    }
     pipeline.push({$skip:skip},{$limit:limit});
     return await couponModel.aggregate(pipeline);
 }
@@ -27,10 +38,21 @@ const getCount = async()=>{
   return await couponModel.countDocuments();
 }
 
+const activate = async(couponId)=>{
+    await couponModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(couponId)},{$set:{isActive:true}})
+}
+
+const deactive =  async(couponId)=>{
+    await couponModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(couponId)},{$set:{isActive:false}})
+}
+
+
 
 
 export default {
     storeCouponInDB,
     getCoupons,
-    getCount
+    getCount,
+    activate,
+    deactive
 }

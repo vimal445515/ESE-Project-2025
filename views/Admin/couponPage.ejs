@@ -143,19 +143,23 @@
                         <i class="fas fa-plus me-2"></i> Create Coupon
                     </button>
                 </div>
-
+                    <input type="text" id="searchInput" name="value"  placeholder="Search..." aria-label="Search" required>
+                <button type="button" onclick="searchText()" id="search" class="btn btn-light">Search</button>
+                <button type="button" onclick="window.location.href=`/coupon`" id="search" class="btn btn-light">Clear</button>
+                
                 <ul class="nav nav-tabs-custom mt-3">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">All</a>
+                        <a class="nav-link active" onclick="window.location.href=`/coupon`">All</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Active</a>
+                        <a class="nav-link" onclick="active()">Active</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Expired</a>
+                        <a class="nav-link" onclick="expired()">Expired</a>
                     </li>
                 </ul>
 
+               
                 <div class="card coupon-card shadow-sm mb-4">
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -197,9 +201,9 @@
                                         <td class="text-center">
                                             <button onclick="showEditModal()" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
                                              <%if(coupon.isActive){%>
-                                            <button class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
+                                            <button type="button" onclick="deactive('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
                                              <%}else{%>
-                                            <button class="btn btn-link text-muted p-0"><i class="fas fa-undo"></i></button>
+                                            <button  type="button" onclick="activate('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-undo"></i></button>
                                              <%}%>
                                         </td>
                                     </tr>
@@ -289,7 +293,7 @@
 
                         
                         <div class="modal-header border-0">
-                            <h5 class="modal-title fw-bold">Create Coupon</h5>
+                            <h5 class="modal-title fw-bold">Edit Coupon</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
@@ -299,39 +303,32 @@
                            <form>
                             <div class="mb-3">
                             <label class="form-label">Coupon Code</label>
-                            <input type="text" name="couponCode" class="form-control" placeholder="Enter your code">
+                            <input type="text" id="couponCode"  class="form-control" readonly>
                             </div>
 
                             
                             <div class="mb-3">
                             <label class="form-label">Discount</label>
-                            <input type="number" name="discount" class="form-control" placeholder="Enter discount">
+                            <input type="number" id="discount" name="discount" class="form-control" placeholder="Enter discount">
                             </div>
 
 
                             <div class="mb-3">
                             <label class="form-label">Minimum order</label>
-                            <input type="number" name="minimumOrder"  class="form-control" placeholder="Max price">
+                            <input type="number" id="minimumOrder" name="minimumOrder"  class="form-control" placeholder="Max price">
                             </div>
 
                    
                             <div class="mb-3">
                             <label class="form-label">Maximum Amount</label>
-                            <input type="number" name="maximumAmount" class="form-control" placeholder="Min price">
+                            <input type="number" id="maximumDiscount" name="maximumDiscount" class="form-control" placeholder="Min price">
                             </div>
 
                             
                             <div class="mb-3">
                             <label class="form-label">Expiry Date</label>
-                            <input type="date" name="expireDate" class="form-control">
+                            <input type="date" id="expiryDate" name="expiryDate" class="form-control">
                             </div>
-
-                        
-                            <div class="d-flex gap-2 mb-4">
-                            <button class="btn btn-sm btn-success">Active</button>
-                            <button class="btn btn-sm btn-outline-danger">Deactivate</button>
-                            </div>
-
                             <button type="submit" class="btn btn-primary w-100 fw-semibold">
                             Save
                             </button>
