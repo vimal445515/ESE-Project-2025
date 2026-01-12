@@ -59,9 +59,9 @@ const calculateAvargeRating = (reviews)=>{
 }
 
 const generateCouponCode = ()=>{
- const randomNumber  = Math.random().toString(36).substring(2, 8).toUpperCase()
- const date = new Date().toISOString().slice(0,10).replace(/-/g,'')
- return `COUPON-${date}-${randomNumber}`
+ const randomNumber  = Math.random().toString(36).substring(2, 8).toUpperCase().slice(1,4)
+ const random =  Math.random().toString(36).substring(2, 8).toUpperCase().slice(1,4)
+ return `COUPON-${random}-${randomNumber}`
 
 }
 export default {
