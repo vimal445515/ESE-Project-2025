@@ -197,9 +197,9 @@
                                         
                                         </td>
                                         <td class="text-muted"><%= coupon.createdAt.toString().slice(0,16)%></td>
-                                        <td class="text-muted"><%= coupon.expiryDate.toString().slice(0,16)%></td>
+                                        <td class="text-muted"><%= coupon.expiryDate?.toString().slice(0,16)%></td>
                                         <td class="text-center">
-                                            <button onclick="showEditModal()" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
+                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','coupon.expiryDate')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
                                              <%if(coupon.isActive){%>
                                             <button type="button" onclick="deactive('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
                                              <%}else{%>
@@ -239,6 +239,7 @@
                         <div class="modal-header border-0">
                             <h5 class="modal-title fw-bold">Create Coupon</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          
                         </div>
 
                     
@@ -249,31 +250,32 @@
                             <div class="mb-3">
                             <label class="form-label">Discount</label>
                             <input type="number" name="discount" class="form-control" placeholder="Enter discount">
+                              <p class="discountError text-danger"></p>
                             </div>
 
 
                             <div class="mb-3">
                             <label class="form-label">Minimum order</label>
                             <input type="number" name="minimumOrder"  class="form-control" placeholder="Max price">
+                             <p class="minimumOrderError text-danger"></p>
                             </div>
 
                    
                             <div class="mb-3">
                             <label class="form-label">Maximum Amount</label>
                             <input type="number" name="maximumDiscount" class="form-control" placeholder="Min price">
+                            <p class="maximumDiscountError text-danger"></p>
                             </div>
 
                             
                             <div class="mb-3">
                             <label class="form-label">Expiry Date</label>
                             <input type="date" name="expiryDate" class="form-control">
+                             <p class="dateError text-danger"></p>
                             </div>
 
                         
-                            <div class="d-flex gap-2 mb-4">
-                            <button class="btn btn-sm btn-success">Active</button>
-                            <button class="btn btn-sm btn-outline-danger">Deactivate</button>
-                            </div>
+            
 
                             <button type="submit" class="btn btn-primary w-100 fw-semibold">
                             Save
@@ -300,34 +302,38 @@
                     
                         <div class="modal-body">
 
-                           <form>
+                           <form action="coupon/edit" method="post">
                             <div class="mb-3">
                             <label class="form-label">Coupon Code</label>
-                            <input type="text" id="couponCode"  class="form-control" readonly>
+                            <input type="text" id="couponCode" name="couponCode" class="form-control" readonly>
                             </div>
 
                             
                             <div class="mb-3">
                             <label class="form-label">Discount</label>
                             <input type="number" id="discount" name="discount" class="form-control" placeholder="Enter discount">
+                            <p class="discountError text-danger"></p>
                             </div>
 
 
                             <div class="mb-3">
                             <label class="form-label">Minimum order</label>
                             <input type="number" id="minimumOrder" name="minimumOrder"  class="form-control" placeholder="Max price">
+                            <p class="minimumOrderError text-danger"></p>
                             </div>
 
                    
                             <div class="mb-3">
                             <label class="form-label">Maximum Amount</label>
                             <input type="number" id="maximumDiscount" name="maximumDiscount" class="form-control" placeholder="Min price">
+                             <p class="maximumDiscountError text-danger"></p>
                             </div>
 
                             
                             <div class="mb-3">
                             <label class="form-label">Expiry Date</label>
                             <input type="date" id="expiryDate" name="expiryDate" class="form-control">
+                            <p class="dateError text-danger"></p>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 fw-semibold">
                             Save

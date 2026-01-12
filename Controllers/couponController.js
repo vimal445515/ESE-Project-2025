@@ -29,9 +29,16 @@ const deactiveCoupon = async(req,res)=>{
     await couponService.deactive(couponId)
     return res.status(200).json({type:"success"});
 }
+
+const editCoupon = async(req,res)=>{
+    const {couponCode,discount,minimumOrder, maximumDiscount,expiryDate} = req.body
+    await couponService.updateCoupon(couponCode,discount,minimumOrder, maximumDiscount,expiryDate)
+    res.redirect('/coupon');
+}
 export default {
     loadCouponPage,
     createCoupon,
     activateCoupon,
-    deactiveCoupon
+    deactiveCoupon,
+    editCoupon
 }

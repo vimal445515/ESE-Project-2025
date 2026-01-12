@@ -47,6 +47,15 @@ const deactive =  async(couponId)=>{
 }
 
 
+const updateCoupon = async(couponCode,discount,minimumOrder, maximumDiscount,expiryDate)=>{
+    await couponModel.findOneAndUpdate({couponCode},{$set:{
+        discount,
+        minimumOrder,
+        maximumDiscount,
+        expiryDate
+    }})
+}
+
 
 
 export default {
@@ -54,5 +63,6 @@ export default {
     getCoupons,
     getCount,
     activate,
-    deactive
+    deactive,
+    updateCoupon
 }
