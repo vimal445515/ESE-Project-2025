@@ -1,5 +1,5 @@
 import couponService from "../Service/couponService.js";
-
+import cartService from "../Service/cartService.js";
 
 const loadCouponPage= async(req,res)=>{
     const page = req.query.page||1
@@ -35,10 +35,36 @@ const editCoupon = async(req,res)=>{
     await couponService.updateCoupon(couponCode,discount,minimumOrder, maximumDiscount,expiryDate)
     res.redirect('/coupon');
 }
+
+
+const applayCoupon = async(req,res)=>{
+    const products = req.body.products;
+    const couponCode = req.body.couponCode;
+   try{
+    const {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount} =  await couponService.applayCouponCodeInTotalAmount(products,couponCode,req.session._id)
+    console.log(totalPriceCartItem," ",totalDiscountPrice," ",tax," ",total," ",couponDiscount)
+    res.status(200).json({type:"success",totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,couponCode})
+   }
+   catch(error){
+    res.status(400).json({type:"error",message:error.message});
+   }
+
+}
+
+const removeCoupon = (req,res)=>{
+    const {products} = req.body;
+    const {totalPriceCartItem,totalDiscountPrice,tax,total} = couponService.calculateTotalAmount(products)
+    
+    return res.status(200).json({totalPriceCartItem,totalDiscountPrice,tax,total})
+}
+
+
 export default {
     loadCouponPage,
     createCoupon,
     activateCoupon,
     deactiveCoupon,
-    editCoupon
+    editCoupon,
+    applayCoupon,
+    removeCoupon
 }

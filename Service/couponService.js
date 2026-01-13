@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
-import { couponModel } from '../Models/couponSchema.js'
+import { couponModel,couponUseCount } from '../Models/couponSchema.js'
 import helpers from '../helpers/helpers.js'
+import cartService from './cartService.js'
 
 const storeCouponInDB = async(discount,minimumOrder,maximumDiscount,expiryDate)=>{
    const  couponCode =  helpers.generateCouponCode()
@@ -57,6 +58,65 @@ const updateCoupon = async(couponCode,discount,minimumOrder, maximumDiscount,exp
 }
 
 
+const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
+    console.log(couponCode,userId)
+    const coupon = await couponModel.findOne({couponCode:couponCode})
+    
+    console.log(coupon)
+    if(!coupon){
+       throw new Error("Coupon is not valid");
+    }
+    if(!coupon.isActive){
+        throw new Error("Coupon is not Active now")
+    }
+
+    if(coupon.expiryDate<new Date()){
+        throw new Error("Coupon is expired")
+    }
+    
+    const oldAmount = cartService.cartSummary(products)
+    if(oldAmount.total<coupon.minimumOrder){
+        throw new Error(`This coupon require a minimum amount of ${coupon.minimumOrder} INR`)
+    }
+    if(await couponUseCount.findOne({couponId:coupon._id,userId:userId})){
+        throw new Error('This coupon is already used');
+    }
+    const  discount = (oldAmount.totalPriceCartItem*(coupon.discount/100))
+   const  couponDiscount = Math.min(discount,coupon.maximumDiscount)
+
+    // Calculating total price of every itme in the items and store into a array with discount
+    let totalPriceCartItem = products.reduce((total,item)=>{
+      total += ((item.product.variants?.price*item.quantity)-parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
+      return total;
+    },0)
+
+    totalPriceCartItem = totalPriceCartItem - couponDiscount; // Applay discount
+  // Calculate total discount price 
+   const totalDiscountPrice = products.reduce((total,item)=>{
+      total += (parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
+      return total;
+    },0)
+
+  const  tax =parseInt( ( totalPriceCartItem* 18 ) / 100)
+  const total =  totalPriceCartItem+ tax
+
+ return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount}
+}
+
+const calculateTotalAmount = (products)=>{
+    return cartService.cartSummary(products)
+}
+
+const getCouponsForCheckout = async(orderDetails)=>{
+       let coupons = await couponModel.find({expiryDate:{$gte:new Date()},isActive:true})
+      
+
+       return coupons
+
+
+}
+
+
 
 export default {
     storeCouponInDB,
@@ -64,5 +124,8 @@ export default {
     getCount,
     activate,
     deactive,
-    updateCoupon
+    updateCoupon,
+     applayCouponCodeInTotalAmount,
+     calculateTotalAmount,
+     getCouponsForCheckout
 }
