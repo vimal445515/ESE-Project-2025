@@ -35,9 +35,9 @@ const couponUser = new mongoose.Schema({
         required:true,
         type:mongoose.Types.ObjectId
     },
-    couponId:{
+    couponCode:{
          required:true,
-        type:mongoose.Types.ObjectId
+        type:String
     },
     userdCount:{
         type:Number,

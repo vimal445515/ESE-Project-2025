@@ -5,6 +5,7 @@ import helpers from '../helpers/helpers.js'
 import categoryService from "../Service/categoryService.js"
 import productService from "../Service/productService.js"
 import { startSession } from "mongoose"
+import couponService from '../Service/couponService.js'
 
 const loadOrdersHistory = async(req,res)=>{
     
@@ -31,7 +32,7 @@ const cancelOrder = async(req,res)=>{
 const placeOrder =  async(req,res)=>{
 
     // single product order
-
+    
  
     let order;
       if(req.body?.productId){
@@ -58,10 +59,18 @@ const placeOrder =  async(req,res)=>{
                 products =[{product:{...data[0]}}]
                 products[0].quantity = Number(req.body.quantity);
                 
-                const orderDetails =  cartService.cartSummary(products)
-                const [{product,quantity}] = products
-                
-              order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
+                if(req.body.appliedCoupon){
+                   const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
+                   const [{product,quantity}] = products
+                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,req.body.appliedCoupon)
+                }
+                else{
+                    const orderDetails =  cartService.cartSummary(products)
+                    const [{product,quantity}] = products
+                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
+
+                }
+              
 
       }
       else{
@@ -78,8 +87,14 @@ const placeOrder =  async(req,res)=>{
          return res.redirect('/cart')
         }
         else{
-        const orderDetails =  cartService.cartSummary(products)
-        order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+          if(req.body.appliedCoupon){
+            const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
+             order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id,req.body.appliedCoupon);
+          }else{
+            const orderDetails =  cartService.cartSummary(products)
+            order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+          }
+        
         }
 
       }

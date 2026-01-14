@@ -78,7 +78,7 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
     if(oldAmount.total<coupon.minimumOrder){
         throw new Error(`This coupon require a minimum amount of ${coupon.minimumOrder} INR`)
     }
-    if(await couponUseCount.findOne({couponId:coupon._id,userId:userId})){
+    if(await couponUseCount.findOne({couponCode:coupon.couponCode,userId:userId})){
         throw new Error('This coupon is already used');
     }
     const  discount = (oldAmount.totalPriceCartItem*(coupon.discount/100))

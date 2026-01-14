@@ -277,6 +277,7 @@
                     <h5 class="fw-bold mb-3">Coupon Applied</h5>
                     <div class="mb-3">
                         <h5 id="appiledCoupon" class=" rounded-pill text-light p-3" style="background-color: #73e873;"></h5>
+                        <input type="hidden" name="appliedCoupon" id="couponHolder">
                     </div>
                     <button type="button" onclick="removerCoupon()" class="btn btn-apply px-4 py-2">Remove</button>
                 </div>
@@ -653,6 +654,7 @@ function applayCoupon(couponCode=couponInput.value.trim()){
             You saved ₹<span>${parseInt(data.couponDiscount)}</span> on this order
             </p>`
             document.querySelector("#appiledCoupon").innerText = data.couponCode
+            document.getElementById('couponHolder').value = data.couponCode
             document.querySelector('.coupon-card').style.display = 'none';
             document.getElementById('couponInput').value= ''
             document.querySelector('.coupon-card-applied').classList.remove('d-none')

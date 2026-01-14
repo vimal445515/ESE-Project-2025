@@ -7,9 +7,10 @@ import addressModel from '../Models/addressSchema.js'
 import orderReturnModel from "../Models/orderReturnSchema.js"
 import wishlistModel from '../Models/wishlistSchema.js'
 import cartService from './cartService.js'
+import { couponModel,couponUseCount } from '../Models/couponSchema.js'
 
 
-const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount)=>{
+const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null)=>{
 
 
     
@@ -24,6 +25,21 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             {'variant._id':variantId}
         ]}
     )
+
+    let couponData
+    if(coupon){
+       couponData =  await couponModel.findOne({couponCode:coupon})
+       couponData = {
+        couponCode:couponData.couponCode,
+        discount:couponData.discount,
+        maximumDiscount:couponData.maximumDiscount,
+        minimumOrder:couponData.minimumOrder
+       }
+        await couponUseCount.create({userId,couponCode:coupon})
+    }
+    else{
+        couponData = null;
+    }
 
     //create order
     const orderId = helper.generateOrderId()
@@ -61,13 +77,14 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             tax:orderDetails.tax,
             totalAmount:orderDetails.total
         },
+        coupon:couponData
     
     })
     return data
 }
 
 
-const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
+const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null)=>{
    let items=[];
 
    
@@ -95,6 +112,20 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
         await wishlistModel.deleteOne({productId:product.productId,variantId:product.variantId})
 
     })
+    let couponData
+    if(coupon){
+        couponData =  await couponModel.findOne({couponCode:coupon})
+       couponData = {
+        couponCode:couponData.couponCode,
+        discount:couponData.discount,
+        maximumDiscount:couponData.maximumDiscount,
+        minimumOrder:couponData.minimumOrder
+       }
+        await couponUseCount.create({userId,couponCode:coupon})
+    }
+    else{
+        couponData = null;
+    }
 
     const orderId = helper.generateOrderId()
 
@@ -122,6 +153,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId)=>{
             tax:orderDetails.tax,
             totalAmount:orderDetails.total
         },
+        coupon:couponData
     
     })
  
