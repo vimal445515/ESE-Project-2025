@@ -8,9 +8,13 @@ const loadAdminOffersPage = (req,res)=>{
 }
 
 const loadCategoryOfferPage = async(req,res)=>{
+    const page = req.query?.page||1
+    const limit = 10;
+    const skip = helpers.paginationSkip(page,limit)
     const categorys = await categoryService.getAllCategoryForOffer();
-    const offers = await offerService.getAllOffers('category',0,10);
-    res.status(200).render('Admin/categoryOfferPage',{categorys,offers})
+    const offers = await offerService.getAllOffers('category',skip,limit);
+     const count = await offerService.getCout('category')
+    res.status(200).render('Admin/categoryOfferPage',{categorys,offers,count,limit,page})
 }
 
 const loadProductOfferPage = async(req,res)=>{
@@ -64,6 +68,18 @@ const createOfferForCategory = async(req,res)=>{
 }
 
 
+const enableDesabelOfferForCategoryOffer = async(req,res)=>{
+    console.log("helo")
+    const action = req.body.action ==='true'?true:false;
+    if(action){
+        await offerService.enableOffer('category',req.body.offerId,req.body.categoryId)
+    }
+    else{
+        await offerService.desebleOffer(req.body.offerId) 
+    }
+    res.status(200).json({href:`/offers/category?page=${Number(req.query.page)}`})
+}
+
 export default 
 {
     loadAdminOffersPage,
@@ -72,5 +88,6 @@ export default
     createOfferForProduct,
     enableDesabelOffer,
     updateProductOffer,
-    createOfferForCategory
+    createOfferForCategory,
+    enableDesabelOfferForCategoryOffer
 }
