@@ -1,6 +1,7 @@
 import offerModel from "../Models/offerSchema.js";
 import mongoose from 'mongoose'
 import productService from "./productService.js";
+import categoryService from "./categoryService.js";
 
 const createOffer = async(offerName,productId,discount,expiryDate)=>{
    const productName =  await productService. getSingleProductName(productId)
@@ -40,11 +41,26 @@ const desebleOffer = async(offerId)=>{
 const updateOffer = async(offerName,discount,expiryDate,offerId)=>{
     await offerModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(offerId)},{$set:{offerName,discount,expiryDate}})
 }
+
+const createCategoryOffer = async(offerName,categoryId,discount,expiryDate)=>{
+    const category = await categoryService.getSingleCategoryName(categoryId)
+    await offerModel.create(
+       {
+        offerName,
+        targetId:new mongoose.Types.ObjectId(categoryId),
+        offerType:"category",
+        itemName:category.categoryName,
+        discount,
+        expiryDate
+       }
+    )
+}
 export default { 
     createOffer,
     getAllOffers,
     getCout,
     enableOffer,
     desebleOffer,
-    updateOffer 
+    updateOffer ,
+    createCategoryOffer
 }

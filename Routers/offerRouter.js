@@ -8,4 +8,5 @@ router.get('/product',offerController.loadProductOfferPage)
 router.post('/product',offerController.createOfferForProduct)
 router.patch('/product/action',offerController.enableDesabelOffer)
 router.patch('/product/update',offerController.updateProductOffer)
+router.post('/category',offerController.createOfferForCategory)
 export default router;

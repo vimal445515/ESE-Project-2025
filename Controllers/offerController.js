@@ -2,12 +2,14 @@
 import offerService from "../Service/offerService.js";
 import productService from "../Service/productService.js";
 import helpers from '../helpers/helpers.js'
+import categoryService from "../Service/categoryService.js";
 const loadAdminOffersPage = (req,res)=>{
     res.status(200).render('Admin/offersPage');
 }
 
-const loadCategoryOfferPage = (req,res)=>{
-    res.status(200).render('Admin/categoryOfferPage')
+const loadCategoryOfferPage = async(req,res)=>{
+    const categorys = await categoryService.getAllCategoryForOffer();
+    res.status(200).render('Admin/categoryOfferPage',{categorys})
 }
 
 const loadProductOfferPage = async(req,res)=>{
@@ -53,6 +55,14 @@ const updateProductOffer = async (req,res)=>{
     }
 }
 
+
+const createOfferForCategory = async(req,res)=>{
+    const {offerName,categoryId,discount,expiryDate} = req.body;
+    await offerService.createCategoryOffer(offerName,categoryId,discount,expiryDate)
+    res.status(201).redirect('/offers/category');
+}
+
+
 export default 
 {
     loadAdminOffersPage,
@@ -60,5 +70,6 @@ export default
     loadProductOfferPage,
     createOfferForProduct,
     enableDesabelOffer,
-    updateProductOffer
+    updateProductOffer,
+    createOfferForCategory
 }

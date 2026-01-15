@@ -26,10 +26,20 @@ const getAllCategory = async()=>{
     return category
 }
 
+const getAllCategoryForOffer = async()=>{
+    const category  = await categoryModel.find({isBlocked:false})
+    return category
+}
+const getSingleCategoryName = async(categoryId)=>{
+    return await categoryModel.findOne({_id: new mongoose.Types.ObjectId(categoryId)});
+}
+
 
 
 export default {
     findCategoryByName,
     getAllCategory,
-    isBlocked 
+    isBlocked,
+    getAllCategoryForOffer,
+    getSingleCategoryName 
 }
