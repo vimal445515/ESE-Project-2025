@@ -79,6 +79,21 @@ const enableDisableOfferForCategoryOffer = async(req,res)=>{
     res.status(200).json({href:`/offers/category?page=${Number(req.query.page)}`})
 }
 
+
+const updateCategoryOffer = async (req,res)=>{
+    try{
+            const {offerName,discount,expiryDate,offerId} = req.body;
+             await offerService.updateOffer(offerName,discount,expiryDate,offerId)
+             req.flash('success','offer updated successfully');
+             res.status(200).json({type:"success",message:"Offer updated successfully"})
+    }
+    catch(error){
+        req.flash('error','Oops somthing was Wrong')
+        res.status(500).json({type:"error",message:"! Oops somthing was Wrong"});
+    }
+}
+
+
 export default 
 {
     loadAdminOffersPage,
@@ -88,5 +103,6 @@ export default
     enableDisableOffer,
     updateProductOffer,
     createOfferForCategory,
-    enableDisableOfferForCategoryOffer
+    enableDisableOfferForCategoryOffer,
+    updateCategoryOffer
 }

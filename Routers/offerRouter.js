@@ -10,4 +10,5 @@ router.patch('/product/action',offerController.enableDisableOffer)
 router.patch('/product/update',offerController.updateProductOffer)
 router.post('/category',offerController.createOfferForCategory)
 router.patch('/category/action',offerController.enableDisableOfferForCategoryOffer)
+router.patch('/category/update',offerController.updateCategoryOffer)
 export default router;
