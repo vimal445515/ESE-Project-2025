@@ -35,7 +35,7 @@ const createOfferForProduct = async(req,res)=>{
 }
 
 
-const enableDesabelOffer = async(req,res)=>{
+const enableDisableOffer = async(req,res)=>{
 
     const action = req.body.action ==='true'?true:false;
     if(action){
@@ -68,7 +68,7 @@ const createOfferForCategory = async(req,res)=>{
 }
 
 
-const enableDesabelOfferForCategoryOffer = async(req,res)=>{
+const enableDisableOfferForCategoryOffer = async(req,res)=>{
     const action = req.body.action ==='true'?true:false;
     if(action){
         await offerService.enableOffer('category',req.body.offerId,req.body.categoryId)
@@ -85,8 +85,8 @@ export default
     loadCategoryOfferPage,
     loadProductOfferPage,
     createOfferForProduct,
-    enableDesabelOffer,
+    enableDisableOffer,
     updateProductOffer,
     createOfferForCategory,
-    enableDesabelOfferForCategoryOffer
+    enableDisableOfferForCategoryOffer
 }
