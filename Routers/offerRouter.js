@@ -9,5 +9,5 @@ router.post('/product',offerController.createOfferForProduct)
 router.patch('/product/action',offerController.enableDesabelOffer)
 router.patch('/product/update',offerController.updateProductOffer)
 router.post('/category',offerController.createOfferForCategory)
-router.post('/category/action',offerController.enableDesabelOfferForCategoryOffer)
+router.patch('/category/action',offerController.enableDesabelOfferForCategoryOffer)
 export default router;

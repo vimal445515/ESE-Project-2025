@@ -69,7 +69,6 @@ const createOfferForCategory = async(req,res)=>{
 
 
 const enableDesabelOfferForCategoryOffer = async(req,res)=>{
-    console.log("helo")
     const action = req.body.action ==='true'?true:false;
     if(action){
         await offerService.enableOffer('category',req.body.offerId,req.body.categoryId)
