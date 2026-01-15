@@ -20,7 +20,8 @@ const getAllOffers = async(offerType,skip,limit)=>{
         [
             {$match:{offerType:offerType}},
             {$skip:skip},
-            {$limit:limit}
+            {$limit:limit},
+            {$sort:{'createdAt':-1}}
         ]
     )
 }
