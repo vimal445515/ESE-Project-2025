@@ -9,7 +9,8 @@ const loadAdminOffersPage = (req,res)=>{
 
 const loadCategoryOfferPage = async(req,res)=>{
     const categorys = await categoryService.getAllCategoryForOffer();
-    res.status(200).render('Admin/categoryOfferPage',{categorys})
+    const offers = await offerService.getAllOffers('category',0,10);
+    res.status(200).render('Admin/categoryOfferPage',{categorys,offers})
 }
 
 const loadProductOfferPage = async(req,res)=>{

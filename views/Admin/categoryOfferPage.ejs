@@ -124,15 +124,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <%offers.forEach(offer=>{%>
                                     <tr>
                                         <td class="ps-4 fw-bold">Sample Offer Name</td>
-                                        <td>Electronics</td>
-                                        <td class="text-primary fw-bold">10%</td>
-                                        <td class="text-muted">2026-01-01</td>
-                                        <td><span class="status-pill status-active">Active</span></td>
+                                        <td><%= offer.offerName%></td>
+                                        <td class="text-primary fw-bold"><%= offer.discount%>%</td>
+                                        <td class="text-muted"><%= offer.expiryDate.toISOString().slice(0,10)%></td>
+                                        <td>
+                                            <% if(offer.isActive){%>
+                                            <span class="status-pill status-active">Active</span></td>
+                                            <%}else{%>
+                                            <span class="status-pill status-disabled">Blocked</span></td>
+                                             <%}%>
+                                        </td>
                                         <td>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" checked>
+                                                <input class="form-check-input" type="checkbox" name="active" value="<%= offer.isActive === true ? false : true%>" type="checkbox" <%= offer.isActive ? 'checked' : ''  %> >
                                             </div>
                                         </td>
                                         <td class="text-center">
@@ -144,6 +151,7 @@
                                             </button>
                                         </td>
                                     </tr>
+                                    <%})%>
                                 </tbody>
                             </table>
                         </div>
