@@ -245,6 +245,14 @@ const isBlocked = async(productId)=>{
   return await productModel.find({_id:productId,isDeleted:false})
 }
 
+const getAllProductsForOffer=async()=>{
+  return await productModel.find({isDeleted:false},{productName:1})
+}
+const getSingleProductName = async(productId)=>{
+ const product = await productModel.findOne({_id:productId});
+ return product.productName;
+}
+
 
 
 export default {
@@ -263,7 +271,9 @@ export default {
  getRelateditems,
  isBlocked,
  unDeleteProductFromDB,
- variantCount
+ variantCount,
+ getAllProductsForOffer,
+ getSingleProductName
 
 
 }
