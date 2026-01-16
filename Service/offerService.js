@@ -57,7 +57,7 @@ const createCategoryOffer = async(offerName,categoryId,discount,expiryDate)=>{
     )
 }
 
-
+//working
 const calculateOffersForProducts = async(products)=>{
    
     const result = await Promise.all(products.map(async(product)=>{

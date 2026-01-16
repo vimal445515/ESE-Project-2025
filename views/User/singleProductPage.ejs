@@ -279,9 +279,9 @@
             </div>
             
             <div class="d-flex align-items-baseline mb-4">
-                <span class="current-price me-3">₹<%= parseInt(productData.variants.price-((productData.discound/100)*productData.variants.price))%></span>
+                <span class="current-price me-3">₹<%= parseInt(productData.finalPrice)%></span>
                 <span class="old-price me-3">₹<%= productData.variants.price%></span>
-                <span class="badge bg-warning text-dark fw-bold"><%= productData.discound%>% OFF</span>
+                <span class="badge bg-warning text-dark fw-bold"><%= productData.finalDiscount%>% OFF</span>
             </div>
             
             <div class="row mb-4 g-3">

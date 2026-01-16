@@ -281,7 +281,7 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   const products =  await productModel.aggregate(pipeline)
   console.log(products)
   return products
-  // return await offerService.calculateOffersForProducts(products);
+  
 }
 
 const getSingleProduct= async (_id,storage,ram) =>{
@@ -297,6 +297,86 @@ const getSingleProduct= async (_id,storage,ram) =>{
       }},
       {$unwind:'$variants'}      
     )
+
+    // calculate offer 
+
+  // get product offer
+   pipeline.push(
+    {$lookup:{
+      from:'offers',
+      let:{'productId':'$_id'},
+      pipeline:[
+       {
+         $match:{
+          $expr:{
+            $and:[
+              {$eq:['$targetId','$$productId']},
+              {$eq:['$isActive',true]},
+              {$gte:['$expiryDate',new Date()]} 
+            ]
+          }
+        }
+       }
+      ]
+
+      ,as:"productOffer"
+    }
+  
+  }
+  )
+
+ // get category offer
+  pipeline.push({
+    $lookup:{
+      from:"offers",
+      let:{'categoryId':'$categoryId'},
+      pipeline:[
+        {$match:{
+         $expr:{
+          $and:[
+            {$eq:['$targetId','$$categoryId']},
+            {$eq:['$isActive',true]},
+            {$gte:['$expiryDate',new Date()]}
+          ]
+         }
+        }}
+      ],
+      as:"categoryOffer"
+    }
+  })
+
+
+  pipeline.push({
+    $addFields:{
+      productDiscount:{
+        $ifNull:[{$arrayElemAt:['$productOffer.discount',0]},0]
+      },
+      categoryDiscount:{
+        $ifNull:[{$arrayElemAt:['$categoryOffer.discount',0]},0]
+      }
+    }
+  })
+
+  // get final discount
+
+  pipeline.push(
+    {$addFields:{
+     finalDiscount:{$max:[
+        '$discound',
+        '$productDiscount',
+        '$categoryDiscount'
+      ]}
+    }},
+    {$addFields:{
+      finalPrice:{
+        $subtract:[
+          "$variants.price",{$multiply:['$variants.price',{$divide:['$finalDiscount',100]}]}
+        ]
+      }
+    }}
+  )
+
+
 
     if (storage !== undefined ) {
     pipeline.push({
