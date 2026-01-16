@@ -10,8 +10,10 @@ const storeWishlistItemInDB= async (productId,variantId,userId) =>{
 }
 
 const getWishlistItems = async(userId) =>{
-   const data =  await wishlistModel.aggregate([
-    {$match:{userId:new mongoose.Types.ObjectId(userId)}},
+
+    const pipeline = []
+
+    pipeline.push( {$match:{userId:new mongoose.Types.ObjectId(userId)}},
     {
         $lookup:{
             from:"products",
@@ -45,8 +47,89 @@ const getWishlistItems = async(userId) =>{
             as:"category"
         }
     },
-    {$unwind:"$category"}
-   ])
+    {$unwind:"$category"})
+
+
+    // calculate offer 
+
+  // get product offer
+   pipeline.push(
+    {$lookup:{
+      from:'offers',
+      let:{'productId':'$product._id'},
+      pipeline:[
+       {
+         $match:{
+          $expr:{
+            $and:[
+              {$eq:['$targetId','$$productId']},
+              {$eq:['$isActive',true]},
+              {$gte:['$expiryDate',new Date()]} 
+            ]
+          }
+        }
+       }
+      ]
+
+      ,as:"productOffer"
+    }
+  
+  }
+  )
+
+ // get category offer
+  pipeline.push({
+    $lookup:{
+      from:"offers",
+      let:{'categoryId':'$product.categoryId'},
+      pipeline:[
+        {$match:{
+         $expr:{
+          $and:[
+            {$eq:['$targetId','$$categoryId']},
+            {$eq:['$isActive',true]},
+            {$gte:['$expiryDate',new Date()]}
+          ]
+         }
+        }}
+      ],
+      as:"categoryOffer"
+    }
+  })
+
+
+  pipeline.push({
+    $addFields:{
+      productDiscount:{
+        $ifNull:[{$arrayElemAt:['$productOffer.discount',0]},0]
+      },
+      categoryDiscount:{
+        $ifNull:[{$arrayElemAt:['$categoryOffer.discount',0]},0]
+      }
+    }
+  })
+
+  // get final discount
+
+  pipeline.push(
+    {$addFields:{
+     finalDiscount:{$max:[
+        '$product.discound',
+        '$productDiscount',
+        '$categoryDiscount'
+      ]}
+    }},
+    {$addFields:{
+      finalPrice:{
+        $subtract:[
+          "$product.variants.price",{$multiply:['$product.variants.price',{$divide:['$finalDiscount',100]}]}
+        ]
+      }
+    }}
+  )
+
+   const data =  await wishlistModel.aggregate(pipeline)
+
    if(data.length > 0){
     return data
    }

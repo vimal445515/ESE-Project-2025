@@ -131,9 +131,9 @@
                                             <h6 class="product-name"><%= item.product.productName%></h6>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="d-flex">
                                         <span class="price-old">₹<%= item.product.variants.price%></span>
-                                        <span class="price-new">₹<%= item.product.variants.price-parseInt((item.product.discound/100)*item.product.variants.price)%></span>
+                                        <span class="price-new">₹<%= parseInt(item.finalPrice)%></span>
                                     </td>
                                      
                                     <td>

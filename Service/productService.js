@@ -279,7 +279,6 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   {$limit:limit})
    
   const products =  await productModel.aggregate(pipeline)
-  console.log(products)
   return products
   
 }
