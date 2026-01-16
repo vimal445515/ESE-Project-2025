@@ -1,6 +1,8 @@
 import { categoryModel } from "../Models/categorySchema.js";
 import { productModel } from "../Models/productSchema.js";
 import mongoose from "mongoose"
+import offerService from "./offerService.js";
+import offerModel from "../Models/offerSchema.js";
 
 const storeProductDataInDB = async (generalPhoto,productName,basePrice,description,category,discound,variantsData)=>{
   
@@ -138,7 +140,9 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   let pipeline = []
   pipeline.push({
     $match:{isDeleted:false}
-  },{$sort:{'createdAt':-1}},{
+  },
+  {$unwind:'$variants'}
+  ,{$sort:{'createdAt':-1}},{
     $lookup:{
       from:"categories",
       foreignField:"_id",
@@ -149,16 +153,94 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   {$match:{'category.isBlocked':false}}
   ,{
     $addFields:{totalStock:{$sum:"$variants.stock"}}
-  },
-  {$skip:skip},
-  {$limit:limit})
+  }
+  )
+
+  // calculate offer 
+
+  // get product offer
+  pipeline.push(
+    {$lookup:{
+      from:'offers',
+      let:{'productId':'$_id'},
+      pipeline:[
+       {
+         $match:{
+          $expr:{
+            $and:[
+              {$eq:['$targetId','$$productId']},
+              {$eq:['$isActive',true]},
+              {$gte:['$expiryDate',new Date()]} 
+            ]
+          }
+        }
+       }
+      ]
+
+      ,as:"productOffer"
+    }
+  
+  }
+  )
+
+ // get category offer
+  pipeline.push({
+    $lookup:{
+      from:"offers",
+      let:{'categoryId':'$categoryId'},
+      pipeline:[
+        {$match:{
+         $expr:{
+          $and:[
+            {$eq:['$targetId','$$categoryId']},
+            {$eq:['$isActive',true]},
+            {$gte:['$expiryDate',new Date()]}
+          ]
+         }
+        }}
+      ],
+      as:"categoryOffer"
+    }
+  })
+
+
+  pipeline.push({
+    $addFields:{
+      productDiscount:{
+        $ifNull:[{$arrayElemAt:['$productOffer.discount',0]},0]
+      },
+      categoryDiscount:{
+        $ifNull:[{$arrayElemAt:['$categoryOffer.discount',0]},0]
+      }
+    }
+  })
+
+  // get final discount
+
+  pipeline.push(
+    {$addFields:{
+     finalDiscount:{$max:[
+        '$discound',
+        '$productDiscount',
+        '$categoryDiscount'
+      ]}
+    }},
+    {$addFields:{
+      finalPrice:{
+        $subtract:[
+          "$variants.price",{$multiply:['$variants.price',{$divide:['$finalDiscount',100]}]}
+        ]
+      }
+    }}
+  )
+
   
   if(sort){
     if(sort ==='ltoH'){
-      pipeline.push({$sort:{basePrice:1}})
+      pipeline.push({$sort:{finalPrice:1}})
     }
     else if(sort ==='htoL'){
-      pipeline.push({$sort:{basePrice:-1}})
+      pipeline.push({$sort:{finalPrice:-1}})
     }else if(sort ==='AZ'){
       pipeline.push({$addFields:{lowerCase:{$toLower:"$productName"}}},{$sort:{lowerCase:1}})
     }
@@ -173,13 +255,13 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
     
     if(priceRange==="priceUnder10k")
     {
-      pipeline.push({$match:{basePrice:{$lte:10000}}})
+      pipeline.push({$match:{finalPrice:{$lte:10000}}})
     }
     else if(priceRange ==="price20k30k"){
-      pipeline.push({$match:{$and:[{basePrice:{$gte:20000}},{basePrice:{$lte:30000}}]}})
+      pipeline.push({$match:{$and:[{finalPrice:{$gte:20000}},{finalPrice:{$lte:30000}}]}})
     }
     else if(priceRange ==="priceOver50k"){
-      pipeline.push({$match:{basePrice:{$gte:5000}}})
+      pipeline.push({$match:{finalPrice:{$gte:5000}}})
     }
     
   }
@@ -192,8 +274,14 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
    
     pipeline.push({$match:{productName:{$regex:searchValue,$options:"i"}}});
   }
+
+  pipeline.push({$skip:skip},
+  {$limit:limit})
    
-  return await productModel.aggregate(pipeline)
+  const products =  await productModel.aggregate(pipeline)
+  console.log(products)
+  return products
+  // return await offerService.calculateOffersForProducts(products);
 }
 
 const getSingleProduct= async (_id,storage,ram) =>{
@@ -209,6 +297,7 @@ const getSingleProduct= async (_id,storage,ram) =>{
       }},
       {$unwind:'$variants'}      
     )
+
     if (storage !== undefined ) {
     pipeline.push({
       $match: { "variants.storage": Number(storage) }

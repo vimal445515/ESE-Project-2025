@@ -160,8 +160,9 @@
                         <h6 class="mb-1 fw-bold text-truncate"><%= product.productName%></h6>
                         
                         <div class="d-flex align-items-baseline mt-2">
-                            <span class="old-price me-2">₹<%= product.basePrice %></span>
-                            <span class="current-price fs-5">₹<%= parseInt(product.basePrice - (parseInt((product.discound/100)*product.basePrice)))%></span>
+                            <span class="old-price me-2">₹<%= product.variants.price %></span>
+                            <span class="current-price fs-5">₹<%= parseInt(product.finalPrice)%></span>
+                            <pan class=" ms-3 text-success"><%= product.finalDiscount%>% Off</pan>
                         </div>
                     </div>
                 </div>

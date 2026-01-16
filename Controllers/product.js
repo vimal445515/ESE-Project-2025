@@ -102,9 +102,8 @@ const loadUserSideProductsPage = async(req,res)=>{
     const products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     const toatalCount = await productService.countPages()
     const {count} =toatalCount[0]
-
+  
     const categoryNames =  await categoryService.getAllCategory();
-    console.log("this is categoryNames",categoryNames)
     res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile,categoryNames})
 }
 

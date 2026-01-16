@@ -56,6 +56,38 @@ const createCategoryOffer = async(offerName,categoryId,discount,expiryDate)=>{
        }
     )
 }
+
+
+const calculateOffersForProducts = async(products)=>{
+   
+    const result = await Promise.all(products.map(async(product)=>{
+        const categoryDiscount = await offerModel.findOne({isActive:true,expiryDate:{$gte:new Date()},offerType:"category",targetId:new mongoose.Types.ObjectId(product.categoryId)});
+        const productDiscount = await offerModel.findOne({isActive:true,expiryDate:{$gte:new Date()},offerType:"product",targetId:new mongoose.Types.ObjectId(product._id)});
+        let offer;
+        if(!categoryDiscount && !productDiscount)
+        {
+            offer = null;
+        }
+        else if(categoryDiscount && !productDiscount){
+            offer = categoryDiscount;
+        }
+        else if(!categoryDiscount && productDiscount){
+            offer = productDiscount;
+        }
+        else if(categoryDiscount && productDiscount){
+            offer = productDiscount.discount >= categoryDiscount.discount?productDiscount:categoryDiscount
+        }
+        if(offer){
+           if(offer.discount>product.discount){
+              product.discount = offer.discount;  
+           } 
+        }
+        return product
+    }))
+     console.log(result)
+    return result;
+
+}
 export default { 
     createOffer,
     getAllOffers,
@@ -63,5 +95,6 @@ export default {
     enableOffer,
     desebleOffer,
     updateOffer ,
-    createCategoryOffer
+    createCategoryOffer,
+    calculateOffersForProducts
 }
