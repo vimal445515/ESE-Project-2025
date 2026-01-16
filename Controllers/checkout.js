@@ -50,8 +50,8 @@ const loadCheckOutPage = async (req,res)=>{
         
     }
 
-   
-     const orderDetails =  cartService.cartSummary(products)
+    
+     const orderDetails =  cartService.singleProductSummary(products)
      const defaultAddress  = await address.getUserAddress(req.session._id)
      const allAddress = await address.getAllAddressForCheckout(req.session._id)
      const coupons = await  couponService.getCouponsForCheckout(orderDetails)

@@ -82,7 +82,7 @@
                                     </td>
                                     <td>
                                         <span class="old-price">₹<%= value.product.variants.price%></span>
-                                        <span class="fw-bold">₹<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%></span>
+                                        <span class="fw-bold">₹<%=  parseInt(value.finalPrice)*1%></span>
                                     </td>
                                     <td>
                                         <div id="cartItem" class="input-group quantity-group">
@@ -106,7 +106,7 @@
                                         </div>
                                     </td>
                                      
-                                    <td class="fw-bold border-bottom-0 subTotalPrice">₹<%=  (value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price))*value.quantity%></td>
+                                    <td class="fw-bold border-bottom-0 subTotalPrice">₹<%=  parseInt(value.finalPrice)*value.quantity%></td>
                                 </tr>
                                 <% })%>
                             </tbody>
