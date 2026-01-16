@@ -39,6 +39,9 @@ const editCoupon = async(req,res)=>{
 
 const applayCoupon = async(req,res)=>{
     const products = req.body.products;
+
+    console.log('product',products)
+
     const couponCode = req.body.couponCode;
    try{
     const {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount} =  await couponService.applayCouponCodeInTotalAmount(products,couponCode,req.session._id)
