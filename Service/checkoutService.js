@@ -7,13 +7,31 @@ const getProduct = async(productId,variantId)=>{
         {$unwind:'$variants'},
         {$match:{"variants._id":new mongoose.Types.ObjectId(variantId)}})
 
+    pipeline.push({
+        $project:{
+            _id:0,
+            product:{
+                _id:'$_id',
+                productName:"$productName",
+                basePrice:"$basePrice",
+                discription:"$description",
+                discound:'$discound',
+                categoryId:"$categoryId",
+                createdAt:"$createdAt",
+                generalPhoto:"$generalPhoto",
+                isDeleted:"$isDeleted",
+                variants:'$variants'
+
+            }
+        }
+    })
     // calculate offer 
 
   // get product offer
    pipeline.push(
     {$lookup:{
       from:'offers',
-      let:{'productId':'$_id'},
+      let:{'productId':'$product._id'},
       pipeline:[
        {
          $match:{
@@ -38,7 +56,7 @@ const getProduct = async(productId,variantId)=>{
   pipeline.push({
     $lookup:{
       from:"offers",
-      let:{'categoryId':'$categoryId'},
+      let:{'categoryId':'$product.categoryId'},
       pipeline:[
         {$match:{
          $expr:{
@@ -71,7 +89,7 @@ const getProduct = async(productId,variantId)=>{
   pipeline.push(
     {$addFields:{
      finalDiscount:{$max:[
-        '$discound',
+        '$product.discound',
         '$productDiscount',
         '$categoryDiscount'
       ]}
@@ -79,7 +97,7 @@ const getProduct = async(productId,variantId)=>{
     {$addFields:{
       finalPrice:{
         $subtract:[
-          "$variants.price",{$multiply:['$variants.price',{$divide:['$finalDiscount',100]}]}
+          "$product.variants.price",{$multiply:['$product.variants.price',{$divide:['$finalDiscount',100]}]}
         ]
       }
     }}

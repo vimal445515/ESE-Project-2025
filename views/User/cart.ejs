@@ -82,7 +82,7 @@
                                     </td>
                                     <td>
                                         <span class="old-price">₹<%= value.product.variants.price%></span>
-                                        <span class="fw-bold">₹<%=  parseInt(value.finalPrice)*1%></span>
+                                        <span class="fw-bold">₹<%=  parseInt(value.finalPrice).toLocaleString('en-IN')%></span>
                                     </td>
                                     <td>
                                         <div id="cartItem" class="input-group quantity-group">
@@ -92,7 +92,7 @@
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
                                              
-                                            <button  type="button" onclick="decrement(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%>`)" class="decrementButton btn btn-qty">-</button>
+                                            <button  type="button" onclick="decrement(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.finalPrice%>`)" class="decrementButton btn btn-qty">-</button>
                                             </form>
                                             <input type="text" class="form-control text-center bg-white quantityInput"  value="<%= value.quantity%>" readonly>
                                             <form action="/cart" method="post">
@@ -101,12 +101,12 @@
                                                 <input type="hidden" name="quantity" value="<%= value.quantity%>">
                                                 <input type="hidden" name="variantId" value="<%= value.variantId %>">
                                                 
-                                            <button  type="button" onclick="increment(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.product.variants.price-parseInt((value.product.discound/100)*value.product.variants.price)%>`)" class="incrementButton btn btn-qty ">+</button>
+                                            <button  type="button" onclick="increment(`<%= value.product.variants.stock%>`,`<%= value.productId %>`,`<%= value.variantId %>`,this,`<%=  value.finalPrice%>`)" class="incrementButton btn btn-qty ">+</button>
                                             </form>
                                         </div>
                                     </td>
                                      
-                                    <td class="fw-bold border-bottom-0 subTotalPrice">₹<%=  parseInt(value.finalPrice)*value.quantity%></td>
+                                    <td class="fw-bold border-bottom-0 subTotalPrice">₹<%=  parseInt(value.finalPrice*value.quantity).toLocaleString('en-IN')%></td>
                                 </tr>
                                 <% })%>
                             </tbody>
@@ -125,7 +125,7 @@
                     <h5 class="fw-bold mb-4">Cart Totals</h5>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Sub-total</span>
-                        <span id="subTotal"  class="fw-bold">₹<%= subTotal.totalPriceCartItem%></span>
+                        <span id="subTotal"  class="fw-bold">₹<%= subTotal.totalPriceCartItem.toLocaleString('en-IN')%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Shipping</span>
@@ -133,7 +133,7 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Discount</span>
-                        <span id="discount"  class="fw-bold">₹<%= subTotal.totalDiscountPrice%></span>
+                        <span id="discount"  class="fw-bold">₹<%= subTotal.totalDiscountPrice.toLocaleString('en-IN')%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="text-muted">GST </span>
@@ -142,7 +142,7 @@
                     <hr>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="h5 fw-bold mb-0">Total</span>
-                        <span id="total" class="h5 fw-bold mb-0">₹<%= subTotal.total%> INR</span>
+                        <span id="total" class="h5 fw-bold mb-0">₹<%= subTotal.total.toLocaleString('en-IN')%> </span>
                     </div>
                        <%if(cartItems.length < 1 ){%>
                      <a href="" class="btn btn-disabled w-100 text-decoration-line-through ">PROCEED TO CHECKOUT</a>

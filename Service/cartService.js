@@ -201,6 +201,8 @@ const cartSummary = (items)=>{
       total += ((item.product.variants?.price*item.quantity))
       return total;
     },0)
+
+     
   // Calculate total discount price 
    const totalDiscountPrice = items.reduce((total,item)=>{
       total += (parseInt(item.finalPrice*item.quantity))
@@ -214,24 +216,6 @@ const cartSummary = (items)=>{
   
 }
 
-const singleProductSummary = (items)=>{
-  // Calculating total price of every itme in the items and store into a array with discount
-    const totalPriceCartItem = items.reduce((total,item)=>{
-      total += ((item.product.variants?.price*item.quantity))
-      return total;
-    },0)
-  // Calculate total discount price 
-   const totalDiscountPrice = items.reduce((total,item)=>{
-      total += (parseInt(item.product.finalPrice*item.quantity))
-      return total;
-    },0)
-
-  const  tax =parseInt (( (totalPriceCartItem-totalDiscountPrice)* 18 ) / 100)
-  const total =  (totalPriceCartItem-totalDiscountPrice) + tax
-
-   return {totalPriceCartItem,totalDiscountPrice,tax,total}
-  
-}
 
 
 const cartItemsBlocked = async (userId)=>{
@@ -276,6 +260,6 @@ export default {
     cartSummary,
     cartItemsBlocked,
     getCartSingleItem,
-    getCartQuantity,
-    singleProductSummary
+    getCartQuantity
+   
 }
