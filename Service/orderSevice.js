@@ -12,7 +12,6 @@ import walletService from './walletService.js'
 import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
-
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null,orderStatus='placed')=>{
 
     
@@ -426,10 +425,21 @@ const deletereturnOrder = async(orderId,type)=>{
  ;
 }
 
-const acceptOrderReturn = async(orderId) =>{
+const acceptOrderReturn = async(orderId,userId) =>{
      console.log("accepted succussfuly",orderId)
      await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"accept"}})
-     await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"return"}})
+    const order =    await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"return"}})
+    if(order.payment.method === 'razorpay' || order.payment.method === 'wallet'){
+        await walletModel.findOneAndUpdate({userId:userId},{$inc:{balance:order.pricing.totalAmount}})
+         let transactionId = helpers.generateTransactionId()
+                await walletTransaction.create({
+                    transactionId:transactionId,
+                    userId:new mongoose.Types.ObjectId(userId),
+                    amount:order.pricing.totalAmount,
+                    type:"cradit",
+                    orderId:order.orderId
+                })
+    }
 
 }
 
