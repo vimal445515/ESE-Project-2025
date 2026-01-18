@@ -196,8 +196,8 @@
                         <div class="col-md-4">
                             <div class="payment-method">
                                 <i class="bi bi-lightning-fill"></i>
-                                <p class="mb-3 small fw-bold">Rayorpay</p>
-                                <input type="radio" value="rayorpay" name="payment" id="rayorpay">
+                                <p class="mb-3 small fw-bold">Razorpay</p>
+                                <input type="radio" value="razorpay" name="payment" id="razorpay">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -257,7 +257,7 @@
                     <span class="h6 fw-bold mb-0">Total</span>
                     <span id="total" class="h5 fw-bold mb-0">₹<%= orderDetails?.total%></span>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>
+                <button type="button" id="placeOrderButton" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>
             </div>
 
              <!-- coupon apply -->
@@ -363,14 +363,14 @@
 
 
 <%- include("../partials/footer.ejs")%>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
   
-  const form = document.querySelector(".checkout-container");
+  const button= document.querySelector("#placeOrderButton");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  button.addEventListener("click", async function () {
+ 
 
     // Inputs
     const userName = userNameInput();
@@ -474,7 +474,7 @@
 
 
         if (!isCorrect) {
-                isValid = false;
+        isValid = false;
        setError("pinCodeError", "State / Country / City does not match PIN code");
        setError("stateError", "Invalid state for this PIN code");
        setError("countryError", "Invalid country for this PIN code");
@@ -487,10 +487,47 @@
       alert("Please select a payment method");
       isValid = false;
     }
+   
 
     // Final submit
     if (isValid) {
-      form.submit();
+        const variantId = '<%= variantId%>'
+        const productId = "<%= productId%>"
+        const categoryId = "<%= categoryId%>"
+        const quantity = "<%=products[0].quantity%>"
+        const data = JSON.stringify({
+            variantId,
+            productId,
+            categoryId,
+            userName,
+            address,pinCode,
+            country,
+            state,city,
+            email,
+            phone,
+            payment:payment.value,
+            quantity
+        })
+      fetch('/orders/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:data
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        if(data.type === 'razorpay'){
+            console.log("working")
+            payNow(data.orderId)
+            return 
+         }
+        if(data.type ==="error"){
+            window.location.href = data.href;
+        }
+        else if(data.type === "success"){
+            
+             window.location.href = data.href;
+        }
+      })
     }
   });
 
@@ -517,6 +554,61 @@
 
 
 
+  async function payNow(orderId){
+    const res = await fetch("/createOrder", { 
+        method: "POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId})
+    }
+    );
+    const order = await res.json();
+   
+    let options = {
+    key:order.keyId,
+    amount: order.amount,
+    currency: "INR",
+    order_id: order.orderId,
+    name: "SES",
+    handler: function (response) {
+      fetch('/varifyPayment',{
+        method:'POST',
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(response)
+      }).then(data=>data.json())
+      .then(data=>{
+        if(data.type === "success"){
+            window.location.href=data.href;
+        }
+        if(data.type === "error"){
+            window.location.href=data.href
+        }
+      })
+    }
+  };
+
+  let rzp1 = new Razorpay(options);
+  rzp1.open();
+
+  rzp1.on('payment.failed',function (response){
+   
+    fetch('/paymentFaild',{
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId:response.error.metadata.order_id,reson:response.error.reason})
+    }).then(data=>data.json())
+    .then(data=>{
+        if(data.type === "error"){
+            window.location.href=data.href;
+        }
+    })
+  })
+  }
+
+
+
+
+
+
 
     const userName = document.getElementById("userName")
     const companyName =document.getElementById("companyName")
@@ -527,6 +619,7 @@
     const pinCode = document.getElementById("pinCode")
     const email = document.getElementById("email")
     const phoneNumber  = document.getElementById("phoneNumber")
+
 
 
     document.getElementById("defaultAddress").addEventListener('click',()=>{

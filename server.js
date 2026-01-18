@@ -20,7 +20,7 @@ import errorHandlingMiddleware from './middleware/errorHandlingMiddleware.js'
 import cloudinary from "./config/cloudinary.js";
 import couponRouter from './Routers/couponRouter.js';
 import offerRouter from './Routers/offerRouter.js'
-
+import razorpayRouter from './Routers/razorpayRouter.js'
 
 
 
@@ -55,6 +55,7 @@ app.use("/orders",orderRouter)
 app.use(invoiceRoutes);
 app.use(reviewRouter);
 app.use(couponRouter)
+app.use(razorpayRouter)
 app.use('/offers',offerRouter)
 app.use(errorHandlingMiddleware.error)
 app.listen(process.env.PORT,()=>{

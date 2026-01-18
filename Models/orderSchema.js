@@ -28,11 +28,10 @@ const orderSchema = new mongoose.Schema({
             }
         }
     ],  
-
     payment:{
         method:{type:String},
-        status:{type:String},
-        transactionId:{type:String}
+        status:{type:String,default:'pending'},
+        paymentOrderId:{type:String}
     },
     address:{
         userName:{type:String},

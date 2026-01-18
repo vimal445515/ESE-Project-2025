@@ -10,21 +10,24 @@ import cartService from './cartService.js'
 import { couponModel,couponUseCount } from '../Models/couponSchema.js'
 
 
-const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null)=>{
-
+const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null,orderStatus='placed')=>{
 
     
     //store address
     await addressModel.create()
 
     // Reduce stock
-    await productModel.findOneAndUpdate(
+
+    if(paymentMethod !== 'razorpay'){
+        await productModel.findOneAndUpdate(
         {_id: new mongoose.Types.ObjectId(productId)},
-        {$inc:{'variants.$[variant].stock':-quantity}},
+        {$inc:{'variants.$[variant].stock':-Number(quantity)}},
         {arrayFilters:[
             {'variant._id':variantId}
         ]}
     )
+    }
+    
 
     let couponData
     if(coupon){
@@ -53,7 +56,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
                 quantity:quantity,
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
-                image:generalPhoto.url,
+                image:generalPhoto?.url,
                 
             }
         ],
@@ -77,8 +80,8 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             tax:orderDetails.tax,
             totalAmount:orderDetails.total
         },
-        coupon:couponData
-    
+        coupon:couponData,
+        orderStatus:paymentMethod==='razorpay'?'pending':"placed"
     })
     return data
 }
@@ -171,7 +174,7 @@ const checkOrderStock= async(productId,variantId)=>{
     ])
         
      console.log("this is new prodduct",product)
-        if(product.length===0 || product[0]?.variants?.stock < 1){
+        if(product.length===0 || Number(product[0]?.variants?.stock) < 1){
             return false;
         }
 

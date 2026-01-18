@@ -15,9 +15,9 @@ router.post('/',auth.isUser,orderController.placeOrder)
 router.get('/return',auth.isUser,orderController.returnOrder)
 router.post('/return',auth.isUser,orderController.storeReturOrder)
 router.post('/search',auth.isUser,orderController.search)
-router.post('/cancleSingleProduct',orderController.cancelProduct)
-router.post('/returnSingleProduct',orderController.returnSingleProduct)
-
-
+router.post('/cancleSingleProduct',auth.isUser,orderController.cancelProduct)
+router.post('/returnSingleProduct',auth.isUser,orderController.returnSingleProduct)
+router.get('/orderSuccess',auth.isUser,orderController.loadOrPlacedPage)
+router.get('/orderFailure',auth.isUser,orderController.loadOrderFailurePage)
 
 export default router

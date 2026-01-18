@@ -202,9 +202,6 @@ const cartSummary = (items)=>{
       return total;
     },0)
 
-    console.log("total",totalPriceCartItem,items)
-
-     
   // Calculate total discount price 
    const totalDiscountPrice = items.reduce((total,item)=>{
       total += (parseInt(item.finalPrice*item.quantity))
