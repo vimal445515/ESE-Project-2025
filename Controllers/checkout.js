@@ -35,7 +35,7 @@ const loadCheckOutPage = async (req,res)=>{
 
         products = await checkoutService.getProduct(req.query.productId,req.query.variantId)
         products[0].quantity = Number(req.query.quantity);
-      
+     
           const isBlock = await productService.isBlocked(req.query.productId)
           if(isBlock.length === 0) {
             req.flash("error","This product currently unavailable")

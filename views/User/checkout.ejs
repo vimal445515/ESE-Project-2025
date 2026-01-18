@@ -516,13 +516,14 @@
       })
       .then(data=>data.json())
       .then(data=>{
-        if(data.type === 'walletError'){
-            showToast(data.message,'error',)
-         }
+        
         if(data.type === 'razorpay'){
             
             payNow(data.orderId)
             return 
+         }
+         if(data.type === 'walletError'){
+            showToast(data.message,'error',)
          } 
         if(data.type ==="error"){
             window.location.href = data.href;
