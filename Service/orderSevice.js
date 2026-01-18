@@ -224,6 +224,10 @@ const countOrders = async(userId)=>{
 
 const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
     let pipeline = [];
+     pipeline.push({$match:{$and:[
+        {'orderStatus':{$ne:'pending'}},
+        {'orderStatus':{$ne:'paymentFailed'}}
+     ]}})
      if(orderId){
         pipeline.push({$match:{orderId:orderId}})
     }

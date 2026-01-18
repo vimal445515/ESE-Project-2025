@@ -80,6 +80,7 @@ router.post('/paymentFaild',async(req,res)=>{
 })
 
 router.post('/oldOrderId',async(req,res)=>{
+  console.log(req.body.paymentOrderId)
  const order =  await paymentModel.findOne({paymentOrderId:req.body.paymentOrderId})
  console.log(order)
  const {amount,paymentOrderId,currency} = order
