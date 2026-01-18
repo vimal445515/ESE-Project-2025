@@ -124,7 +124,7 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-4">Cart Totals</h5>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Sub-total</span>
+                        <span class="text-muted">Sub-total (Before Discounts)</span>
                         <span id="subTotal"  class="fw-bold">₹<%= subTotal.totalPriceCartItem.toLocaleString('en-IN')%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
@@ -132,7 +132,7 @@
                         <span class="text-success">Free</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Discount</span>
+                        <span class="text-muted">Total Discount price</span>
                         <span id="discount"  class="fw-bold">₹<%= subTotal.totalDiscountPrice.toLocaleString('en-IN')%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
@@ -152,17 +152,7 @@
                 </div>
             </div>
 
-            <div class="card coupon-card shadow-sm">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Coupon Code</h5>
-                    <div class="mb-3">
-                        <input type="text" class="form-control p-3" placeholder="Coupon code">
-                    </div>
-                    <button class="btn btn-apply px-4 py-2">APPLY COUPON</button>
-                </div>
-            </div>
-        </div>
-
+           
     </div>
 </div>
 <script>

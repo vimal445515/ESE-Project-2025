@@ -1,6 +1,6 @@
 import couponService from "../Service/couponService.js";
 import cartService from "../Service/cartService.js";
-
+import checkoutService from "../Service/checkoutService.js";
 const loadCouponPage= async(req,res)=>{
     const page = req.query.page||1
     const search = req.query.search||null
@@ -38,9 +38,14 @@ const editCoupon = async(req,res)=>{
 
 
 const applayCoupon = async(req,res)=>{
-    const products = req.body.products;
+    let products;
 
-    console.log('product',products)
+    if(req.body?.productId){
+        products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
+        products[0].quantity = Number(req.body.quantity);
+    }else{
+         products =  await cartService.getCartItems(req.session._id)
+    }
 
     const couponCode = req.body.couponCode;
    try{
@@ -54,8 +59,14 @@ const applayCoupon = async(req,res)=>{
 
 }
 
-const removeCoupon = (req,res)=>{
-    const {products} = req.body;
+const removeCoupon = async(req,res)=>{
+   let products
+     if(req.body?.productId){
+        products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
+        products[0].quantity = Number(req.body.quantity);
+    }else{
+         products =  await cartService.getCartItems(req.session._id)
+    }
     const {totalPriceCartItem,totalDiscountPrice,tax,total} = couponService.calculateTotalAmount(products)
     
     return res.status(200).json({totalPriceCartItem,totalDiscountPrice,tax,total})

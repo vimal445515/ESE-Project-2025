@@ -35,7 +35,7 @@ const loadCheckOutPage = async (req,res)=>{
 
         products = await checkoutService.getProduct(req.query.productId,req.query.variantId)
         products[0].quantity = Number(req.query.quantity);
-        console.log(products)
+      
           const isBlock = await productService.isBlocked(req.query.productId)
           if(isBlock.length === 0) {
             req.flash("error","This product currently unavailable")
@@ -56,6 +56,7 @@ const loadCheckOutPage = async (req,res)=>{
      const defaultAddress  = await address.getUserAddress(req.session._id)
      const allAddress = await address.getAllAddressForCheckout(req.session._id)
      const coupons = await  couponService.getCouponsForCheckout(orderDetails)
+     
      res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,categoryId:req.query.categoryId,variantId:req?.query?.variantId,type:null,message:null,coupons});
    
 }

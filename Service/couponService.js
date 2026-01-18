@@ -62,7 +62,6 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
     console.log(couponCode,userId)
     const coupon = await couponModel.findOne({couponCode:couponCode})
     
-    console.log(coupon)
     if(!coupon){
        throw new Error("Coupon is not valid");
     }

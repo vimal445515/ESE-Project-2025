@@ -731,8 +731,11 @@ function applayCoupon(couponCode=couponInput.value.trim()){
     }
      
     const data = JSON.stringify({
-        couponCode:couponCode,
-        products:JSON.parse('<%- JSON.stringify(products)%>')
+         couponCode:couponCode,
+         variantId : '<%= variantId%>',
+         productId : "<%= productId%>",
+         categoryId : "<%= categoryId%>",
+         quantity : "<%=products[0].quantity%>"
     })
     fetch('/checkout/coupon',
         {
@@ -771,15 +774,19 @@ function applayCoupon(couponCode=couponInput.value.trim()){
 function removerCoupon(){
      let couponInput = document.getElementById('couponInput')
      couponInput.innerText = ''
-    const products = JSON.parse('<%- JSON.stringify(products)%>')
- const product = JSON.stringify({
-        products:products
+     
+  const data = JSON.stringify({
+         variantId : '<%= variantId%>',
+         productId : "<%= productId%>",
+         categoryId : "<%= categoryId%>",
+         quantity : "<%=products[0].quantity%>"
     })
+
      fetch('/checkout/removeCoupon',
         {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:product
+            body:data
         }
     ).then(data=>data.json())
     .then(data=>{

@@ -204,7 +204,8 @@ const cartSummary = (items)=>{
 
   // Calculate total discount price 
    const totalDiscountPrice = items.reduce((total,item)=>{
-      total += (parseInt(item.finalPrice*item.quantity))
+     
+      total += (parseInt((item.product.variants.price - item.finalPrice)*item.quantity))
       return total;
     },0)
 
