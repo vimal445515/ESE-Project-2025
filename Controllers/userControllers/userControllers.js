@@ -24,14 +24,18 @@ const otpGenerator= async (req,res)=>{
 }
 
 const verifyOtp = async (req,res) => {
-  const {otp,userName,email,password,phoneNumber,referralCode} = req.body;
-  console.log(otp,userName,email,password,phoneNumber,referralCode)
+  const {otp,userName,email,password,phoneNumber} = req.body;
+   const referralCode = req.session.referralCode;
   const result = await user.checkOtp(otp,email);
 
    if(result){
     const code =  generateReferralCode(userName)
+    
     const userData =  await user.storeUserData(req,code,"user");
-    walletService.createWallet(userData._id)
+    await walletService.createWallet(userData._id)
+    if(referralCode){
+      await walletService.referralReward(userData._id,referralCode);
+    }
     return res.status(200).redirect('/login');
   }
   return res.status(400).render('User/otp',{userName,email,password,phoneNumber,referralCode,status:"error",message:"invalid OTP"});

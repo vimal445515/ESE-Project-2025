@@ -135,6 +135,13 @@ const getCorrentPassword = async (email)=>{
   return password
 }
 
+const findReferralUser = async(referralCode)=>{
+   return  await User.findOne({referralId:referralCode})
+
+}
+
+
+
 export default {
     findUserFromDB,
     storeOtpInDb,
@@ -145,6 +152,7 @@ export default {
     updatePassword,
     verifyData,
     updateUserData,
-    getCorrentPassword
+    getCorrentPassword,
+    findReferralUser
 
 }
