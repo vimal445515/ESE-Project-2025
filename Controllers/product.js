@@ -99,7 +99,8 @@ const loadUserSideProductsPage = async(req,res)=>{
     
     const limit = 12;
     const skip = helpers.paginationSkip(page,limit)
-    const products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
+    let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
+    products = await wishlistService.addLikeToProduct(products,req.session._id);
     const toatalCount = await productService.countPages()
     const {count} =toatalCount[0]
   
