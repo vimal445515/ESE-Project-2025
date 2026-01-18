@@ -364,6 +364,7 @@
 
 <%- include("../partials/footer.ejs")%>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
 
   
@@ -515,11 +516,14 @@
       })
       .then(data=>data.json())
       .then(data=>{
+        if(data.type === 'walletError'){
+            showToast(data.message,'error',)
+         }
         if(data.type === 'razorpay'){
-            console.log("working")
+            
             payNow(data.orderId)
             return 
-         }
+         } 
         if(data.type ==="error"){
             window.location.href = data.href;
         }

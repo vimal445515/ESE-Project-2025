@@ -74,6 +74,14 @@ const placeOrder =  async(req,res)=>{
                     if(req.body.payment === 'razorpay'){
                       order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
+                    }else if(req.body.payment === 'wallet'){
+                      try{
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
+                      }catch(error){
+                        console.log(error)
+                        return res.status(400).json({type:"walletError",message:error.message});
+                      }
+                      
                     }else{
                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound)
                     }
@@ -104,9 +112,16 @@ const placeOrder =  async(req,res)=>{
           }else{
             const orderDetails =  cartService.cartSummary(products)
              if(req.body.payment === 'razorpay'){
-             order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+              order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
               return res.status(200).json({type:"razorpay",orderId:order.orderId})
-             }else{
+             }else if(req.body.payment === 'wallet'){
+                      try{
+                           order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+                      }catch(error){
+                        console.log(error)
+                        return res.status(400).json({type:"walletError",message:error.message});
+                      }
+                     } else{
               order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
              }
           }

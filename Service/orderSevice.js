@@ -9,11 +9,34 @@ import wishlistModel from '../Models/wishlistSchema.js'
 import cartService from './cartService.js'
 import { couponModel,couponUseCount } from '../Models/couponSchema.js'
 import walletService from './walletService.js'
+import { walletModel,walletTransaction } from '../Models/walletSchema.js'
+import helpers from '../helpers/helpers.js'
 
 
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null,orderStatus='placed')=>{
 
     
+    if(paymentMethod==='wallet'){
+        
+        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
+        
+        if(wallet.balance < orderDetails.total){
+            throw new Error('"Your wallet balance is less than the order total. Please use another payment method ');
+        }else{
+            wallet.balance = wallet.balance-orderDetails.total;
+            await wallet.save();
+
+             let transactionId = helpers.generateTransactionId()
+                await walletTransaction.create({
+                    transactionId:transactionId,
+                    userId:new mongoose.Types.ObjectId(userId),
+                    amount:orderDetails.total,
+                    type:"debit",
+                    orderId:null
+                })
+        }
+    }
+
     //store address
     await addressModel.create()
 
@@ -62,7 +85,8 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             }
         ],
         payment:{
-            method:paymentMethod
+            method:paymentMethod,
+            status:paymentMethod==="wallet"?"paid":'pending'
         },
         address:{
             userName:reqObj.userName,
@@ -88,8 +112,30 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
 }
 
 
-const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null)=>{
+const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,paymentMethod)=>{
    let items=[];
+
+     
+    if(reqObj.payment==='wallet'){
+        
+        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
+        
+        if(wallet.balance < orderDetails.total){
+            throw new Error('"Your wallet balance is less than the order total. Please use another payment method ');
+        }else{
+            wallet.balance = wallet.balance-orderDetails.total;
+            await wallet.save();
+
+             let transactionId = helpers.generateTransactionId()
+                await walletTransaction.create({
+                    transactionId:transactionId,
+                    userId:new mongoose.Types.ObjectId(userId),
+                    amount:orderDetails.total,
+                    type:"debit",
+                    orderId:null
+                })
+        }
+    }
 
    
     products.forEach(async (product)=>{
