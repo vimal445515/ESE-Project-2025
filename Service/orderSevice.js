@@ -8,6 +8,7 @@ import orderReturnModel from "../Models/orderReturnSchema.js"
 import wishlistModel from '../Models/wishlistSchema.js'
 import cartService from './cartService.js'
 import { couponModel,couponUseCount } from '../Models/couponSchema.js'
+import walletService from './walletService.js'
 
 
 const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null,orderStatus='placed')=>{
@@ -321,7 +322,6 @@ const getOrderById = async(orderId,sort)=>{
 
 const updateOrderCancel = async(orderId)=>{
    const items =  await orderModel.findOne({_id:orderId},{items:1,_id:0})
-   console.log("this is items",items[0])
     items.items.forEach(async(item)=>{
         await productModel.findOneAndUpdate(
             {_id:item.productId},
@@ -332,7 +332,13 @@ const updateOrderCancel = async(orderId)=>{
         )
     })
 
-    return await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"canceled"}})
+   const order =  await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"canceled"}})
+   if(order.payment.status === 'paid' && order.orderStatus != "canceled"){
+      const amount = order.pricing.totalAmount
+     await walletService.craditWallet(order.orderId,order.userId,amount);
+   }
+   return order
+
 }
 
 const searchByUser = async (userId,orderId)=>{

@@ -64,6 +64,10 @@ const generateCouponCode = ()=>{
  return `COUPON-${random}-${randomNumber}`
 
 }
+
+const generateTransactionId = ()=>{
+ return  `WALLET_TXN_${Date.now()}_${Math.floor(Math.random() * 100000)}`
+}
 export default {
    otpGenerator,
    sendEmail,
@@ -72,5 +76,6 @@ export default {
    deleteProfile,
   generateOrderId,
   calculateAvargeRating,
-  generateCouponCode
+  generateCouponCode,
+  generateTransactionId
 }

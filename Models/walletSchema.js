@@ -13,9 +13,13 @@ const walletSchema = new mongoose.Schema({
 },{timeseries:true})
 
 const walletTransactionSchema = new mongoose.Schema({
-    useId:{
+    userId:{
          required:true,
         type:mongoose.Types.ObjectId
+    },
+    transactionId:{
+          type:String,
+        required:true
     },
     amount:{
         required:true,
@@ -27,8 +31,12 @@ const walletTransactionSchema = new mongoose.Schema({
     },
     orderId:{
         type:String
+    },
+    createdAt:{
+        type:Date,
+        default:new Date()
     }
-},{timeseries:true})
+})
 
 export const walletModel = mongoose.model('wallet',walletSchema)
 export const walletTransaction = mongoose.model('walletTransaction',walletTransactionSchema)
