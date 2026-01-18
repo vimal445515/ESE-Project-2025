@@ -21,8 +21,14 @@ const deleteWislistItem = async(req,res) =>{
     res.status(200).json({data:"success"});
 }
 
+const unlike = async(req,res)=>{
+  await wishlistService.removeWishlistItem(req.body.productId,req.body.variantId,req.session._id)
+  res.status(200).json({data:"success"});
+}
+
 export default{
     loadWishListPage,
     storeWishlistData,
-    deleteWislistItem
+    deleteWislistItem,
+    unlike
 }

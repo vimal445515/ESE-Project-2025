@@ -147,9 +147,30 @@ const findWishlist = async (productId,variantId,userId) =>{
   return await wishlistModel.findOne({productId:productId,variantId:variantId,userId:userId})
 }
 
+const removeWishlistItem = async(productId,variantId,userId)=>{
+  return await wishlistModel.deleteOne({productId,variantId,userId:userId})
+}
+
+const addLikeToProduct = async(products,userId)=>{
+ 
+  for(let i = 0; i < products.length; i++){
+    let isTrue = await wishlistModel.findOne({productId:products[i]._id,variantId:products[i].variants._id,userId:new mongoose.Types.ObjectId(userId)})
+    if(isTrue){
+      products[i].like=true;
+    }
+    else{
+      products[i].like=false;
+    }
+  }
+  
+  return products;
+}
+
 export default {
     storeWishlistItemInDB,
     getWishlistItems,
     remove,
-    findWishlist
+    findWishlist,
+    removeWishlistItem,
+    addLikeToProduct
 }
