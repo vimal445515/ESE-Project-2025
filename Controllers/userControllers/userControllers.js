@@ -9,6 +9,8 @@ import product from "../product.js";
 import passport from 'passport'
 import addressService from "../../Service/addressService.js";
 import orderSevice from "../../Service/orderSevice.js";
+import walletController from "../walletController.js";
+import walletService from "../../Service/walletService.js";
 
 
 
@@ -28,7 +30,8 @@ const verifyOtp = async (req,res) => {
 
    if(result){
     const code =  generateReferralCode(userName)
-    await user.storeUserData(req,code,"user");
+    const userData =  await user.storeUserData(req,code,"user");
+    walletService.createWallet(userData._id)
     return res.status(200).redirect('/login');
   }
   return res.status(400).render('User/otp',{userName,email,password,phoneNumber,referralCode,status:"error",message:"invalid OTP"});
@@ -52,7 +55,6 @@ const authentication = async (req,res)=>{
   req.session.referralCode = data.referralId;
   req.session.profile = data.profile.url; 
   req.session._id = data._id
-  console.log(req.session.userName);
   return res.status(200).redirect("/home");
 }
 const loadSignupPage = (req,res)=>{

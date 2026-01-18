@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { useId } from 'react'
 
 const walletSchema = new mongoose.Schema({
     userId:{
@@ -31,5 +30,5 @@ const walletTransactionSchema = new mongoose.Schema({
     }
 },{timeseries:true})
 
-export const walletModel = mongoose.Model('wallet',walletSchema)
-export const walletTransaction = mongoose.Model('walletTransaction',walletTransactionSchema)
+export const walletModel = mongoose.model('wallet',walletSchema)
+export const walletTransaction = mongoose.model('walletTransaction',walletTransactionSchema)

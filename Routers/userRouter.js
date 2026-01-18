@@ -3,6 +3,7 @@ import Auth from '../middleware/userAuth.js'
 import userControllers from '../Controllers/userControllers/userControllers.js'
 import products from "../Controllers/product.js"
 import image from "../Config/categoryThumbnail.js"
+import walletController from '../Controllers/walletController.js'
 
 const router = Router()
 router.get('/',Auth.isUser,userControllers.loadHomePage)
@@ -39,9 +40,7 @@ router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 
 
 
-router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/wallet',{userName:req.session.userName,profile:req.session.profile})
-})
+router.get('/wallet',Auth.isUser,Auth.checkUser,walletController.loadWalletPage)
 
 
 

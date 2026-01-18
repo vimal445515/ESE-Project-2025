@@ -143,11 +143,10 @@
                             <i class="fa-solid fa-wallet"></i>
                         </div>
                         <div>
-                            <div class="balance-amount">₹16,000</div>
+                            <div class="balance-amount">₹<%= wallet.walletData.balance%></div>
                             <p class="balance-label">My Wallet Balance</p>
                         </div>
                     </div>
-                    <button class="btn-add-money">Add Money</button>
                 </div>
 
                 <div class="transaction-card">
@@ -158,62 +157,20 @@
                             <thead>
                                 <tr>
                                     <th>Transaction ID</th>
-                                    <th>Description</th>
                                     <th>Date</th>
                                     <th>Withdrawal</th>
                                     <th>Deposit</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
-                                <tr>
+                               <%wallet.walletTransactionData.forEach(transaction=>{%>
+                                 <tr>
                                     <td>#96459761</td>
-                                    <td>You Added</td>
                                     <td>Dec 30, 2023</td>
                                     <td>₹ 6,000</td>
                                     <td>-</td>
                                 </tr>
-
-                                <tr>
-                                    <td>#96459760</td>
-                                    <td>You Added</td>
-                                    <td>Dec 30, 2023</td>
-                                    <td>₹ 10,000</td>
-                                    <td>-</td>
-                                </tr>
-
-                                <tr>
-                                    <td>#96459759</td>
-                                    <td>Bought a product</td>
-                                    <td>Dec 30, 2023</td>
-                                    <td>-</td>
-                                    <td>₹ 36000</td>
-                                </tr>
-
-                                <tr>
-                                    <td>#96459758</td>
-                                    <td>You added</td>
-                                    <td>Dec 30, 2023</td>
-                                    <td>₹ 12,000</td>
-                                    <td>-</td>
-                                </tr>
-
-                                <tr>
-                                    <td>#96459757</td>
-                                    <td>You added</td>
-                                    <td>Dec 30, 2023</td>
-                                    <td>₹ 9,000</td>
-                                    <td>-</td>
-                                </tr>
-
-                                <tr>
-                                    <td>#96459756</td>
-                                    <td>You added</td>
-                                    <td>Dec 30, 2023</td>
-                                    <td>₹ 14,000</td>
-                                    <td>-</td>
-                                </tr>
-
+                              <% })%> 
                             </tbody>
                         </table>
                     </div>

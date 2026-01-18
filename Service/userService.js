@@ -29,7 +29,7 @@ const storeUserData  = async (req,referralId,role)=>
 {
     const {otp,userName,email,password,phoneNumber,referralCode} = req.body;
     const passwordHashed = hash.passwordHash(password);
-    await User.create({userName,email,password:passwordHashed,phoneNumber,referralCode,referralId,role,isBlocked:false,createdAt:new Date(),deleted:false})
+   return await User.create({userName,email,password:passwordHashed,phoneNumber,referralCode,referralId,role,isBlocked:false,createdAt:new Date(),deleted:false})
 }
 
 const clearOtp  = async (email)=>
