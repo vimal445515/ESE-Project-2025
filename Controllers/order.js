@@ -179,7 +179,7 @@ const storeReturOrder  = async(req,res)=>{
 }
 
 const cancelProduct = async(req,res)=>{
-   const orderId = await orderSevice.cancelSingleProduct(req.body.orderId,req.body.productId,req.body.variantId,req.body.quantity);
+   const orderId = await orderSevice.cancelSingleProduct(req.body.orderId,req.body.productId,req.body.variantId,req.body.quantity,req.session._id);
    
     res.redirect(`/orders/orderDetails/${orderId.orderId}`)
 }

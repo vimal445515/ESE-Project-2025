@@ -455,7 +455,7 @@ const getOrderDataForDashbord = async(userId)=>{
   return {pending,totalOrder,completed}
 }
 
-const cancelSingleProduct = async(orderId,productId,variantId,quantity) =>{
+const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =>{
    await orderModel.findOneAndUpdate({_id:orderId},
         {
             $set:{'items.$[product].status':"cancelled"}
@@ -491,6 +491,31 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity) =>{
              'pricing.tax':tax,
              "pricing.totalAmount":totalAmount
         }})
+
+        const orderData =  await orderModel.aggregate([
+            {$match:{_id: new mongoose.Types.ObjectId(orderId)}},
+            {$unwind:'$items'},
+            {$match:{'items.variantId':new mongoose.Types.ObjectId(variantId)}}
+        ]);
+
+        console.log(orderData)
+        
+            const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
+        
+    
+            wallet.balance = wallet.balance+Number(orderData[0].items.finalPrice.toFixed(2)); 
+            await wallet.save();
+
+             let transactionId = helpers.generateTransactionId()
+                await walletTransaction.create({
+                    transactionId:transactionId,
+                    userId:new mongoose.Types.ObjectId(userId),
+                    amount:Number(orderData[0].items.finalPrice.toFixed(2)),
+                    type:"cradit",
+                    orderId:orderId
+                })
+       
+
 
         return order
 }
