@@ -83,6 +83,9 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
     const  discount = (oldAmount.totalPriceCartItem*(coupon.discount/100))
    const  couponDiscount = Math.min(discount,coupon.maximumDiscount)
 
+    
+
+
     // Calculating total price of every itme in the items and store into a array with discount
     // let totalPriceCartItem = products.reduce((total,item)=>{
     //   total += ((item.product.variants?.price*item.quantity)-parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
@@ -95,6 +98,16 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
   // Calculate total discount price 
     const totalDiscountPrice = oldAmount.totalDiscountPrice + couponDiscount;
 
+
+     products = products.map((item)=>{
+       let itemCouponDiscountAmount = (item.finalPrice/oldAmount.total) * couponDiscount
+        return {
+            ...item,
+            finalPrice:(item.finalPrice*item.quantity)-itemCouponDiscountAmount,
+            itemCouponDiscountAmount
+        }
+       
+    })
 //    const totalDiscountPrice = products.reduce((total,item)=>{
 //       total += (parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
 //       return total;
@@ -103,7 +116,7 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
   const  tax =parseInt( ( (totalPriceCartItem - totalDiscountPrice) * 18 ) / 100)
   const total =  (totalPriceCartItem- totalDiscountPrice) + tax
 
- return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount}
+ return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,products}
 }
 
 const calculateTotalAmount = (products)=>{

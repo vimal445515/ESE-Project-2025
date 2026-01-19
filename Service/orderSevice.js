@@ -12,7 +12,7 @@ import walletService from './walletService.js'
 import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
-const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,coupon=null,orderStatus='placed')=>{
+const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,coupon=null,orderStatus='placed')=>{
 
     
     if(paymentMethod==='wallet'){
@@ -77,6 +77,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
                 productId:productId,
                 variantId:variantId,
                 quantity:quantity,
+                finalPrice:Number(productFinalPrice),
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
                 image:generalPhoto?.url,
@@ -143,6 +144,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
             variantId:product.variantId,
             productName:product.product.productName,
             quantity:product.quantity,
+            finalPrice:product.finalPrice,
             price:parseInt(product.product.variants.price-((product.product.discound/100)*product.product.variants.price)),
             image:product.product.generalPhoto.url
         })

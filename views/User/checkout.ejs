@@ -492,11 +492,13 @@
 
     // Final submit
     if (isValid) {
+        const appliedCoupon = document.getElementById('couponHolder').value
         const variantId = '<%= variantId%>'
         const productId = "<%= productId%>"
         const categoryId = "<%= categoryId%>"
         const quantity = "<%=products[0].quantity%>"
         const data = JSON.stringify({
+            appliedCoupon,
             variantId,
             productId,
             categoryId,

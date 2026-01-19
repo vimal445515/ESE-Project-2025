@@ -73,6 +73,8 @@ const getProduct = async(productId,variantId)=>{
   })
 
 
+
+
   pipeline.push({
     $addFields:{
       productDiscount:{
@@ -102,6 +104,19 @@ const getProduct = async(productId,variantId)=>{
       }
     }}
   )
+
+
+    //calculating final product price for refund
+  pipeline.push({
+    $addFields:{
+      offerDiscountAmount:{
+        $multiply:[
+          '$product.variants.price',
+          {$divide:['$finalDiscount',100]}
+        ]
+      }
+    }
+  })
 
   const data =await  productModel.aggregate(pipeline);
     console.log(data)

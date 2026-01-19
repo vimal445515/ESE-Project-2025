@@ -22,6 +22,7 @@ const orderSchema = new mongoose.Schema({
             productName:{type:String},
             quantity:{type:Number},
             image:{type:String},
+            finalPrice:{type:Number},
             status:{
                 type:String,
                 default:"placed"
