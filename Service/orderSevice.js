@@ -41,7 +41,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
 
     // Reduce stock
 
-    if(paymentMethod !== 'razorpay'){
+    
         await productModel.findOneAndUpdate(
         {_id: new mongoose.Types.ObjectId(productId)},
         {$inc:{'variants.$[variant].stock':-Number(quantity)}},
@@ -49,7 +49,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             {'variant._id':variantId}
         ]}
     )
-    }
+   
     
 
     let couponData

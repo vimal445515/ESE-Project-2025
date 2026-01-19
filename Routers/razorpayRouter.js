@@ -4,7 +4,7 @@ import paymentModel from '../Models/paymentSchema.js'
 import mongoose from 'mongoose'
 import crypto from 'crypto'
 import orderSchema from '../Models/orderSchema.js'
-
+import { productModel } from '../Models/productSchema.js'
 const router = Router()
 
 router.post('/createOrder',async (req,res)=>{
@@ -50,22 +50,35 @@ router.post('/varifyPayment',async(req,res)=>{
   const expectedSignature = crypto.createHmac('sha256',process.env.RAZORPAY_KEY_SECRET)
   .update(body)
   .digest('hex')
-const order = await orderSchema.findOne({'payment.paymentOrderId':razorpay_order_id})
-const payment =  await paymentModel.findOne({paymentOrderId:razorpay_order_id})
-  if(razorpay_signature === expectedSignature){
-
+    const order = await orderSchema.findOne({'payment.paymentOrderId':razorpay_order_id})
+    const payment =  await paymentModel.findOne({paymentOrderId:razorpay_order_id})
+    if(razorpay_signature === expectedSignature){
+    if(order.orderStatus === 'paymentFailed'){
+       for(let item of order.items){
+      await productModel.updateOne({_id:new mongoose.Types.ObjectId(item.productId)},{$inc:{'variants.$[v].stock':-Number(item.quantity)}},{arrayFilters:[{'v._id':new mongoose.Types.ObjectId(item.variantId)}]})
+    }
+    }
    order.status = 'paid'
    order.payment.status = 'paid'
    order.orderStatus = 'placed'
+   
    await order.save();
    await payment.save();
+
+   
+
     res.status(200).json({type:"success",href:`/orders/orderSuccess?orderId=${order.orderId}`})
 
   }else{
-     order.payment.status = 'failed'
+    if(order.orderStatus !== "paymentFailed"){
+       order.payment.status = 'failed'
      order.orderStatus = 'paymentFailed'
+      for(let item of order.items){
+      await productModel.updateOne({_id:new mongoose.Types.ObjectId(item.productId)},{$inc:{'variants.$[v].stock':Number(item.quantity)}},{arrayFilters:[{'v._id':new mongoose.Types.ObjectId(item.variantId)}]})
+    }
+    }
      await order.save()
-    res.status(401).json({type:"error",message:"payment faild",href:`orders/orderFailure?orderId=${payment.orderId}&productOrderId=${order.orderId}$reason=somthing was wroing!`});
+    res.status(401).json({type:"error",message:"payment faild",href:`/orders/orderFailure?orderId=${payment.orderId}&productOrderId=${order.orderId}$reason=somthing was wroing!`});
   }
 
 
@@ -73,10 +86,15 @@ const payment =  await paymentModel.findOne({paymentOrderId:razorpay_order_id})
 
 router.post('/paymentFaild',async(req,res)=>{
   const order = await orderSchema.findOne({'payment.paymentOrderId':req.body.orderId})
+  if(order.orderStatus !== "paymentFailed"){
    order.payment.status = 'failed'
     order.orderStatus = 'paymentFailed'
+     for(let item of order.items){
+     await productModel.updateOne({_id:new mongoose.Types.ObjectId(item.productId)},{$inc:{'variants.$[v].stock':Number(item.quantity)}},{arrayFilters:[{'v._id':new mongoose.Types.ObjectId(item.variantId)}]})
+    }
+  }
     await order.save()
-    res.status(401).json({type:"error",message:"payment faild",href:`orders/orderFailure?orderId=${req.body.orderId}&productOrderId=${order.orderId}&reason=${req.body.reson}`});
+    res.status(401).json({type:"error",message:"payment faild",href:`/orders/orderFailure?orderId=${req.body.orderId}&productOrderId=${order.orderId}&reason=${req.body.reson}`});
 })
 
 router.post('/oldOrderId',async(req,res)=>{

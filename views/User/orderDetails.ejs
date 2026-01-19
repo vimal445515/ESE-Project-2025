@@ -145,12 +145,12 @@ This action cannot be undone.
                 </div>
                  <%if(order.orderStatus === "paymentFailed" || order.orderStatus === "pending"){%>
                     <button onclick="payNow()"  class="text-primary text-decoration-none fw-bold small">Retry payment</button>
-                <%}{%>
+                <%}else{%>
                     <% if(order.orderStatus !== "canceled"){%>
                   <button onclick="downloadInvoice(`<%= order._id%>`)"  class=" btn text-primary text-decoration-none fw-bold small me-2">Download invoice</button>
                   <%}%>
 
-                <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled"){%>
+                <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled" ){%>
                 <a href="" data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small">Cancel Order</a>
                 <%}%>
                 <%if(order.orderStatus ==="delivered"){%>

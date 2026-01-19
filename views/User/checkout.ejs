@@ -588,6 +588,18 @@
             window.location.href=data.href
         }
       })
+    },
+    modal:{
+        ondismiss:function (){
+           fetch('/paymentFaild',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({orderId:order.orderId})
+           }).then(data=>data.json())
+           .then(data=>{
+            window.location.href = data.href
+           })
+        }
     }
   };
 
