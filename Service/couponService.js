@@ -123,11 +123,18 @@ const calculateTotalAmount = (products)=>{
     return cartService.cartSummary(products)
 }
 
-const getCouponsForCheckout = async(orderDetails)=>{
+const getCouponsForCheckout = async(orderDetails,userId)=>{
        let coupons = await couponModel.find({expiryDate:{$gte:new Date()},isActive:true})
-      
+       const couponResult = []
 
-       return coupons
+       for(let coupon of coupons)
+       {
+         if(!await couponUseCount.findOne({couponCode:coupon.couponCode,userId:userId})){
+            couponResult.push(coupon)
+         }
+       }
+
+       return couponResult
 
 
 }

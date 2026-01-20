@@ -55,7 +55,7 @@ const loadCheckOutPage = async (req,res)=>{
      req.session.amount = orderDetails.total;
      const defaultAddress  = await address.getUserAddress(req.session._id)
      const allAddress = await address.getAllAddressForCheckout(req.session._id)
-     const coupons = await  couponService.getCouponsForCheckout(orderDetails)
+     const coupons = await  couponService.getCouponsForCheckout(orderDetails,req.session._id)
      
      res.render('User/checkout',{userName:req.session.userName,profile:req.session.profile,_id:req.session._id,defaultAddressId:defaultAddress?._id,allAddress,products,orderDetails,productId:req?.query?.productId,categoryId:req.query.categoryId,variantId:req?.query?.variantId,type:null,message:null,coupons});
    
