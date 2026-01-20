@@ -264,7 +264,7 @@
                                                  
                                         </div>
             
-            <h3 class="fw-bold mb-3"></h3>
+            <h3 class="fw-bold mb-3"><%= productData.productName%> <%= productData.variants.ram%>GB RAM <%= productData.variants.storage%> GB SSD</h3>
            
             
             <div class="mb-4 d-flex align-items-center">
@@ -287,19 +287,10 @@
             <div class="row mb-4 g-3">
                 <div class="col-6">
                     <label for="memorySelect" class="form-label small text-muted">Memory</label>
-                    <select class="form-select" value="<%= productData.variants.ram%>" id="memorySelect">
-                        <% getVariants[0].ram.forEach((value)=>{%>
-                        <option value="<%= value%>"><%= value %> GB</option>
+                    <select class="form-select" onchange="getVariant(this)"  id="memorySelect">
+                        <% getVariants[0].variants.forEach((value)=>{%>
+                        <option <%= value._id.toString()===productData.variants._id.toString()?'selected':''%> value="/productDetails/<%= productData._id%>?variantId=<%= value._id%>"><%= value.ram %> GB RAM - <%= value.storage%> GB STORAGE</option>
                         <%})%>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label for="storageSelect" class="form-label small text-muted">Storage</label>
-                    <select class="form-select" id="storageSelect">
-                        <% getVariants[0].storage.forEach((value)=>{%>
-                        <option value="<%= value%>"><%= value %> GB SSD</option>
-                        <%})%>
-                        
                     </select>
                 </div>
             </div>
@@ -507,21 +498,21 @@
     document.getElementById("quantityforCheckout").value = quantity;
    
     
-     document.querySelector('#memorySelect').value='<%= ram%>'||document.querySelector('#memorySelect').value
-    let storage ='<%= storage%>'
-    document.querySelector('#storageSelect').value='<%= storage%>'||document.querySelector('#storageSelect').value
+    //  document.querySelector('#memorySelect').value='<%= ram%>'||document.querySelector('#memorySelect').value
+    // let storage ='<%= storage%>'
+    // document.querySelector('#storageSelect').value='<%= storage%>'||document.querySelector('#storageSelect').value
    
 
-  function redirectWithFilters() {
-    const ram = memorySelect.value;
-    const rom = storageSelect.value;
+//   function redirectWithFilters() {
+//     const ram = memorySelect.value;
+//     const rom = storageSelect.value;
 
-    window.location.href =
-      `/productDetails/<%= productData._id %>?ram=${ram}&rom=${rom}`;
-  }
+//     window.location.href =
+//       `/productDetails/<%= productData._id %>?ram=${ram}&rom=${rom}`;
+//   }
 
-   document.querySelector('#memorySelect').addEventListener('change',redirectWithFilters)
-     document.querySelector('#storageSelect').addEventListener('change',redirectWithFilters)
+//    document.querySelector('#memorySelect').addEventListener('change',redirectWithFilters)
+    //  document.querySelector('#storageSelect').addEventListener('change',redirectWithFilters)
  const mainImage = document.querySelector("#bigimg");
 const thumbnails = document.querySelectorAll(".thumbnail");
 
@@ -533,7 +524,7 @@ thumbnails.forEach((img) => {
     img.classList.add("active");
   });
 })
-document.querySelector('.fw-bold').textContent =  `<%= productData.productName%> (${document.querySelector('#memorySelect').value}GB RAM ${document.querySelector('#storageSelect').value}GB SSD)`
+document.querySelector('.fw-bold').textContent =  `<%= productData.productName%> <%= productData.variants.ram%>GB RAM <%= productData.variants.storage%> GB SSD`
  
 document.getElementById('decrementButton').addEventListener("click",()=>{
    
@@ -551,7 +542,7 @@ document.getElementById('incrementButton').addEventListener("click",()=>{
      if(quantity < stock && sessionStorage.getItem('quantity') < 5){
     quantity++;
     sessionStorage.setItem('quantity',quantity);
-    redirectWithFilters()
+    window.location.reload()
 
  }
 })
@@ -576,7 +567,7 @@ document.getElementById('addToCart').addEventListener('click',(e)=>{
 
 
 
- document.querySelector('#remove').addEventListener("click",()=>{
+ document.querySelector('#remove')?.addEventListener("click",()=>{
                        
                      let data  = `<%=  wishlistId%>`
                     
@@ -594,6 +585,12 @@ document.getElementById('addToCart').addEventListener('click',(e)=>{
                             sessionStorage.clear()
                         })
                     })
+
+
+                    function getVariant(element){
+                        window.location.href=element.value
+                        sessionStorage.clear()
+                    }
           
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
