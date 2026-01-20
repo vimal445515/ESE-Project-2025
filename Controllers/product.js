@@ -112,12 +112,12 @@ const loadUserSideProductsPage = async(req,res)=>{
  const id = req.params.id;
   const storage = req.query.rom;
   const ram = req.query.ram;
-  
+  const variantId = req.query.variantId;
 
   let productData;
     let isLiked = false
     let wishlistId = null
-  const productArray = await productService.getSingleProduct(id, storage, ram);
+  const productArray = await productService.getSingleProduct(id, storage, ram,variantId);
   const getVariants = await productService.getVariants(id);
   const review = await reviewService.getReview(id)
   const average = helpers.calculateAvargeRating(review)

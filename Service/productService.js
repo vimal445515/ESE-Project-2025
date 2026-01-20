@@ -283,7 +283,7 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
   
 }
 
-const getSingleProduct= async (_id,storage,ram) =>{
+const getSingleProduct= async (_id,storage,ram,variantId) =>{
   let pipeline =[]
   pipeline.push(
        {$match:{_id:new mongoose.Types.ObjectId(_id)}},
@@ -296,7 +296,11 @@ const getSingleProduct= async (_id,storage,ram) =>{
       }},
       {$unwind:'$variants'}      
     )
-
+if(variantId){
+  pipeline.push({
+    $match:{'variants._id':new mongoose.Types.ObjectId(variantId)}
+  })
+}
     // calculate offer 
 
   // get product offer

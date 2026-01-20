@@ -287,7 +287,7 @@
             <div class="row mb-4 g-3">
                 <div class="col-6">
                     <label for="memorySelect" class="form-label small text-muted">Memory</label>
-                    <select class="form-select" id="memorySelect">
+                    <select class="form-select" value="<%= productData.variants.ram%>" id="memorySelect">
                         <% getVariants[0].ram.forEach((value)=>{%>
                         <option value="<%= value%>"><%= value %> GB</option>
                         <%})%>

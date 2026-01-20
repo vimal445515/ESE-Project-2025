@@ -153,7 +153,7 @@
                     
                     <div class="product-card bg-white shadow-sm">
                       <button onclick="like('<%= product._id%>','<%= product.variants._id%>',this)" class="btn btn-light"> <i class="bi <%= product.like?`bi-heart-fill`:`bi-heart`%> fs-4 text-danger"></i> </button>
-                      <div onclick="window.location.href=`productDetails/<%= product._id%>`">
+                      <div onclick="window.location.href=`productDetails/<%= product._id%>?variantId=<%= product.variants._id %>`">
                         <img src="<%= product.generalPhoto.url%>" class="product-image" alt="Samsung Galaxy S25 Ultra">
                         
                         <!-- <div class="d-flex align-items-center small mb-1">
