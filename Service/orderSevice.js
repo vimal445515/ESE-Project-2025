@@ -77,7 +77,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
                 productId:productId,
                 variantId:variantId,
                 quantity:quantity,
-                finalPrice:Number(productFinalPrice),
+                finalPrice:Number(productFinalPrice+((18/100)*productFinalPrice)),
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
                 image:generalPhoto?.url,
@@ -403,7 +403,6 @@ const storeReturnOrderData = async(orderId,reason)=>{
 }
 const storeSingleReturnOrderData = async(orderId,reason,productId,variantId)=>{
      const productName = await productModel.find({_id:productId},{productName:1,_id:0})
-     console.log(productName)
      
       const isPresent = await orderReturnModel.findOne({orderId:new mongoose.Types.ObjectId(orderId),"product.variantId": new mongoose.Types.ObjectId(variantId)})
      if(isPresent)
@@ -429,19 +428,25 @@ const deletereturnOrder = async(orderId,type)=>{
 
 const acceptOrderReturn = async(orderId,userId) =>{
      console.log("accepted succussfuly",orderId)
-     await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"accept"}})
+    const returnOrder = await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"accept"}})
     const order =    await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"return"}})
-    if(order.payment.method === 'razorpay' || order.payment.method === 'wallet'){
-        await walletModel.findOneAndUpdate({userId:userId},{$inc:{balance:order.pricing.totalAmount}})
+
+
+          if(order.payment.method === 'razorpay' || order.payment.method === 'wallet'){
+         await walletModel.findOneAndUpdate({userId:userId},{$inc:{balance:order.pricing.totalAmount}})
          let transactionId = helpers.generateTransactionId()
                 await walletTransaction.create({
                     transactionId:transactionId,
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:order.pricing.totalAmount,
+                    reason:'refund',
                     type:"cradit",
                     orderId:order.orderId
                 })
+    
+
     }
+   
 
 }
 
@@ -498,8 +503,10 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =
             {$match:{'items.variantId':new mongoose.Types.ObjectId(variantId)}}
         ]);
 
-        console.log(orderData)
-        
+ 
+            
+            if(orderData[0].payment.method === 'razorpay' || orderData[0].payment.method === 'wallet' ){
+                   
             const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
         
     
@@ -507,13 +514,15 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =
             await wallet.save();
 
              let transactionId = helpers.generateTransactionId()
-                await walletTransaction.create({
+                 await walletTransaction.create({
                     transactionId:transactionId,
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:Number(orderData[0].items.finalPrice.toFixed(2)),
                     type:"cradit",
-                    orderId:orderId
+                    orderId:orderData[0].orderId
                 })
+
+                }
        
 
 
@@ -533,9 +542,9 @@ const rejectSingleReturnProduct= async(orderId,variantId,productId)=>{
 }
 
 const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
-    const data =  await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"single",'product.variantId':new mongoose.Types.ObjectId(variantId)},{$set:{status:"approved"}})
+    const returnOrder =  await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"single",'product.variantId':new mongoose.Types.ObjectId(variantId)},{$set:{status:"approved"}})
     console.log(data);
-    await orderModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{
+   const order =   await orderModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{
         $set:{'items.$[item].status':"return"}
     },
     {arrayFilters:[
@@ -543,6 +552,32 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
     ]}
 
 )
+
+         if(returnOrder?.product){
+         order = await order.aggregate([
+                {$match:{_id:order._id}},
+                {$unwind:'$items'},
+                {
+                    $match:{'items.variantId':returnOrder.product.variantId}
+                }
+            ])
+
+            if(order.payment.method === 'razorpay' || order.payment.method === 'wallet'){
+         await walletModel.findOneAndUpdate({userId:userId},{$inc:{balance:Number(order.items.finalPrice)}})
+         let transactionId = helpers.generateTransactionId()
+                await walletTransaction.create({
+                    transactionId:transactionId,
+                    userId:new mongoose.Types.ObjectId(userId),
+                    amount:order.items.finalPrice,
+                    reason:'refund',
+                    type:"cradit",
+                    orderId:order.orderId
+                })
+    }
+
+    }
+
+ 
 }
 
 export default {

@@ -60,14 +60,17 @@ const placeOrder =  async(req,res)=>{
                 
         
                  products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
-                products[0].quantity = Number(req.body.quantity);
+                 products[0].quantity = Number(req.body.quantity);
 
                 if(req.body.appliedCoupon){
 
                     const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
                     const [{product,quantity}] = orderDetails.products
-                    console.log("this is the result :",orderDetails.products)
+                  
                     order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,req.body.appliedCoupon)
+                    if(req.body.payment === 'razorpay'){
+                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
+                    }
                 }
                 else{
 
@@ -113,6 +116,9 @@ const placeOrder =  async(req,res)=>{
           if(req.body.appliedCoupon){
             const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
              order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon);
+             if(req.body.payment === 'razorpay'){
+                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
+              }
           }else{
             const orderDetails =  cartService.cartSummary(products)
              if(req.body.payment === 'razorpay'){

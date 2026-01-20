@@ -32,6 +32,9 @@ const walletTransactionSchema = new mongoose.Schema({
     orderId:{
         type:String
     },
+    reason:{
+        type:String,
+    },
     createdAt:{
         type:Date,
         default:new Date()
