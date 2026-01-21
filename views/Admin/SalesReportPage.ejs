@@ -145,10 +145,10 @@
                         <div class="col-lg-5">
                             <label class="form-label small fw-bold text-muted">Quick Filters</label>
                             <div class="btn-group w-100" role="group">
-                                <button type="button" class="btn btn-filter active">1 Day</button>
-                                <button type="button" class="btn btn-filter">Weekly</button>
-                                <button type="button" class="btn btn-filter">Monthly</button>
-                                <button type="button" class="btn btn-filter">Yearly</button>
+                                <button type="button" onclick="OneDay(new Date,new Date)" class="btn btn-filter active">1 Day</button>
+                                <button type="button" onclick="week()" class="btn btn-filter">Weekly</button>
+                                <button type="button" onclick="month()" class="btn btn-filter">Monthly</button>
+                                <button type="button" onclick="year() " class="btn btn-filter">Yearly</button>
                             </div>
                         </div>
                         <div class="col-lg-5">
@@ -256,6 +256,37 @@
                 btn.classList.add('active');
             });
         });
+
+      function OneDay(startDate,endDate){
+            startDate.setHours(0,0,0,0),
+            endDate.setHours(23,59,59,999)
+            fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+        }
+
+        function week(){
+            let startDate = new Date();
+            startDate.setHours(0,0,0,0);
+            let endDate = new Date()
+            endDate.setHours(23,59,59,999);
+            startDate.setDate(startDate.getDate()-7)
+            fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+
+        }
+
+        function month(){
+            let startDate = new Date(new Date().getFullYear(),new Date().getMonth(),1);
+            let endDate = new Date();
+            endDate.setHours(23,59,59,999);
+            fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+        }
+
+        function year(){
+            let startDate = new Date(new Date().getFullYear(),0,1)
+            let endDate =  new Date()
+            endDate.setHours(23,59,59,999)
+            fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+        }
+
     </script>
 </body>
 </html>
