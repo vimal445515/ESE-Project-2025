@@ -70,6 +70,13 @@ const placeOrder =  async(req,res)=>{
                     order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,req.body.appliedCoupon)
                     if(req.body.payment === 'razorpay'){
                        return res.status(200).json({type:"razorpay",orderId:order.orderId})
+                    }else if(req.body.payment === 'wallet'){
+                       try{
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                      }catch(error){
+                        console.log(error)
+                        return res.status(400).json({type:"walletError",message:error.message});
+                      }
                     }
                 }
                 else{

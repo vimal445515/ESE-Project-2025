@@ -145,7 +145,7 @@
                         <div class="col-lg-5">
                             <label class="form-label small fw-bold text-muted">Quick Filters</label>
                             <div class="btn-group w-100" role="group">
-                                <button type="button" onclick="OneDay(new Date,new Date)" class="btn btn-filter active">1 Day</button>
+                                <button type="button" onclick="OneDay(new Date,new Date)" class="btn btn-filter">1 Day</button>
                                 <button type="button" onclick="week()" class="btn btn-filter">Weekly</button>
                                 <button type="button" onclick="month()" class="btn btn-filter">Monthly</button>
                                 <button type="button" onclick="year() " class="btn btn-filter">Yearly</button>
@@ -168,36 +168,50 @@
                 </div>
 
                 <div class="row g-4 mb-4">
-                    <div class="col-md-4">
+                    <div class="col-sm-6 col-lg-3">
                         <div class="kpi-card bg-white shadow-sm d-flex align-items-center">
                             <div class="icon-box bg-primary-subtle text-primary me-3">
                                 <i class="bi bi-cart-check"></i>
                             </div>
                             <div>
-                                <small class="text-muted d-block">Overall Sales Count</small>
-                                <h4 class="fw-bold mb-0">1,452</h4>
+                                <small class="text-muted d-block font-size-xs">Overall Sales Count</small>
+                                <h4 id="salesCount" value="<%= salesReportData[0].totalOrder%>" class="fw-bold mb-0"><%= salesReportData[0].totalOrder%></h4>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-sm-6 col-lg-3">
                         <div class="kpi-card bg-white shadow-sm d-flex align-items-center">
                             <div class="icon-box bg-success-subtle text-success me-3">
-                                <i class="bi bi-currency-dollar"></i>
+                                <i class="bi bi-currency-rupee"></i>
                             </div>
                             <div>
-                                <small class="text-muted d-block">Overall Order Amount</small>
-                                <h4 class="fw-bold mb-0">₹8,42,200</h4>
+                                <small class="text-muted d-block font-size-xs">Overall Order Amount</small>
+                                <h4 id="orderAmount" value="<%= salesReportData[0].overalOrderAmount%>"  class="fw-bold mb-0">₹<%= salesReportData[0].overalOrderAmount.toLocaleString('en-IN')%></h4>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-sm-6 col-lg-3">
                         <div class="kpi-card bg-white shadow-sm d-flex align-items-center">
                             <div class="icon-box bg-danger-subtle text-danger me-3">
                                 <i class="bi bi-tag"></i>
                             </div>
                             <div>
-                                <small class="text-muted d-block">Overall Discounts</small>
-                                <h4 class="fw-bold mb-0">₹24,500</h4>
+                                <small class="text-muted d-block font-size-xs">Overall Discounts</small>
+                                <h4 id="discountAmount" value="<%= salesReportData[0].overalDiscountAmount%>"  class="fw-bold mb-0">₹<%= salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')%></h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="kpi-card bg-white shadow-sm d-flex align-items-center" style="border-bottom: 3px solid #0dcaf0;">
+                            <div class="icon-box bg-info-subtle text-info me-3">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block font-size-xs text-uppercase fw-semibold">Revenue</small>
+                                <h4 id="revenue" value="<%=  salesReportData[0].netSales%>" class="fw-bold mb-0 text-info">₹<%=  salesReportData[0].netSales.toLocaleString('en-IN')%></h4>
                             </div>
                         </div>
                     </div>
@@ -256,11 +270,28 @@
                 btn.classList.add('active');
             });
         });
-
+        const salesCount= document.getElementById('salesCount');
+        const orderAmount = document.getElementById('orderAmount');
+        const discountAmount = document.getElementById('discountAmount');
+        const revenue = document.getElementById('revenue');
       function OneDay(startDate,endDate){
             startDate.setHours(0,0,0,0),
             endDate.setHours(23,59,59,999)
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+            .then(data=>data.json())
+            .then(data=>{
+                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0].totalOrder;
+                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
+                revenue.value = data.salesReportData[0].netSales
+
+                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
+                salesCount.innerText = `₹${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
+                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
+                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+
+            })
         }
 
         function week(){
@@ -270,6 +301,21 @@
             endDate.setHours(23,59,59,999);
             startDate.setDate(startDate.getDate()-7)
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+             .then(data=>data.json())
+            .then(data=>{
+                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0].totalOrder;
+                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
+                revenue.value = data.salesReportData[0].netSales
+
+                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
+                salesCount.innerText = `₹${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
+                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
+                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+
+            })
+         
 
         }
 
@@ -278,6 +324,21 @@
             let endDate = new Date();
             endDate.setHours(23,59,59,999);
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+             .then(data=>data.json())
+            .then(data=>{
+                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0].totalOrder;
+                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
+                revenue.value = data.salesReportData[0].netSales
+
+                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
+                salesCount.innerText = `₹${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
+                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
+                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+
+            })
+            
         }
 
         function year(){
@@ -285,6 +346,21 @@
             let endDate =  new Date()
             endDate.setHours(23,59,59,999)
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
+             .then(data=>data.json())
+            .then(data=>{
+                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0].totalOrder;
+                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
+                revenue.value = data.salesReportData[0].netSales
+
+                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
+                salesCount.innerText = `₹${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
+                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
+                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+
+            })
+            
         }
 
     </script>
