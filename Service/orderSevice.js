@@ -100,8 +100,10 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             phoneNumber:reqObj.phoneNumber
         },
         pricing:{
-            subTotal:orderDetails.otalPriceCartItem,
+            subTotal:orderDetails.totalPriceCartItem,
             discount:orderDetails.totalDiscountPrice,
+            offerDiscount:orderDetails.offerDiscount,
+            couponDiscount:orderDetails?.couponDiscount?orderDetails.couponDiscount:0,
             tax:orderDetails.tax,
             totalAmount:orderDetails.total
         },
@@ -201,6 +203,8 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
         pricing:{
             subTotal:orderDetails.totalPriceCartItem,
             discount:orderDetails.totalDiscountPrice,
+            offerDiscount:orderDetails.offerDiscount,
+            couponDiscount:orderDetails?.couponDiscount?orderDetails.couponDiscount:0,
             tax:orderDetails.tax,
             totalAmount:orderDetails.total
         },

@@ -50,6 +50,8 @@ const orderSchema = new mongoose.Schema({
         subTotal:{type:Number},
         tax:{type:Number},
         discount:{type:Number},
+        offerDiscount:{type:Number},
+        couponDiscount:{type:Number},
         totalAmount:{type:Number}
     },
     orderStatus:{

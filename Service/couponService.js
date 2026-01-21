@@ -95,6 +95,7 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
 
 
    const totalPriceCartItem = oldAmount.totalPriceCartItem ; // Applay discount
+   
   // Calculate total discount price 
     const totalDiscountPrice = oldAmount.totalDiscountPrice + couponDiscount;
 
@@ -116,7 +117,7 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
   const  tax =parseInt( ( (totalPriceCartItem - totalDiscountPrice) * 18 ) / 100)
   const total =  (totalPriceCartItem- totalDiscountPrice) + tax
 
- return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,products}
+ return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,products,offerDiscount:oldAmount.totalDiscountPrice}
 }
 
 const calculateTotalAmount = (products)=>{

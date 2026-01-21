@@ -214,7 +214,7 @@ const cartSummary = (items)=>{
   const  tax =parseInt (( (totalPriceCartItem-totalDiscountPrice)* 18 ) / 100)
   const total =  (totalPriceCartItem-totalDiscountPrice) + tax
 
-   return {totalPriceCartItem,totalDiscountPrice,tax,total}
+   return {totalPriceCartItem,totalDiscountPrice,tax,total,offerDiscount:totalDiscountPrice}
   
 }
 

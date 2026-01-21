@@ -14,13 +14,13 @@ const getSalesReport = (startDate,endDate)=>{
             totalOrder:{$sum:1},
             overalOrderAmount:{$sum:'$pricing.subTotal'},
             overalDiscountAmount:{$sum:'$pricing.discount'},
+            overalTax:{$sum:'$pricing.tax'},
             netSales:{$sum:'$pricing.totalAmount'}
         }})
 
        
 
     const salesReport = orderModel.aggregate(pipeline)
-
     return salesReport;
 }
 
