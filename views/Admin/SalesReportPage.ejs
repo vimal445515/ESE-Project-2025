@@ -301,16 +301,13 @@
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
             .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0].totalOrder;
-                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
-                revenue.value = data.salesReportData[0].netSales
 
-                orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
-                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
-                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
-                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
-                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
 
 
                 const table = document.getElementById('tableBody')
@@ -346,16 +343,14 @@
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0].totalOrder;
-                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
-                revenue.value = data.salesReportData[0].netSales
+         
 
-                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
-                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
-                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
-                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
-                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+             
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
 
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
@@ -392,16 +387,14 @@
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0].totalOrder;
-                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
-                revenue.value = data.salesReportData[0].netSales
+              
 
-                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
-                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
-                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
-                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
-                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+             
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
 
 
                 const table = document.getElementById('tableBody')
@@ -437,18 +430,13 @@
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0].totalOrder;
-                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
-                revenue.value = data.salesReportData[0].netSales
+           
 
-                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
-                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
-                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
-                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
-                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
-
-
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
                 data.orders.forEach(order =>{
@@ -512,15 +500,13 @@
              fetch(`/reports?startDate=${startDateObj}&endDate=${endDateObj}`)
              .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0]?.overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0]?.totalOrder;
-                discountAmount.value = data.salesReportData[0]?.overalDiscountAmount;
-                revenue.value = data.salesReportData[0]?.netSales
+            
 
+               
                 orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
                 salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
                 tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
                 revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
@@ -541,16 +527,8 @@
                                     table.append(row)
 
                 })      
-
-
             })
-
-
-              
         }
-
-
-        
     </script>
 </body>
 </html>
