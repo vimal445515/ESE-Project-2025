@@ -153,14 +153,18 @@
                         </div>
                         <div class="col-lg-5">
                             <label class="form-label small fw-bold text-muted">Custom Date Range</label>
+                            <p class="startDateError text-danger"></p>
+                              <p class="endDateError text-danger"></p>
                             <div class="input-group">
-                                <input type="date" class="form-control form-control-sm">
+                                <input type="date" id="startDate" class="form-control form-control-sm">
+                                
                                 <span class="input-group-text small">to</span>
-                                <input type="date" class="form-control form-control-sm">
+                                <input type="date" id="endDate" class="form-control form-control-sm">
+                              
                             </div>
                         </div>
                         <div class="col-lg-2">
-                            <button class="btn btn-primary w-100 btn-sm py-2" style="background-color: var(--primary-blue); border: none;">
+                            <button onclick="generateCostomDateReport()" id="generateReportButton" class="btn btn-primary w-100 btn-sm py-2" style="background-color: var(--primary-blue); border: none;">
                                 Generate Report
                             </button>
                         </div>
@@ -384,6 +388,58 @@
 
             })
             
+        }
+
+        function generateCostomDateReport(){
+            const startDate = document.getElementById('startDate').value
+            const endDate = document.getElementById('endDate').value
+            if(!startDate){
+                document.querySelector('.startDateError').innerText="required"
+                return
+            }
+
+            if(!endDate){
+                document.querySelector('.endDateErorr').innerText="required"
+                return
+            }
+
+            startDateObj = new Date(startDate);
+            startDateObj.setHours(0,0,0,0);
+            endDateObj = new Date(endDate);
+            endDateObj.setHours(23,59,59,999)
+
+            if(startDateObj < new Date()){
+                 document.querySelector('.startDateError').innerText="invalid"
+                return
+            }
+            if(endDateObj < new Date()){
+                document.querySelector('.endDateError').innerText="invalid"
+                return
+            }
+
+            if(startDateObj > endDateObj){
+                 document.querySelector('.endDateError').innerText="invalid"
+                return
+            }
+
+             fetch(`/reports?startDate=${startDateObj}&endDate=${endDateObj}`)
+             .then(data=>data.json())
+            .then(data=>{
+                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0].totalOrder;
+                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
+                revenue.value = data.salesReportData[0].netSales
+
+                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
+                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
+                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
+                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
+                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+            })
+
+
+              
         }
 
     </script>
