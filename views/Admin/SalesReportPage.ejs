@@ -134,7 +134,7 @@
                         <button class="btn btn-outline-danger btn-download">
                             <i class="bi bi-file-earmark-pdf me-2"></i>PDF
                         </button>
-                        <button class="btn btn-outline-success btn-download">
+                        <button onclick="downloadExcel()" class="btn btn-outline-success btn-download">
                             <i class="bi bi-file-earmark-excel me-2"></i>Excel
                         </button>
                     </div>
@@ -290,6 +290,9 @@
                 btn.classList.add('active');
             });
         });
+
+        let globalStartDate;
+        let globalEndDate;
         const salesCount= document.getElementById('salesCount');
         const orderAmount = document.getElementById('orderAmount');
         const discountAmount = document.getElementById('discountAmount');
@@ -298,6 +301,8 @@
       function OneDay(startDate,endDate){
             startDate.setHours(0,0,0,0),
             endDate.setHours(23,59,59,999)
+            globalStartDate = startDate
+            globalEndDate = endDate
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
             .then(data=>data.json())
             .then(data=>{
@@ -340,6 +345,8 @@
             let endDate = new Date()
             endDate.setHours(23,59,59,999);
             startDate.setDate(startDate.getDate()-7)
+            globalStartDate = startDate
+            globalEndDate = endDate
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
@@ -384,6 +391,8 @@
             let startDate = new Date(new Date().getFullYear(),new Date().getMonth(),1);
             let endDate = new Date();
             endDate.setHours(23,59,59,999);
+            globalStartDate = startDate
+            globalEndDate = endDate
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
@@ -427,6 +436,8 @@
             let startDate = new Date(new Date().getFullYear(),0,1)
             let endDate =  new Date()
             endDate.setHours(23,59,59,999)
+            globalStartDate = startDate
+            globalEndDate = endDate
             fetch(`/reports?startDate=${startDate}&endDate=${endDate}`)
              .then(data=>data.json())
             .then(data=>{
@@ -481,7 +492,8 @@
             endDateObj.setHours(23,59,59,999)
             const today = new Date()
             today.setHours(23,59,59,999)
-
+            globalStartDate = startDateObj
+            globalEndDate = endDateObj
             if(startDateObj > today){
                  document.querySelector('.startDateError').innerText="invalid"
                 return
@@ -528,6 +540,13 @@
 
                 })      
             })
+
+
+        }
+
+        function downloadExcel(){
+
+           window.location.href= `/report/download?startDate=${globalStartDate||''}&endDate=${globalEndDate||''}`
         }
     </script>
 </body>

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import orderModel from '../Models/orderSchema.js'
+import excelJS from 'exceljs'
 
 const getSalesReport = (startDate,endDate)=>{
     
@@ -24,6 +25,50 @@ const getSalesReport = (startDate,endDate)=>{
     return salesReport;
 }
 
+const generateExcelSheet= (reportData,orders)=>{
+        const workbook = new excelJS.Workbook();
+        const sheet = workbook.addWorksheet('Sales report');
+        sheet.addRow(["SALES SUMMARY"]);
+        sheet.addRow(['Total Order',reportData[0].totalOrder])
+        sheet.addRow(['Overal Order Amount',`₹${reportData[0]. overalOrderAmount}`])
+        sheet.addRow(['Overal Discount Amount',`₹${reportData[0].overalDiscountAmount}`])
+        sheet.addRow(['Net Sales',`₹${reportData[0].netSales}`])
+        sheet.addRow([]);
+
+        sheet.addRow([]);
+          sheet.addRow([]);
+
+            sheet.columns = [
+    { key: "totalOrder", width: 30 },
+    { key: "overalOrderAmount", width: 15 },
+    {  key: "overalDiscountAmount", width: 20 },
+    {  key: "overalTax", width: 15 },
+    {  key: "netSales", width: 15 }
+  ];
+
+
+     sheet.addRow(["Order ID","Customer Name", "Date","Sub Total", "Offer Discount", "Coupon Discount", "totalAmount"]);
+
+
+     orders.forEach(order=>{
+        console.log(orders)
+        sheet.addRow([order.orderId, 
+            order.user[0].userName,
+            order.createdAt.toString().slice(0,10),
+           `₹${parseInt(order.pricing.subTotal)}`,
+           `₹${ parseInt(order.pricing.offerDiscount)}`, 
+            `₹${parseInt(order.pricing.couponDiscount)}`, 
+           `₹${parseInt(order.pricing.totalAmount)}`]);
+     })
+
+
+
+return workbook;
+
+
+}
+
 export default {
-    getSalesReport
+    getSalesReport,
+    generateExcelSheet
 }
