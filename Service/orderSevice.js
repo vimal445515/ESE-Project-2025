@@ -584,6 +584,43 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
  
 }
 
+
+const getOrdersForSalesReport= async(startDate,endDate)=>{
+    if(startDate){
+          return await orderModel.aggregate([
+        {$match:{orderStatus:'delivered',createdAt:{$gte:startDate,$lte:endDate}}},
+        {$lookup:{
+            from:'users',
+            localField:"userId",
+            foreignField:"_id",
+            as:"user"
+        }},
+        {$project:{
+            createdAt:1,
+            orderId:1,
+            '$user.userName':1,
+            pricing:1
+        }}
+    ])
+    }
+    return  await orderModel.aggregate([
+        {$match:{orderStatus:'delivered'}},
+        {$lookup:{
+            from:'users',
+            localField:"userId",
+            foreignField:"_id",
+            as:"user"
+        }},
+        {$project:{
+            createdAt:1,
+            orderId:1,
+            'user.userName':1,
+            pricing:1
+        }}
+    ])
+  
+}
+
 export default {
     orderSingleProduct,
     orderCartItmes,
@@ -609,6 +646,7 @@ export default {
     cancelSingleProduct,
     storeSingleReturnOrderData,
     rejectSingleReturnProduct,
-    aproveSingleReturnProduct
+    aproveSingleReturnProduct,
+    getOrdersForSalesReport
    
 }

@@ -255,24 +255,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <% orders.forEach(order=>{%>
+
+                                    
                                     <tr>
-                                        <td class="ps-4">24 Oct 2023</td>
-                                        <td class="fw-medium text-muted">#ORD-9921</td>
-                                        <td>Rahul Sharma</td>
-                                        <td>₹1,200.00</td>
-                                        <td class="text-danger">-₹100.00</td>
-                                        <td class="text-danger">-₹50.00</td>
-                                        <td class="text-end pe-4 fw-bold text-success">₹1,050.00</td>
+                                        <td class="ps-4"><%= order.createdAt.toString().slice(0,10)%></td>
+                                        <td class="fw-medium text-muted"><%= order.orderId%></td>
+                                        <td><%= order.user[0].userName%></td>
+                                        <td>₹<%= order.pricing.subTotal.toLocaleString('en-IN')%></td>
+                                        <td class="text-danger">-₹<%= order.pricing.offerDiscount.toLocaleString('en-IN')%></td>
+                                        <td class="text-danger">-₹<%= order.pricing.couponDiscount.toLocaleString('en-IN')%></td>
+                                        <td class="text-end pe-4 fw-bold text-success">₹<%= order.pricing.totalAmount.toLocaleString('en-IN')%></td>
                                     </tr>
-                                    <tr>
-                                        <td class="ps-4">23 Oct 2023</td>
-                                        <td class="fw-medium text-muted">#ORD-9918</td>
-                                        <td>Anjali V.</td>
-                                        <td>₹5,400.00</td>
-                                        <td class="text-danger">-₹400.00</td>
-                                        <td class="text-danger">-₹0.00</td>
-                                        <td class="text-end pe-4 fw-bold text-success">₹5,000.00</td>
-                                    </tr>
+                                   <%})%>
                                 </tbody>
                             </table>
                         </div>
@@ -338,6 +333,8 @@
                 discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
 
+               
+
 
             })
          
@@ -384,7 +381,6 @@
                 tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
                 discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
-
 
             })
             
