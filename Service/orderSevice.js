@@ -598,7 +598,7 @@ const getOrdersForSalesReport= async(startDate,endDate)=>{
         {$project:{
             createdAt:1,
             orderId:1,
-            '$user.userName':1,
+            'user.userName':1,
             pricing:1
         }}
     ])

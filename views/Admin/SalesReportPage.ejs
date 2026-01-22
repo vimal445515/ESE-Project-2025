@@ -407,12 +407,14 @@
             startDateObj.setHours(0,0,0,0);
             endDateObj = new Date(endDate);
             endDateObj.setHours(23,59,59,999)
+            const today = new Date()
+            today.setHours(23,59,59,999)
 
-            if(startDateObj < new Date()){
+            if(startDateObj > today){
                  document.querySelector('.startDateError').innerText="invalid"
                 return
             }
-            if(endDateObj < new Date()){
+            if(endDateObj > today){
                 document.querySelector('.endDateError').innerText="invalid"
                 return
             }
@@ -421,20 +423,21 @@
                  document.querySelector('.endDateError').innerText="invalid"
                 return
             }
-
+             document.querySelector('.endDateError').innerText=""
+              document.querySelector('.startDateError').innerText=""
              fetch(`/reports?startDate=${startDateObj}&endDate=${endDateObj}`)
              .then(data=>data.json())
             .then(data=>{
-                orderAmount.vaule = data.salesReportData[0].overalOrderAmount;
-                salesCount.vaule = data.salesReportData[0].totalOrder;
-                discountAmount.value = data.salesReportData[0].overalDiscountAmount;
-                revenue.value = data.salesReportData[0].netSales
+                orderAmount.vaule = data.salesReportData[0]?.overalOrderAmount;
+                salesCount.vaule = data.salesReportData[0]?.totalOrder;
+                discountAmount.value = data.salesReportData[0]?.overalDiscountAmount;
+                revenue.value = data.salesReportData[0]?.netSales
 
-                 orderAmount.innerText = `₹${data.salesReportData[0].overalOrderAmount.toLocaleString('en-IN')}`;
-                salesCount.innerText = `${data.salesReportData[0].totalOrder.toLocaleString('en-IN')}`
-                tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
-                discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
-                revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
 
             })
 
