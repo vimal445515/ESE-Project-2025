@@ -7,6 +7,7 @@ const loadSalesReportPage = async(req,res)=>{
     console.log(startDate,endDate)
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
+ 
     if(startDate){
         console.log(salesReport)
         return  res.status(200).json({salesReportData:salesReport,orders});

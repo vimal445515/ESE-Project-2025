@@ -258,18 +258,17 @@
                                         <th class="text-end pe-4">Final Amount</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tableBody">
                                     <% orders.forEach(order=>{%>
 
-                                    
                                     <tr>
-                                        <td class="ps-4"><%= order.createdAt.toString().slice(0,10)%></td>
-                                        <td class="fw-medium text-muted"><%= order.orderId%></td>
-                                        <td><%= order.user[0].userName%></td>
-                                        <td>₹<%= order.pricing.subTotal.toLocaleString('en-IN')%></td>
-                                        <td class="text-danger">-₹<%= order.pricing.offerDiscount.toLocaleString('en-IN')%></td>
-                                        <td class="text-danger">-₹<%= order.pricing.couponDiscount.toLocaleString('en-IN')%></td>
-                                        <td class="text-end pe-4 fw-bold text-success">₹<%= order.pricing.totalAmount.toLocaleString('en-IN')%></td>
+                                        <td class="ps-4 date"><%= order.createdAt.toString().slice(0,10)%></td>
+                                        <td class="fw-medium text-muted orderId"><%= order.orderId%></td>
+                                        <td class="userName"><%= order.user[0].userName%></td>
+                                        <td class="orderAmount">₹<%= order.pricing.subTotal.toLocaleString('en-IN')%></td>
+                                        <td class="text-danger discount">-₹<%= order.pricing.offerDiscount.toLocaleString('en-IN')%></td>
+                                        <td class="text-danger coupon">-₹<%= order.pricing.couponDiscount.toLocaleString('en-IN')%></td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹<%= order.pricing.totalAmount.toLocaleString('en-IN')%></td>
                                     </tr>
                                    <%})%>
                                 </tbody>
@@ -314,6 +313,27 @@
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
 
 
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                            let row = document.createElement('tr')
+                        row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ order.pricing.totalAmount.toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
+
+
             })
         }
 
@@ -336,6 +356,26 @@
                 tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
                 discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                            let row = document.createElement('tr')
+                        row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ order.pricing.totalAmount.toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
 
                
 
@@ -364,6 +404,28 @@
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
 
 
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                            let row = document.createElement('tr')
+                        row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ order.pricing.totalAmount.toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
+
+
+
             })
             
         }
@@ -385,6 +447,28 @@
                 tax.innerText = `₹${data.salesReportData[0].overalTax.toLocaleString('en-IN')}`
                 discountAmount.innerText = `₹${data.salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')}`;
                 revenue.innerText = `₹${data.salesReportData[0].netSales.toLocaleString('en-IN')}`;
+
+
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                            let row = document.createElement('tr')
+                        row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ order.pricing.totalAmount.toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
+
 
             })
             
@@ -438,6 +522,26 @@
                 tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
                 discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`
                 revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                            let row = document.createElement('tr')
+                        row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ order.pricing.totalAmount.toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
+
 
             })
 
@@ -445,6 +549,8 @@
               
         }
 
+
+        
     </script>
 </body>
 </html>
