@@ -198,14 +198,14 @@ const incrementQuantity = async(productId,variantId,quantity) =>{
 const cartSummary = (items)=>{
   // Calculating total price of every itme in the items and store into a array with discount
     const totalPriceCartItem = items.reduce((total,item)=>{
-      total += (parseInt(item.product.variants?.price*item.quantity))
+      total += (item.product.variants?.price*item.quantity.toFixed(2))
       return total;
     },0)
 
   // Calculate total discount price 
    const totalDiscountPrice = items.reduce((total,item)=>{
      
-      total += (parseInt((item.product.variants.price - item.finalPrice)*item.quantity))
+      total += ((item.product.variants.price - item.finalPrice)*item.quantity.toFixed(2))
       return total;
     },0)
 
@@ -214,7 +214,7 @@ const cartSummary = (items)=>{
   const  tax =parseInt (( (totalPriceCartItem-totalDiscountPrice)* 18 ) / 100)
   const total =  (totalPriceCartItem-totalDiscountPrice) + tax
 
-   return {totalPriceCartItem,totalDiscountPrice,tax,total,offerDiscount:totalDiscountPrice}
+   return {totalPriceCartItem:totalPriceCartItem.toFixed(2),totalDiscountPrice:totalDiscountPrice.toFixed(2),tax:tax.toFixed(2),total:total.toFixed(2),offerDiscount:totalDiscountPrice.toFixed(2)}
   
 }
 

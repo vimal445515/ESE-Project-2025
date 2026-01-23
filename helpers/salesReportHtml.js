@@ -43,14 +43,14 @@ export function salesReportHtml(salesReportData, orders) {
     <div class="col">
       <div class="kpi-card">
         <strong>Total Revenue</strong><br>
-        ₹${salesReportData[0]?.netSales.toLocaleString('en-IN')||0}
+        ₹${salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}
       </div>
     </div>
 
     <div class="col">
       <div class="kpi-card">
         <strong>Total Discount</strong><br>
-        ₹${salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}
+        ₹${salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}
       </div>
     </div>
   </div>
@@ -79,11 +79,11 @@ export function salesReportHtml(salesReportData, orders) {
           <td>${new Date(order?.createdAt).toISOString().slice(0, 10)}</td>
           <td>${order.orderId}</td>
           <td>${order.user[0].userName}</td>
-          <td>₹${Math.floor(order.pricing.subTotal).toLocaleString('en-IN')}</td>
-          <td>-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-          <td>-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-          <td>+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-          <td><strong>₹${Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</strong></td>
+          <td>₹${order.pricing.subTotal.toFixed(2).toLocaleString('en-IN')}</td>
+          <td>-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+          <td>-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+          <td>+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+          <td><strong>₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</strong></td>
         </tr>
       `).join("")
       }

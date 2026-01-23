@@ -95,10 +95,10 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
 
 
 
-   const totalPriceCartItem = oldAmount.totalPriceCartItem ; // Applay discount
+   const totalPriceCartItem = Number(oldAmount.totalPriceCartItem) ; // Applay discount
    
   // Calculate total discount price 
-    const totalDiscountPrice = oldAmount.totalDiscountPrice + couponDiscount;
+    const totalDiscountPrice = Number(oldAmount.totalDiscountPrice) + couponDiscount;
 
 
      products = products.map((item)=>{
@@ -110,15 +110,19 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
         }
        
     })
+
+    console.log("this is products",products)
 //    const totalDiscountPrice = products.reduce((total,item)=>{
 //       total += (parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
 //       return total;
 //     },0)
 
-  const  tax =parseInt( ( (totalPriceCartItem - totalDiscountPrice) * 18 ) / 100)
+  const  tax = ( (Number(totalPriceCartItem) - Number(totalDiscountPrice)) * 18 ) / 100
+  
+  
   const total =  (totalPriceCartItem- totalDiscountPrice) + tax
 
- return {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,products,offerDiscount:oldAmount.totalDiscountPrice}
+ return {totalPriceCartItem:Number(totalPriceCartItem),totalDiscountPrice:Number(totalDiscountPrice),tax:Number(tax),total:Number(total),couponDiscount:Number(couponDiscount),products:products,offerDiscount:Number(oldAmount.totalDiscountPrice)}
 }
 
 const calculateTotalAmount = (products)=>{

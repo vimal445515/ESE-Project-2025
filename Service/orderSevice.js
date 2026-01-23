@@ -201,12 +201,12 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
             phoneNumber:reqObj.phoneNumber
         },
         pricing:{
-            subTotal:orderDetails.totalPriceCartItem,
-            discount:orderDetails.totalDiscountPrice,
-            offerDiscount:orderDetails.offerDiscount,
-            couponDiscount:orderDetails?.couponDiscount?orderDetails.couponDiscount:0,
-            tax:orderDetails.tax,
-            totalAmount:orderDetails.total
+            subTotal:Number(orderDetails.totalPriceCartItem).toFixed(2),
+            discount:Number(orderDetails.totalDiscountPrice).toFixed(2),
+            offerDiscount:Number(orderDetails.offerDiscount).toFixed(2),
+            couponDiscount:orderDetails?.couponDiscount?Number(orderDetails.couponDiscount).toFixed(2):0,
+            tax:Number(orderDetails.tax).toFixed(2),
+            totalAmount:Number(orderDetails.total).toFixed(2)
         },
         coupon:couponData
     
@@ -225,7 +225,6 @@ const checkOrderStock= async(productId,variantId)=>{
         {$match:{"variants._id": new mongoose.Types.ObjectId(variantId)}}
     ])
         
-     console.log("this is new prodduct",product)
         if(product.length===0 || Number(product[0]?.variants?.stock) < 1){
             return false;
         }

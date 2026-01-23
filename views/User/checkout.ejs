@@ -518,7 +518,7 @@
       })
       .then(data=>data.json())
       .then(data=>{
-        
+        console.log(data.orderId);
         if(data.type === 'razorpay'){
             
             payNow(data.orderId)
@@ -760,11 +760,12 @@ function applayCoupon(couponCode=couponInput.value.trim()){
         }
     ).then(data=>data.json())
     .then(data=>{
+        console.log(data)
         if(data.type==="success"){
-            subTotal.innerText =`₹${ parseInt(data.totalPriceCartItem).toLocaleString('en-IN')}`
-             discount.innerText = `₹${parseInt(data.totalDiscountPrice).toLocaleString('en-IN')}`
-             tax.innerText = `₹${parseInt(data.tax).toLocaleString('en-IN')}`
-             total.innerText =`₹${parseInt( data.total).toLocaleString('en-IN')}` 
+            subTotal.innerText =`₹${ data.totalPriceCartItem.toFixed(2).toLocaleString('en-IN')}`
+             discount.innerText = `₹${data.totalDiscountPrice.toFixed(2).toLocaleString('en-IN')}`
+             tax.innerText = `₹${data.tax.toFixed(2).toLocaleString('en-IN')}`
+             total.innerText =`₹${data.total.toFixed(2).toLocaleString('en-IN')}` 
              document.getElementById("couponDiscount").innerHTML=`<p class="text-success fw-semibold">
             You saved ₹<span>${parseInt(data.couponDiscount)}</span> on this order
             </p>`

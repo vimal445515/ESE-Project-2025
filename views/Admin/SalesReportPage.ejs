@@ -194,7 +194,7 @@
                         <div>
                             <small class="text-muted d-block font-size-xs">Overall Order Amount</small>
                             <h4 id="orderAmount" value="<%= salesReportData[0].overalOrderAmount%>" class="fw-bold mb-0">
-                                ₹<%= salesReportData[0].overalOrderAmount.toLocaleString('en-IN')%>
+                                ₹<%= salesReportData[0].overalOrderAmount.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -208,7 +208,7 @@
                         <div>
                             <small class="text-muted d-block font-size-xs">Overall Discounts</small>
                             <h4 id="discountAmount" value="<%= salesReportData[0].overalDiscountAmount%>" class="fw-bold mb-0">
-                                ₹<%= salesReportData[0].overalDiscountAmount.toLocaleString('en-IN')%>
+                                ₹<%= salesReportData[0].overalDiscountAmount.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -222,7 +222,7 @@
                         <div>
                             <small class="text-muted d-block font-size-xs">Total Tax (GST)</small>
                             <h4 id="taxAmount" value="<%= salesReportData[0].totalTax %>" class="fw-bold mb-0">
-                                ₹<%= (salesReportData[0].overalTax || 0).toLocaleString('en-IN') %>
+                                ₹<%= (salesReportData[0].overalTax.toFixed(2) || 0).toLocaleString('en-IN') %>
                             </h4>
                         </div>
                     </div>
@@ -236,7 +236,7 @@
                         <div>
                             <small class="text-muted d-block font-size-xs text-uppercase fw-semibold">Net Revenue</small>
                             <h4 id="revenue" value="<%= salesReportData[0].netSales%>" class="fw-bold mb-0 text-info">
-                                ₹<%= salesReportData[0].netSales.toLocaleString('en-IN')%>
+                                ₹<%= salesReportData[0].netSales.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -266,11 +266,11 @@
                                         <td class="ps-4 date"><%= order.createdAt.toString().slice(0,10)%></td>
                                         <td class="fw-medium text-muted orderId"><%= order.orderId%></td>
                                         <td class="userName"><%= order.user[0].userName%></td>
-                                        <td class="orderAmount">₹<%= Math.floor(order.pricing.subTotal).toLocaleString('en-IN')%></td>
-                                        <td class="text-danger discount">-₹<%= Math.floor(order.pricing.offerDiscount.toLocaleString('en-IN'))%></td>
-                                        <td class="text-danger coupon">-₹<%= Math.floor(order.pricing.couponDiscount.toLocaleString('en-IN'))%></td>
-                                        <td class="text-danger tax">+₹<%= Math.floor(order.pricing.tax.toLocaleString('en-IN'))%></td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹<%= Math.floor(order.pricing.totalAmount.toLocaleString('en-IN'))%></td>
+                                        <td class="orderAmount">₹<%= order.pricing.subTotal.toFixed(2).toLocaleString('en-IN')%></td>
+                                        <td class="text-danger discount">-₹<%= order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')%></td>
+                                        <td class="text-danger coupon">-₹<%= order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')%></td>
+                                        <td class="text-danger tax">+₹<%= order.pricing.tax.toFixed().toLocaleString('en-IN')%></td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹<%= order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')%></td>
                                     </tr>
                                    <%})%>
                                 </tbody>
@@ -310,12 +310,12 @@
             .then(data=>{
 
 
-                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
-                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
-                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
 
-                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
 
 
                 const table = document.getElementById('tableBody')
@@ -328,10 +328,10 @@
                                         <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
                                         <td class="userName">${innerText =order.user[0].userName}</td>
                                         <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
-                                        <td class="text-danger discount">-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
                                     </tr>
                             
                             `
@@ -357,26 +357,29 @@
          
 
              
-                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
-                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
-                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
-                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
+
 
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
                 data.orders.forEach(order =>{
                             let row = document.createElement('tr')
-                        row.innerHTML =    `
-                               <tr>
+                      row.innerHTML =    `
+                            <tr>
                                         <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
                                         <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
                                         <td class="userName">${innerText =order.user[0].userName}</td>
                                         <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
-                                        <td class="text-danger discount">-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
                                     </tr>
                             
                             `
@@ -404,11 +407,13 @@
               
 
              
-                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
-                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
-                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
-                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
+
 
 
                 const table = document.getElementById('tableBody')
@@ -416,15 +421,15 @@
                 data.orders.forEach(order =>{
                             let row = document.createElement('tr')
                         row.innerHTML =    `
-                              <tr>
+                            <tr>
                                         <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
                                         <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
                                         <td class="userName">${innerText =order.user[0].userName}</td>
                                         <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
-                                        <td class="text-danger discount">-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
                                     </tr>
                             
                             `
@@ -449,25 +454,27 @@
             .then(data=>{
            
 
-                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
-                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
-                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
-                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
+
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
                 data.orders.forEach(order =>{
-                            let row = document.createElement('tr')
-                        row.innerHTML =    `
-                              <tr>
+                    let row = document.createElement('tr')
+                            row.innerHTML =    `
+                            <tr>
                                         <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
                                         <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
                                         <td class="userName">${innerText =order.user[0].userName}</td>
                                         <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
-                                        <td class="text-danger discount">-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
                                     </tr>
                             
                             `
@@ -522,25 +529,28 @@
             
 
                
-                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toLocaleString('en-IN')||0}`;
-                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toLocaleString('en-IN')||0}`
-                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toLocaleString('en-IN')||0}`
-                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toLocaleString('en-IN')||0}`;
-                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toLocaleString('en-IN')||0}`;
+                
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
+
                 const table = document.getElementById('tableBody')
                 table.innerHTML = ''
                 data.orders.forEach(order =>{
                             let row = document.createElement('tr')
                         row.innerHTML =    `
-                              <tr>
+                            <tr>
                                         <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
                                         <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
                                         <td class="userName">${innerText =order.user[0].userName}</td>
                                         <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
-                                        <td class="text-danger discount">-₹${Math.floor(order.pricing.offerDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">-₹${Math.floor(order.pricing.couponDiscount).toLocaleString('en-IN')}</td>
-                                        <td class="text-danger coupon">+₹${Math.floor(order.pricing.tax).toLocaleString('en-IN')}</td>
-                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${ Math.floor(order.pricing.totalAmount).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
                                     </tr>
                             
                             `

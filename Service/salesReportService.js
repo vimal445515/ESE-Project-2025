@@ -32,9 +32,9 @@ const generateExcelSheet= (reportData,orders)=>{
         const sheet = workbook.addWorksheet('Sales report');
         sheet.addRow(["SALES SUMMARY"]);
         sheet.addRow(['Total Order',reportData[0].totalOrder])
-        sheet.addRow(['Overal Order Amount',`₹${reportData[0].overalOrderAmount}`])
-        sheet.addRow(['Overal Discount Amount',`₹${reportData[0].overalDiscountAmount}`])
-        sheet.addRow(['Net Sales',`₹${reportData[0].netSales}`])
+        sheet.addRow(['Overal Order Amount',`₹${reportData[0].overalOrderAmount.toFixed(2)}`])
+        sheet.addRow(['Overal Discount Amount',`₹${reportData[0].overalDiscountAmount.toFixed(2)}`])
+        sheet.addRow(['Net Sales',`₹${reportData[0].netSales.toFixed(2)}`])
         sheet.addRow([]);
 
         sheet.addRow([]);
@@ -57,11 +57,11 @@ const generateExcelSheet= (reportData,orders)=>{
         sheet.addRow([order.orderId, 
             order.user[0].userName,
             order.createdAt.toString().slice(0,10),
-           `₹${order.pricing.subTotal}`,
-           `₹${ order.pricing.offerDiscount}`, 
-            `₹${order.pricing.couponDiscount}`,
-            `₹${order.pricing.tax}`,
-           `₹${order.pricing.totalAmount}`]);
+           `₹${order.pricing.subTotal.toFixed(2)}`,
+           `₹${ order.pricing.offerDiscount.toFixed(2)}`, 
+            `₹${order.pricing.couponDiscount.toFixed(2)}`,
+            `₹${order.pricing.tax.toFixed(2)}`,
+           `₹${order.pricing.totalAmount.toFixed(2)}`]);
      })
 
 return workbook;

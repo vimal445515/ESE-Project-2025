@@ -11,9 +11,9 @@ router.post('/createOrder',async (req,res)=>{
   const productsOrderId = req.body.orderId
   const productsOrder = await orderSchema.findOne({orderId:productsOrderId})
 
-
+ 
   const order = await razorpay.orders.create({
-    amount: productsOrder.pricing.totalAmount*100, 
+    amount: (Number(productsOrder.pricing.totalAmount.toFixed(2))*100), 
     currency: "INR",
     notes:{
       useId:req.session._id,
