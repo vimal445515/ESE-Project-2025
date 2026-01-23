@@ -600,7 +600,8 @@ const getOrdersForSalesReport= async(startDate,endDate)=>{
             orderId:1,
             'user.userName':1,
             pricing:1
-        }}
+        }},
+        {$sort:{createdAt:-1}}
     ])
     }
     return  await orderModel.aggregate([
@@ -616,7 +617,8 @@ const getOrdersForSalesReport= async(startDate,endDate)=>{
             orderId:1,
             'user.userName':1,
             pricing:1
-        }}
+        }},
+         {$sort:{createdAt:-1}}
     ])
   
 }
