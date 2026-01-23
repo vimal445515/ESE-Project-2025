@@ -20,6 +20,7 @@ const storeCouponInDB = async(discount,minimumOrder,maximumDiscount,expiryDate)=
 const getCoupons = async(page,limit,search,filter) =>{
     const skip = helpers.paginationSkip(page,limit)
     const pipeline = []
+    pipeline.push({$sort:{createdAt:-1}})
     if(filter){
         if(filter === 'active'){
             pipeline.push({$match:{isActive:true}})
