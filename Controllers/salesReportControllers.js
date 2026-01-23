@@ -23,7 +23,6 @@ const downloadExcelSheet = async(req,res)=>{
     const endDate = req.query.endDate?new Date( req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
-    console.log(salesReport)
     const workbook =  salesReportService.generateExcelSheet(salesReport,orders)
 
     res.setHeader(
@@ -39,7 +38,29 @@ await workbook.xlsx.write(res);
 }
 
 
+const downloadPDF = async(req,res)=>{
+  try{
+       const startDate = req.query.startDate?new Date( req.query.startDate):null
+    const endDate = req.query.endDate?new Date( req.query.endDate):null
+    const salesReport = await salesReportService.getSalesReport(startDate,endDate)
+    const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
+    const report = await salesReportService.generateReportPDF(salesReport,orders)
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=sales-report.pdf"
+        );
+        res.end(report);
+
+  }catch(error){
+    console.log("pdf report error",error)
+    res.status(500).json('pdf error')
+  }
+}
+
+
 export default {
     loadSalesReportPage,
-    downloadExcelSheet
+    downloadExcelSheet,
+    downloadPDF
 }

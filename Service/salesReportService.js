@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 import orderModel from '../Models/orderSchema.js'
 import excelJS from 'exceljs'
+import {salesReportHtml} from '../helpers/salesReportHtml.js'
+import puppeteer from 'puppeteer'
 
 const getSalesReport = (startDate,endDate)=>{
     
@@ -47,7 +49,7 @@ const generateExcelSheet= (reportData,orders)=>{
   ];
 
 
-     sheet.addRow(["Order ID","Customer Name", "Date","Sub Total", "Offer Discount", "Coupon Discount", "totalAmount"]);
+     sheet.addRow(["Order ID","Customer Name", "Date","Sub Total", "Offer Discount", "Coupon Discount","Tax(GST)", "totalAmount"]);
 
 
      orders.forEach(order=>{
@@ -55,20 +57,42 @@ const generateExcelSheet= (reportData,orders)=>{
         sheet.addRow([order.orderId, 
             order.user[0].userName,
             order.createdAt.toString().slice(0,10),
-           `₹${parseInt(order.pricing.subTotal)}`,
-           `₹${ parseInt(order.pricing.offerDiscount)}`, 
-            `₹${parseInt(order.pricing.couponDiscount)}`, 
-           `₹${parseInt(order.pricing.totalAmount)}`]);
+           `₹${Math.floor(order.pricing.subTotal)}`,
+           `₹${ Math.floor(order.pricing.offerDiscount)}`, 
+            `₹${Math.floor(order.pricing.couponDiscount)}`,
+            `₹${Math.floor(order.pricing.tax)}` 
+           `₹${Math.floor(order.pricing.totalAmount)}`]);
      })
-
-
 
 return workbook;
 
 
 }
 
+
+export async function generateReportPDF(salesReport,orders) {
+  
+  try{
+    const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  await page.setContent(salesReportHtml(salesReport,orders), {
+    waitUntil: "networkidle0"
+  });
+
+  const pdfBuffer = await page.pdf({ format: "A4" });
+
+  await browser.close();
+  return pdfBuffer;
+  }catch(error){
+    console.log(error)
+  }
+}
+
+
+
 export default {
     getSalesReport,
-    generateExcelSheet
+    generateExcelSheet,
+    generateReportPDF
 }
