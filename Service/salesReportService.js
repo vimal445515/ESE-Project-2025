@@ -32,7 +32,7 @@ const generateExcelSheet= (reportData,orders)=>{
         const sheet = workbook.addWorksheet('Sales report');
         sheet.addRow(["SALES SUMMARY"]);
         sheet.addRow(['Total Order',reportData[0].totalOrder])
-        sheet.addRow(['Overal Order Amount',`₹${reportData[0]. overalOrderAmount}`])
+        sheet.addRow(['Overal Order Amount',`₹${reportData[0].overalOrderAmount}`])
         sheet.addRow(['Overal Discount Amount',`₹${reportData[0].overalDiscountAmount}`])
         sheet.addRow(['Net Sales',`₹${reportData[0].netSales}`])
         sheet.addRow([]);
@@ -57,11 +57,11 @@ const generateExcelSheet= (reportData,orders)=>{
         sheet.addRow([order.orderId, 
             order.user[0].userName,
             order.createdAt.toString().slice(0,10),
-           `₹${Math.floor(order.pricing.subTotal)}`,
-           `₹${ Math.floor(order.pricing.offerDiscount)}`, 
-            `₹${Math.floor(order.pricing.couponDiscount)}`,
-            `₹${Math.floor(order.pricing.tax)}` 
-           `₹${Math.floor(order.pricing.totalAmount)}`]);
+           `₹${order.pricing.subTotal}`,
+           `₹${ order.pricing.offerDiscount}`, 
+            `₹${order.pricing.couponDiscount}`,
+            `₹${order.pricing.tax}`,
+           `₹${order.pricing.totalAmount}`]);
      })
 
 return workbook;

@@ -37,7 +37,6 @@ await workbook.xlsx.write(res);
   
 }
 
-
 const downloadPDF = async(req,res)=>{
   try{
        const startDate = req.query.startDate?new Date( req.query.startDate):null
