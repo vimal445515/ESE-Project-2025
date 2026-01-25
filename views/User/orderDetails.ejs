@@ -312,10 +312,10 @@ This action cannot be undone.
                             </td>
                             <% if(item.status !== 'cancelled'){%>
                             <td class="text-muted"><%= item.quantity%></td>
-                            <td class="fw-bold">₹<%= item.price.toLocaleString("en-IN")%>
+                            <td class="fw-bold">₹<%= item.price*item.quantity.toLocaleString("en-IN")%>
                                 <%}else{%>
                             <td class="text-muted"><%= item.quantity%></td>
-                            <td class="fw-bold"><del>₹<%= item.price.toLocaleString("en-IN")%></del>
+                            <td class="fw-bold"><del>₹<%= item.price*item.quantity.toLocaleString("en-IN")%></del>
                                     
                                     
                                     <%}%>
@@ -351,21 +351,8 @@ This action cannot be undone.
                         </tr>
                         <%})%>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td>
-                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
-                        <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
-                        <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
-                        </td>
-                    </tr>
-                       
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-md-4">
+                        <td> <div class="row mt-5">
+                <div class=" col-sm-4 col-lg-8">
                     <div class="address-box pe-3">
                         <h6 class="fw-bold mb-3">Address</h6>
                         <p class="fw-bold mb-1 small"><%= order.address.userName%></p>
@@ -378,7 +365,24 @@ This action cannot be undone.
                 </div>
                 <div class="col-md-8">
                     </div>
+            </div></td>
+                        <td></td>
+                        <td>
+                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
+                         <p>offer Discount:₹<%= order.pricing?.offerDiscount?.toLocaleString('en-IN')%></p>
+                         <%if(order.coupon){%>
+                            <p>Coupon Discount:₹<%= order.pricing?.couponDiscount?.toLocaleString('en-IN')%></p>
+                            <%}%>
+                        <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
+                        <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
+                        </td>
+                    </tr>
+                       
+                    </tbody>
+                </table>
             </div>
+
+           
 
         </div>
     </div>

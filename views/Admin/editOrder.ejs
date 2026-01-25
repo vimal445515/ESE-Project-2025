@@ -231,10 +231,10 @@
                                             <td class="small"><%= item.quantity%></td>
                                              <%if(item.status !=="cancelled"){%>
                                             <td class="small">₹<%= item.price%></td>
-                                            <td class="small fw-bold">₹<%= item.quantity+item.price%></td>
+                                            <td class="small fw-bold">₹<%= item.quantity*item.price%></td>
                                             <%}else{%>
                                             <td class="small"><del>₹<%= item.price%></del></td>
-                                            <td class="small fw-bold"><del>₹<%= item.quantity+item.price%></del></td>
+                                            <td class="small fw-bold"><del>₹<%= item.quantity*item.price%></del></td>
                                             <%}%>
                                            <%if(item.status ==='return'){%>
                                              <td>
@@ -245,15 +245,29 @@
                                         <%})%>
                                     </tbody>
                                     <tfoot>
-                                        <!-- <tr>
+                                        <tr>
                                             <td colspan="3" class="text-end text-muted small py-3">Subtotal</td>
                                             <td class="fw-bold small py-3">₹<%= order[0].pricing.subTotal%></td>
-                                        </tr> -->
-                                        
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Offer Discount</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.offerDiscount%></td>
+                                        </tr>
+                                        <% if(order[0].coupon){%>
+                                             <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Coupon Discount</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.couponDiscount%></td>
+                                        </tr>
+                                            <%}%>
+                                         <tr>
+                                            <td colspan="3" class="text-end text-muted small py-3">Total Discount</td>
+                                            <td class="fw-bold small py-3">₹<%= order[0].pricing.discount%></td>
+                                        </tr>
                                          <tr>
                                             <td colspan="3" class="text-end text-muted small py-3">Tax</td>
                                             <td class="fw-bold small py-3">₹<%= order[0].pricing.tax%></td>
                                         </tr>
+                                        
                                         <tr>
                                             <td colspan="3" class="text-end text-muted small py-3 border-0">Total</td>
                                             
