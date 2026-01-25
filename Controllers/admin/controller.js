@@ -178,6 +178,12 @@ export const handleEditImage = (req,res,next)=>{
 }
 export const editCategory = async (req,res)=>{
     const data = await adminService.getCategoryFromDB({_id:req.params.id})
+    if( await categoryService.findCategoryByName(req.body.categoryName)){
+        req.flash("error","category already exists");
+        return res.status(401).render("Admin/editCategory",{data,status:"error",message:"category already exists"})
+         
+    };
+   
     const url = req.file?req.file.path :data.thumbnail.url;
     const publicId = req.file?req.file.filename:data.thumbnail.publicId;
     if( req?.file)
