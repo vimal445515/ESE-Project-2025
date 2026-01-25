@@ -85,6 +85,7 @@ if(req.body.categoryId !== undefined){
             console.log('this is cart times',cartItems);
             return res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
           }else{
+             await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
             return res.redirect('cart')
           }
       }

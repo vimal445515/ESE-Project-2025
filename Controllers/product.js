@@ -92,12 +92,13 @@ const unDeleteProduct = async (req,res) =>{
 
 const loadUserSideProductsPage = async(req,res)=>{
     const page = req.query.page||1
+
     const sort = req.query.sort
     const category = req.query.category;
     const priceRange = req.query.priceRange;
     const searchValue = req.query.search;
     
-    const limit = 12;
+    const limit = 8;
     const skip = helpers.paginationSkip(page,limit)
     let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     products = await wishlistService.addLikeToProduct(products,req.session._id);
