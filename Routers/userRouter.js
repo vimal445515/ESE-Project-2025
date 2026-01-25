@@ -5,6 +5,7 @@ import products from "../Controllers/product.js"
 import image from "../Config/categoryThumbnail.js"
 import walletController from '../Controllers/walletController.js'
 
+
 const router = Router()
 router.get('/',Auth.isUser,userControllers.loadHomePage)
 router.get("/signup",Auth.isLoggedIn,userControllers.loadSignupPage)
@@ -36,7 +37,9 @@ router.get('/profile/resendOtp',Auth.isUser,Auth.checkUser,userControllers.resen
 router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
 router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 
-
+router.get('/forgotPasswordEmail',(req,res)=>{
+    res.render('User/otpEmailPage',{userName:req.session.userName,Profile:req.session.profile,status:null});
+})
 
 
 

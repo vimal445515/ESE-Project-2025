@@ -51,7 +51,7 @@
             </p>
 
             <div class="text-end mb-3">
-                <button type="button" href="/resetPassword" onclick="sendEmail()" class="text-primary btn small">Forgot password?</button>
+                <a  href="/forgotPasswordEmail"  class="text-primary btn small">Forgot password?</a>
             </div>
 
             <!-- Login button -->
@@ -79,33 +79,6 @@
 
 <!-- Validation Script -->
 <script>
-
-function sendEmail(){
-    
-  const email =  document.getElementById("email").value
-  const emailError = document.getElementById("emailError");
-
-  if (!email || !email.includes("@")) {
-        emailError.classList.remove("d-none");
-        valid = false;
-    } else {
-        
-        emailError.classList.add("d-none");
-        const formData = new FormData()
-        const data = JSON.stringify({email})
-        fetch('/resetPassword',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:data
-        }).then(data=>data.json())
-
-        .then((data)=>{
-            if(data.status === "error") return  document.getElementById("error").innerHTML=`<div  class="alert alert-danger" role="alert">${data.message}</div>`
-            window.location.href = data.href
-        }).catch(error=>console.log(error))
-    }
-}
-
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
     let valid = true;
