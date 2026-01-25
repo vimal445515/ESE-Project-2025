@@ -98,7 +98,7 @@ const loadUserSideProductsPage = async(req,res)=>{
     const priceRange = req.query.priceRange;
     const searchValue = req.query.search;
     
-    const limit = 8;
+    const limit = 12;
     const skip = helpers.paginationSkip(page,limit)
     let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     products = await wishlistService.addLikeToProduct(products,req.session._id);
