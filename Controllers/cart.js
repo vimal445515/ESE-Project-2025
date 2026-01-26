@@ -77,14 +77,15 @@ if(req.body.categoryId !== undefined){
       }
      
       if(req.body?.quantity <= stock[0].variants.stock & req.body?.quantity <= 5){
-       
-          await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
           if(req.body?.increment){
+            await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
            let item = await cartService.getCartSingleItem(req.body.productId,req.body.variantId);
             let cartItems = await  cartService.getCartItems(req.session._id)
             let subTotal = cartService.cartSummary(cartItems)
+            console.log('this is cart times',cartItems);
             return res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
           }else{
+             await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
             return res.redirect('cart')
           }
       }

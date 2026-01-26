@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/adminStyles/sideBar.css">
+    <link rel="stylesheet" href="/adminStyles/navBar.css">
+
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --primary-blue: #4054d2;
+            --bg-light: #f5f6fa;
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; 
+        }
+
+        #page-content-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+
+        .coupon-card { border: none; border-radius: 15px; overflow: hidden; background: #fff; }
+        .table thead th { 
+            background-color: #fcfcfc; 
+            color: #888; 
+            font-weight: 500; 
+            font-size: 0.8rem; 
+            border-bottom: 1px solid #f1f1f1; 
+            padding: 15px; 
+        }
+        .table tbody td { 
+            padding: 15px; 
+            vertical-align: middle; 
+            border-bottom: 1px solid #f8f8f8; 
+            font-size: 0.85rem; 
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-active { background-color: #e6f8f0; color: #0d9667; }
+        .status-deactivate { background-color: #ffeaea; color: #ff4d4d; }
+
+        .nav-tabs-custom {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .nav-tabs-custom .nav-link {
+            border: none;
+            color: #6c757d;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+        }
+        .nav-tabs-custom .nav-link.active {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--primary-blue);
+            background: transparent;
+        }
+
+        .page-circle {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid #dee2e6;
+            margin: 0 5px;
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .page-circle.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+          .modal-content {
+    background-color: #e6e6e6;
+  }
+
+  .form-control {
+    border-radius: 10px;
+  }
+
+  .btn-primary {
+    border-radius: 12px;
+    background-color: #3b5bdb;
+    border: none;
+  }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="bg-white h-100">
+                <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom-0">
+                    <div class="logo-box d-inline-block me-2">
+                        <svg width="74" height="36" viewBox="0 0 74 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M51.4 24.144C50.7067 24.144 50.0827 24.0213 49.528 23.776..." fill="#8B8E99"/>
+                            <rect width="40" height="36" fill="#F5F5F7"/>
+                            <path d="M21.5385 36V25.2H0L5.37988e-07 10.8H21.5385V0H24.6154L40 18L24.6154 36H21.5385Z" fill="#8B8E99"/>
+                        </svg>
+                    </div> 
+                </div>
+                
+                <%- include('../partials/adminSideBar.ejs') %>
+            </div>
+        </div>
+
+        <div id="page-content-wrapper">
+            
+            <%- include('../partials/adminNavBar.ejs') %>
+
+            <div class="container-fluid px-4 pt-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h4 class="fw-bold mb-0">Coupon</h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted small">Dashboard</a></li>
+                                <li class="breadcrumb-item active small text-muted">Coupon List</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <button class="btn btn-primary px-4 py-2" style="background-color: var(--primary-blue); border: none;" data-bs-toggle="modal" data-bs-target="#createCouponModal">
+                        <i class="fas fa-plus me-2"></i> Create Coupon
+                    </button>
+                </div>
+                    <input type="text" id="searchInput" name="value"  placeholder="Search..." aria-label="Search" required>
+                <button type="button" onclick="searchText()" id="search" class="btn btn-light">Search</button>
+                <button type="button" onclick="window.location.href=`/coupon`" id="search" class="btn btn-light">Clear</button>
+                
+                <ul class="nav nav-tabs-custom mt-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" onclick="window.location.href=`/coupon`">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="active()">Active</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="expired()">Expired</a>
+                    </li>
+                </ul>
+
+               
+                <div class="card coupon-card shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-4">
+                                            <input type="checkbox" class="form-check-input me-3"> Coupon Code
+                                        </th>
+                                        <th>Discount</th>
+                                        <th>Min Order</th>
+                                         <th>Max discount</i></th>
+                                        <th>Status</th>
+                                        <th>Created</i></th>
+                                        <th>Expired</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% coupons.forEach(coupon=>{%>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <input type="checkbox" class="form-check-input me-3">
+                                            <span class="fw-bold text-muted text-uppercase"><%= coupon.couponCode%></span>
+                                        </td>
+                                        <td class="fw-bold text-primary" style="color: var(--primary-blue) !important;"><%= coupon.discount%>%</td>
+                                        <td>₹<%= coupon.minimumOrder%></td>
+                                        <td>₹<%= coupon.maximumDiscount%></td>
+                                        <td>
+                                            <%if(coupon.isActive){%>
+                                            <span class="status-pill status-active">Active</span>
+                                            <%}else{%>
+                                            <span class="status-pill status-deactivate">Deactivate</span>
+                                            <%}%>
+                                        
+                                        </td>
+                                        <td class="text-muted"><%= coupon.createdAt.toString().slice(0,16)%></td>
+                                        <td class="text-muted"><%= coupon.expiryDate?.toString().slice(0,16)%></td>
+                                        <td class="text-center">
+                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','coupon.expiryDate')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
+                                             <%if(coupon.isActive){%>
+                                            <button type="button" onclick="deactive('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
+                                             <%}else{%>
+                                            <button  type="button" onclick="activate('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-undo"></i></button>
+                                             <%}%>
+                                        </td>
+                                    </tr>
+                                    <%})%>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                     <div class="card-footer bg-white border-0 py-3 ps-4 pe-4 d-flex justify-content-between align-items-center">
+                        <small class="text-muted fw-bold">Showing <%=page%>-<%=parseInt(count/limit)%> from <%=count%></small>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination mb-0">
+                                <li class="page-item"><button onclick="previousPage('<%= page%>')" class="page-link" href=""><i class="fas fa-arrow-left"></i></button></li>
+                                 <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                                <li class="page-item"><button id="page" onclick="search('<%= i%>')" value="<%= i %>" class="page-link active-page" ><%= i%></button></li>
+                                 <% } %>
+                                <li class="page-item"><button class="page-link" onclick="nextPage('<%= page%>')"><i class="fas fa-arrow-right"></i></button></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+  <!-- add coupon -->
+
+                        <div class="modal fade" id="createCouponModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 p-3">
+
+                        
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">Create Coupon</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          
+                        </div>
+
+                    
+                        <div class="modal-body">
+
+                           <form action="/coupon" method="post">
+                           
+                            <div class="mb-3">
+                            <label class="form-label">Discount</label>
+                            <input type="number" name="discount" class="form-control" placeholder="Enter discount">
+                              <p class="discountError text-danger"></p>
+                            </div>
+
+
+                            <div class="mb-3">
+                            <label class="form-label">Minimum order</label>
+                            <input type="number" name="minimumOrder"  class="form-control" placeholder="Max price">
+                             <p class="minimumOrderError text-danger"></p>
+                            </div>
+
+                   
+                            <div class="mb-3">
+                            <label class="form-label">Maximum Amount</label>
+                            <input type="number" name="maximumDiscount" class="form-control" placeholder="Min price">
+                            <p class="maximumDiscountError text-danger"></p>
+                            </div>
+
+                            
+                            <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expiryDate" class="form-control">
+                             <p class="dateError text-danger"></p>
+                            </div>
+
+                        
+            
+
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                            Save
+                            </button>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                        <!-- edit coupon -->
+
+                             
+                    <div class="modal fade" id="editCouponModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 p-3">
+
+                        
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">Edit Coupon</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                    
+                        <div class="modal-body">
+
+                           <form action="coupon/edit" method="post">
+                            <div class="mb-3">
+                            <label class="form-label">Coupon Code</label>
+                            <input type="text" id="couponCode" name="couponCode" class="form-control" readonly>
+                            </div>
+
+                            
+                            <div class="mb-3">
+                            <label class="form-label">Discount</label>
+                            <input type="number" id="discount" name="discount" class="form-control" placeholder="Enter discount">
+                            <p class="discountError text-danger"></p>
+                            </div>
+
+
+                            <div class="mb-3">
+                            <label class="form-label">Minimum order</label>
+                            <input type="number" id="minimumOrder" name="minimumOrder"  class="form-control" placeholder="Max price">
+                            <p class="minimumOrderError text-danger"></p>
+                            </div>
+
+                   
+                            <div class="mb-3">
+                            <label class="form-label">Maximum Amount</label>
+                            <input type="number" id="maximumDiscount" name="maximumDiscount" class="form-control" placeholder="Min price">
+                             <p class="maximumDiscountError text-danger"></p>
+                            </div>
+
+                            
+                            <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" id="expiryDate" name="expiryDate" class="form-control">
+                            <p class="dateError text-danger"></p>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                            Save
+                            </button>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/script/couponPage.js"></script>
+</body>
+</html>

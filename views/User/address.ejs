@@ -361,6 +361,7 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
         fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
         .then(data=>data.json())
         .then(data=>{
+            console.log(data)
             if(data[0].Status==="Error"){
                 document.getElementById("pinCodeError").textContent = "Pin code not found!"
             }

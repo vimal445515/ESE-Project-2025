@@ -3,8 +3,22 @@ import user from "../Service/userService.js"
 
 const checkEmailExists= async (req,res,next)=>{
     
-    const {email} = req.body;
+    const {email,referralCode} = req.body;
+    console.log("first:",referralCode)
+    if(referralCode){
+    const referredUser = await user.findReferralUser(referralCode.trim())
+    if(!referredUser){
+        req.flash("error","Invaid referral code")
+        res.status(404).redirect(req.originalUrl)
+       return res.status(404).json({status:"error",message:"Invaid referral code"});
+    }
+    else{
+        req.session.referralCode = referralCode;
+    }
+    }
+   
     const isTrue = await user.findUserFromDB(email)
+
     if(!isTrue) return next();
     req.flash("error","User already exeists")
     res.redirect(req.originalUrl)

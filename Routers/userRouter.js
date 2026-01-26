@@ -3,6 +3,8 @@ import Auth from '../middleware/userAuth.js'
 import userControllers from '../Controllers/userControllers/userControllers.js'
 import products from "../Controllers/product.js"
 import image from "../Config/categoryThumbnail.js"
+import walletController from '../Controllers/walletController.js'
+
 
 const router = Router()
 router.get('/',Auth.isUser,userControllers.loadHomePage)
@@ -35,13 +37,13 @@ router.get('/profile/resendOtp',Auth.isUser,Auth.checkUser,userControllers.resen
 router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
 router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 
-
-
-
-
-router.get('/wallet',Auth.isUser,Auth.checkUser,(req,res)=>{
-    res.render('User/wallet',{userName:req.session.userName,profile:req.session.profile})
+router.get('/forgotPasswordEmail',(req,res)=>{
+    res.render('User/otpEmailPage',{userName:req.session.userName,Profile:req.session.profile,status:null});
 })
+
+
+
+router.get('/wallet',Auth.isUser,Auth.checkUser,walletController.loadWalletPage)
 
 
 

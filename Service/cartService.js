@@ -17,8 +17,10 @@ const addProduct = async(productId,variantId,userId,quantity) =>{
 }
 
 const getCartItems = async (id) =>{
-   
- let data = await cartModel.aggregate([
+
+  let pipeline = [];
+  pipeline.push(
+    
   {
     $match: {
       userId: new mongoose.Types.ObjectId(id)
@@ -62,7 +64,90 @@ const getCartItems = async (id) =>{
     }
   },
   {$unwind:"$category"}
-]);
+  )
+
+   // calculate offer 
+
+  // get product offer
+   pipeline.push(
+    {$lookup:{
+      from:'offers',
+      let:{'productId':'$product._id'},
+      pipeline:[
+       {
+         $match:{
+          $expr:{
+            $and:[
+              {$eq:['$targetId','$$productId']},
+              {$eq:['$isActive',true]},
+              {$gte:['$expiryDate',new Date()]} 
+            ]
+          }
+        }
+       }
+      ]
+
+      ,as:"productOffer"
+    }
+  
+  }
+  )
+
+ // get category offer
+  pipeline.push({
+    $lookup:{
+      from:"offers",
+      let:{'categoryId':'$product.categoryId'},
+      pipeline:[
+        {$match:{
+         $expr:{
+          $and:[
+            {$eq:['$targetId','$$categoryId']},
+            {$eq:['$isActive',true]},
+            {$gte:['$expiryDate',new Date()]}
+          ]
+         }
+        }}
+      ],
+      as:"categoryOffer"
+    }
+  })
+
+
+  pipeline.push({
+    $addFields:{
+      productDiscount:{
+        $ifNull:[{$arrayElemAt:['$productOffer.discount',0]},0]
+      },
+      categoryDiscount:{
+        $ifNull:[{$arrayElemAt:['$categoryOffer.discount',0]},0]
+      }
+    }
+  })
+
+  // get final discount
+
+  pipeline.push(
+    {$addFields:{
+     finalDiscount:{$max:[
+        '$product.discound',
+        '$productDiscount',
+        '$categoryDiscount'
+      ]}
+    }},
+    {$addFields:{
+      finalPrice:{
+        $subtract:[
+          "$product.variants.price",{$multiply:['$product.variants.price',{$divide:['$finalDiscount',100]}]}
+        ]
+      }
+    }}
+  )
+
+
+
+   
+ let data = await cartModel.aggregate(pipeline);
 return data;
 
     
@@ -110,25 +195,30 @@ const incrementQuantity = async(productId,variantId,quantity) =>{
   
 }
 
-
 const cartSummary = (items)=>{
   // Calculating total price of every itme in the items and store into a array with discount
     const totalPriceCartItem = items.reduce((total,item)=>{
-      total += ((item.product.variants?.price*item.quantity)-parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
+      total += (item.product.variants?.price*item.quantity.toFixed(2))
       return total;
     },0)
+
   // Calculate total discount price 
    const totalDiscountPrice = items.reduce((total,item)=>{
-      total += (parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
+     
+      total += ((item.product.variants.price - item.finalPrice)*item.quantity.toFixed(2))
       return total;
     },0)
 
-  const  tax =parseInt( ( totalPriceCartItem* 18 ) / 100)
-  const total =  totalPriceCartItem+ tax
+    
 
-   return {totalPriceCartItem,totalDiscountPrice,tax,total}
+  const  tax =parseInt (( (totalPriceCartItem-totalDiscountPrice)* 18 ) / 100)
+  const total =  (totalPriceCartItem-totalDiscountPrice) + tax
+
+   return {totalPriceCartItem:totalPriceCartItem.toFixed(2),totalDiscountPrice:totalDiscountPrice.toFixed(2),tax:tax.toFixed(2),total:total.toFixed(2),offerDiscount:totalDiscountPrice.toFixed(2)}
   
 }
+
+
 
 const cartItemsBlocked = async (userId)=>{
 const cartItems = await getCartItems(userId);
@@ -172,5 +262,6 @@ export default {
     cartSummary,
     cartItemsBlocked,
     getCartSingleItem,
-    getCartQuantity 
+    getCartQuantity
+   
 }

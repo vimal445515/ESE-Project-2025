@@ -22,17 +22,17 @@ const orderSchema = new mongoose.Schema({
             productName:{type:String},
             quantity:{type:Number},
             image:{type:String},
+            finalPrice:{type:Number},
             status:{
                 type:String,
                 default:"placed"
             }
         }
     ],  
-
     payment:{
         method:{type:String},
-        status:{type:String},
-        transactionId:{type:String}
+        status:{type:String,default:'pending'},
+        paymentOrderId:{type:String}
     },
     address:{
         userName:{type:String},
@@ -50,6 +50,8 @@ const orderSchema = new mongoose.Schema({
         subTotal:{type:Number},
         tax:{type:Number},
         discount:{type:Number},
+        offerDiscount:{type:Number},
+        couponDiscount:{type:Number},
         totalAmount:{type:Number}
     },
     orderStatus:{
@@ -63,6 +65,10 @@ const orderSchema = new mongoose.Schema({
     isDeleted:{
         type:Boolean,
         default:false
+    },
+    coupon:{
+        type:Object,
+        default:null
     }
 })
 

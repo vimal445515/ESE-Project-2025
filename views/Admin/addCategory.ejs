@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category UI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+     <link rel="stylesheet" href="/adminStyles/sideBar.css">
+    <link rel="stylesheet" href="/adminStyles/navBar.css">
     <style>
-        /* Define colors for the modern look */
+       
         :root {
-            --primary-color: #4054d2; /* Main Blue/Purple */
-            --bg-color: #f4f6f9; /* Light content background */
-            --secondary-bg-color: #eef2ff; /* Very light blue for subtle accents */
+            --primary-color: #4054d2; 
+            --bg-color: #f4f6f9;
+            --secondary-bg-color: #eef2ff; 
             --border-color: #eee;
         }
         body {
@@ -23,7 +25,7 @@
             padding: 2rem;
         }
         
-        /* Custom styling for the header and user info */
+       
         .top-header {
             display: flex;
             justify-content: flex-end;
@@ -39,19 +41,55 @@
         .user-dot {
             width: 10px;
             height: 10px;
-            background-color: #00d084; /* Example green dot */
+            background-color: #00d084; 
             border-radius: 50%;
             margin-right: 0.5rem;
         }
 
-        /* --- Thumbnail Card Styling --- */
+
+        <style>
+    :root {
+        --sidebar-width: 250px;
+        --primary-blue: #4054d2; 
+        --bg-light: #f5f6fa;
+    }
+
+    body { 
+        background-color: var(--bg-light); 
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden; 
+    }
+
+  
+    #page-content-wrapper {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        min-height: 100vh;
+        transition: margin .25s ease-out;
+    }
+
+    #sidebar-wrapper {
+        min-height: 100vh;
+        width: var(--sidebar-width);
+        position: fixed;
+        left: 0;
+        z-index: 1000;
+        transition: margin .25s ease-out;
+    }
+
+   
+    .content-body {
+        padding: 20px;
+        width: 100%;
+    }
+       
         .thumbnail-card {
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
             padding: 1.5rem;
         }
         .image-placeholder-box {
-            border: 2px dashed #a5a9d2; /* Dashed border matching the screenshot's subtle purple */
+            border: 2px dashed #a5a9d2; 
             background-color: #f8f9fa;
             border-radius: 0.5rem;
             padding: 1.5rem;
@@ -67,7 +105,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            color: #00d084; /* Green checkmark */
+            color: #00d084; 
             font-size: 1.5rem;
         }
         .change-image-btn {
@@ -79,7 +117,7 @@
             border-radius: 0.3rem;
         }
 
-        /* Custom buttons for offer actions */
+      
         .offer-btn-primary {
             background-color: var(--primary-color);
             color: #fff;
@@ -100,56 +138,35 @@
     </style>
 </head>
 <body>
+    <div class="d-flex" id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="bg-white h-100">
+            <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom-0">
+                <div class="logo-box d-inline-block me-2">
+                    </div> 
+            </div>
+            <%- include('../partials/adminSideBar.ejs') %>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper" >
+<%- include("../partials/notification.ejs")%>
+<%- include('../partials/adminNavBar')%>
  <% if(status === "error"){%>
             <p class="alert alert-danger">Error! <%= message%></p>
            <%} %>
 <div class="container-fluid">
-<div class="modal fade" id="offerModal" tabindex="-1" aria-labelledby="offerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow">
-            
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="offerModalLabel">Create Offer</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body pt-0 px-4 pb-4">
-                <form>
-                    
-                    <div class="mb-3">
-                        <label for="discount" class="form-label text-muted small mb-1">Discount</label>
-                        <input type="text" class="form-control form-control-lg rounded-3" id="discount" placeholder="Enter Discount">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Label for doing moal-distro-lg sthadhow</label>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <input type="text" class="form-control form-control-lg rounded-3" placeholder="Start date">
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <input type="text" class="form-control form-control-lg rounded-3" placeholder="Ending date">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-3">Save</button>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
  <form action="/admin/category" method="post" enctype="multipart/form-data">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-2">Add Category</h2>
+             <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+             <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted small ">Dashboard</a></li>
+             <li class="breadcrumb-item"><a href="/admin/categories" class="text-decoration-none text-muted small ">Categories</a></li>
+             <li class="breadcrumb-item active  text-primary small">Add category</li>
+                            </ol>
+                </nav>
         </div>
         <div class="d-flex">
             <a href="/admin/categories" class="btn btn-light border me-3 fw-bold text-muted">
@@ -190,16 +207,15 @@
                         <input type="text" name="categoryName" class="form-control" id="categoryName"  placeholder="Type category name here...">
                     </div>
                     
-                    <h5 class="fw-bold mb-3 text-muted">Offers</h5>
-                    <div class="d-flex gap-3">
-                        <button class="btn offer-btn-primary" data-bs-toggle="modal" data-bs-target="#offerModal">Add offer</button>
-                    </div>
+                    
                 </div>
             </div>
         </div>
     </div>
 </div>
 </form>
+    </div>
+    </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

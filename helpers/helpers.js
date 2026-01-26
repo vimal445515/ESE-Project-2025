@@ -57,6 +57,17 @@ const calculateAvargeRating = (reviews)=>{
   },0)
    return sum/reviews.length;
 }
+
+const generateCouponCode = ()=>{
+ const randomNumber  = Math.random().toString(36).substring(2, 8).toUpperCase().slice(1,4)
+ const random =  Math.random().toString(36).substring(2, 8).toUpperCase().slice(1,4)
+ return `COUPON-${random}-${randomNumber}`
+
+}
+
+const generateTransactionId = ()=>{
+ return  `WALLET_TXN_${Date.now()}_${Math.floor(Math.random() * 100000)}`
+}
 export default {
    otpGenerator,
    sendEmail,
@@ -64,5 +75,7 @@ export default {
    groupValues,
    deleteProfile,
   generateOrderId,
-  calculateAvargeRating
+  calculateAvargeRating,
+  generateCouponCode,
+  generateTransactionId
 }

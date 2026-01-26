@@ -92,6 +92,7 @@ const unDeleteProduct = async (req,res) =>{
 
 const loadUserSideProductsPage = async(req,res)=>{
     const page = req.query.page||1
+
     const sort = req.query.sort
     const category = req.query.category;
     const priceRange = req.query.priceRange;
@@ -99,12 +100,12 @@ const loadUserSideProductsPage = async(req,res)=>{
     
     const limit = 12;
     const skip = helpers.paginationSkip(page,limit)
-    const products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
+    let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
+    products = await wishlistService.addLikeToProduct(products,req.session._id);
     const toatalCount = await productService.countPages()
     const {count} =toatalCount[0]
-
+  
     const categoryNames =  await categoryService.getAllCategory();
-    console.log("this is categoryNames",categoryNames)
     res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile,categoryNames})
 }
 
@@ -112,12 +113,12 @@ const loadUserSideProductsPage = async(req,res)=>{
  const id = req.params.id;
   const storage = req.query.rom;
   const ram = req.query.ram;
-  
+  const variantId = req.query.variantId;
 
   let productData;
     let isLiked = false
     let wishlistId = null
-  const productArray = await productService.getSingleProduct(id, storage, ram);
+  const productArray = await productService.getSingleProduct(id, storage, ram,variantId);
   const getVariants = await productService.getVariants(id);
   const review = await reviewService.getReview(id)
   const average = helpers.calculateAvargeRating(review)

@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
+<%- include('../partials/notification.ejs')%>
 <%- include('../partials/navbar.ejs')%>
 <% if(type){%>
    <div  class="alert alert-<%= type===`error`?`danger`:`success`%> d-flex align-items-center" role="alert">
@@ -195,8 +196,8 @@
                         <div class="col-md-4">
                             <div class="payment-method">
                                 <i class="bi bi-lightning-fill"></i>
-                                <p class="mb-3 small fw-bold">Rayorpay</p>
-                                <input type="radio" value="rayorpay" name="payment" id="rayorpay">
+                                <p class="mb-3 small fw-bold">Razorpay</p>
+                                <input type="radio" value="razorpay" name="payment" id="razorpay">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -235,7 +236,7 @@
                 <div class="summary-details small">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Sub-total</span>
-                        <span class="fw-bold">₹<%= orderDetails?.totalPriceCartItem%></span>
+                        <span id="subTotal" class="fw-bold">₹<%= orderDetails?.totalPriceCartItem%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Shipping</span>
@@ -243,35 +244,134 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Discount</span>
-                        <span class="fw-bold">₹<%=orderDetails?.totalDiscountPrice%></span>
+                        <span id="discount" class="fw-bold">₹<%=orderDetails?.totalDiscountPrice%></span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="text-muted">Tax</span>
-                        <span class="fw-bold">₹<%= orderDetails?.tax%></span>
+                        <span id="tax" class="fw-bold">₹<%= orderDetails?.tax%></span>
                     </div>
+                    <div id="couponDiscount"></div>
                 </div>
 
                 <div class="total-row d-flex justify-content-between align-items-center mb-4">
                     <span class="h6 fw-bold mb-0">Total</span>
-                    <span class="h5 fw-bold mb-0">₹<%= orderDetails?.total%> INR</span>
+                    <span id="total" class="h5 fw-bold mb-0">₹<%= orderDetails?.total%></span>
+                </div>
+                <button type="button" id="placeOrderButton" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>
+            </div>
+
+             <!-- coupon apply -->
+          <div class="card coupon-card shadow-sm ">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Coupon Code</h5>
+                    <div class="mb-3">
+                        <input type="text" id="couponInput" class="form-control p-3" placeholder="Coupon code">
+                        <p id="couponInputError" class="text-danger"></p>
+                    </div>
+                    <button type="button" onclick="applayCoupon()" class="btn btn-apply px-4 py-2">APPLY COUPON</button>
+                </div>
+            </div>
+
+            <div class="card coupon-card-applied shadow-sm d-none ">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Coupon Applied</h5>
+                    <div class="mb-3">
+                        <h5 id="appiledCoupon" class=" rounded-pill text-light p-3" style="background-color: #73e873;"></h5>
+                        <input type="hidden" name="appliedCoupon" id="couponHolder">
+                    </div>
+                    <button type="button" onclick="removerCoupon()" class="btn btn-apply px-4 py-2">Remove</button>
+                </div>
+            </div>
+            <!-- view all coupons -->
+
+            <!-- View Coupons Button -->
+            <button type="button"
+            class="btn btn-outline-success w-100 mt-2"
+            data-bs-toggle="modal"
+            data-bs-target="#couponModal">
+            View Available Coupons
+            </button>
+
+     
+            <div
+            class="modal fade "
+            id="couponModal"
+            tabindex="-1"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+
+              
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                    Available Coupons
+                    </h5>
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                    </button>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 btn-place-order">PLACE ORDER</button>
-            </div>
-        </div>
+              
+                <div class="modal-body overflow-auto" style="max-height:400px;">
+                    <div class="row g-3 ">
 
+                 <% coupons.forEach(coupon=>{%>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-success h-100">
+                        <div class="card-body d-flex flex-column">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold text-success mb-0">
+                                <%= coupon.couponCode%>
+                            </h6>
+                            <span class="badge bg-dark">
+                                <%=coupon.discount%>% OFF
+                            </span>
+                            </div>
+
+                            <p class="small text-muted mt-2 mb-1">
+                            Minimum order ₹<%= coupon.minimumOrder%>
+                            </p>
+
+                            <p class="small text-muted mb-2">
+                            Expires on <%=coupon.expiryDate.toISOString().slice(0,10)%>
+                            </p>
+
+                            <button type="button" data-bs-dismiss="modal"  onclick="applayCoupon('<%= coupon.couponCode%>')"   class="btn btn-success mt-auto w-100">
+                            Apply Coupon
+                            </button>
+
+                        </div>
+                        </div>
+                    </div>
+                    <%})%>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+ <!-- view all coupon End -->
+        </div>
+ 
     </div>
 </form>
 
+
+
 <%- include("../partials/footer.ejs")%>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
 
   
-  const form = document.querySelector(".checkout-container");
+  const button= document.querySelector("#placeOrderButton");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  button.addEventListener("click", async function () {
+ 
 
     // Inputs
     const userName = userNameInput();
@@ -375,7 +475,7 @@
 
 
         if (!isCorrect) {
-                isValid = false;
+        isValid = false;
        setError("pinCodeError", "State / Country / City does not match PIN code");
        setError("stateError", "Invalid state for this PIN code");
        setError("countryError", "Invalid country for this PIN code");
@@ -388,10 +488,53 @@
       alert("Please select a payment method");
       isValid = false;
     }
+   
 
     // Final submit
     if (isValid) {
-      form.submit();
+        const appliedCoupon = document.getElementById('couponHolder').value
+        const variantId = '<%= variantId%>'
+        const productId = "<%= productId%>"
+        const categoryId = "<%= categoryId%>"
+        const quantity = "<%=products[0].quantity%>"
+        const data = JSON.stringify({
+            appliedCoupon,
+            variantId,
+            productId,
+            categoryId,
+            userName,
+            address,pinCode,
+            country,
+            state,city,
+            email,
+            phone,
+            payment:payment.value,
+            quantity
+        })
+      fetch('/orders/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:data
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        console.log(data.orderId);
+        if(data.type === 'razorpay'){
+            
+            payNow(data.orderId)
+            return 
+         }
+         if(data.type === 'walletError'){
+            showToast(data.message,'error',)
+         } 
+        if(data.type ==="error"){
+            window.location.href = data.href;
+        }
+        else if(data.type === "success"){
+            
+             window.location.href = data.href;
+        }
+      })
     }
   });
 
@@ -418,6 +561,73 @@
 
 
 
+  async function payNow(orderId){
+    const res = await fetch("/createOrder", { 
+        method: "POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId})
+    }
+    );
+    const order = await res.json();
+   
+    let options = {
+    key:order.keyId,
+    amount: order.amount,
+    currency: "INR",
+    order_id: order.orderId,
+    name: "SES",
+    handler: function (response) {
+      fetch('/varifyPayment',{
+        method:'POST',
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(response)
+      }).then(data=>data.json())
+      .then(data=>{
+        if(data.type === "success"){
+            window.location.href=data.href;
+        }
+        if(data.type === "error"){
+            window.location.href=data.href
+        }
+      })
+    },
+    modal:{
+        ondismiss:function (){
+           fetch('/paymentFaild',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({orderId:order.orderId})
+           }).then(data=>data.json())
+           .then(data=>{
+            window.location.href = data.href
+           })
+        }
+    }
+  };
+
+  let rzp1 = new Razorpay(options);
+  rzp1.open();
+
+  rzp1.on('payment.failed',function (response){
+   
+    fetch('/paymentFaild',{
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId:response.error.metadata.order_id,reson:response.error.reason})
+    }).then(data=>data.json())
+    .then(data=>{
+        if(data.type === "error"){
+            window.location.href=data.href;
+        }
+    })
+  })
+  }
+
+
+
+
+
+
 
     const userName = document.getElementById("userName")
     const companyName =document.getElementById("companyName")
@@ -428,6 +638,7 @@
     const pinCode = document.getElementById("pinCode")
     const email = document.getElementById("email")
     const phoneNumber  = document.getElementById("phoneNumber")
+
 
 
     document.getElementById("defaultAddress").addEventListener('click',()=>{
@@ -518,7 +729,106 @@ async function validatePincodeMapping(pinCode, state, country, city) {
   }
 }
 
+const subTotal = document.getElementById('subTotal')
+const discount = document.getElementById('discount');
+const tax = document.getElementById('tax');
+const total = document.getElementById('total');
+
+function applayCoupon(couponCode=couponInput.value.trim()){
+    
+    let couponInput = document.getElementById('couponInput')
+    let inputError = document.getElementById('couponInputError')
+    
+    inputError.innerText = ''
+    if(!couponCode){
+        inputError.innerText="Enter a coupon code";
+        return
+    }
+     
+    const data = JSON.stringify({
+         couponCode:couponCode,
+         variantId : '<%= variantId%>',
+         productId : "<%= productId%>",
+         categoryId : "<%= categoryId%>",
+         quantity : "<%=products[0].quantity%>"
+    })
+    fetch('/checkout/coupon',
+        {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:data
+        }
+    ).then(data=>data.json())
+    .then(data=>{
+        console.log(data)
+        if(data.type==="success"){
+            subTotal.innerText =`₹${ data.totalPriceCartItem.toFixed(2).toLocaleString('en-IN')}`
+             discount.innerText = `₹${data.totalDiscountPrice.toFixed(2).toLocaleString('en-IN')}`
+             tax.innerText = `₹${data.tax.toFixed(2).toLocaleString('en-IN')}`
+             total.innerText =`₹${data.total.toFixed(2).toLocaleString('en-IN')}` 
+             document.getElementById("couponDiscount").innerHTML=`<p class="text-success fw-semibold">
+            You saved ₹<span>${parseInt(data.couponDiscount)}</span> on this order
+            </p>`
+            document.querySelector("#appiledCoupon").innerText = data.couponCode
+            document.getElementById('couponHolder').value = data.couponCode
+            document.querySelector('.coupon-card').style.display = 'none';
+            document.getElementById('couponInput').value= ''
+            document.querySelector('.coupon-card-applied').classList.remove('d-none')
+            showToast('Coupon added successfully')
+            
+        }
+
+
+        if(data.type==="error"){
+           return showToast(data.message,'error')
+        }
+       
+    })
+}
+
+
+function removerCoupon(){
+     let couponInput = document.getElementById('couponInput')
+     couponInput.innerText = ''
+     
+  const data = JSON.stringify({
+         variantId : '<%= variantId%>',
+         productId : "<%= productId%>",
+         categoryId : "<%= categoryId%>",
+         quantity : "<%=products[0].quantity%>"
+    })
+
+     fetch('/checkout/removeCoupon',
+        {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:data
+        }
+    ).then(data=>data.json())
+    .then(data=>{
+        
+            console.log(data)
+             subTotal.innerText =`₹${ parseInt(data.totalPriceCartItem).toLocaleString('en-IN')}`
+             discount.innerText = `₹${parseInt(data.totalDiscountPrice).toLocaleString('en-IN')}`
+             tax.innerText = `₹${parseInt(data.tax).toLocaleString('en-IN')}`
+             total.innerText =`₹${parseInt( data.total).toLocaleString('en-IN')}` 
+            document.getElementById("couponDiscount").innerHTML=``
+           
+            document.querySelector('.coupon-card').style.display = 'block';
+            document.querySelector('.coupon-card-applied').classList.add('d-none')
+             showToast('Coupon removed')
+  
+   
+    })
+}
+
+
+
+
+
+
 </script>
+<script src="/script/tost.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

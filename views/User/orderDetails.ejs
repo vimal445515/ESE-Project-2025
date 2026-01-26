@@ -138,19 +138,24 @@ This action cannot be undone.
                 </div>
                 </div>
 
-
-
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex align-items-center">
                     <a href="/orders" class="text-dark me-2"><i class="bi bi-arrow-left"></i></a>
                     <h5 class="mb-0 fw-bold">ORDER DETAILS</h5>
                 </div>
+                 <%if(order.orderStatus === "paymentFailed" || order.orderStatus === "pending"){%>
+                    <button onclick="payNow()"  class="text-primary text-decoration-none fw-bold small">Retry payment</button>
+                <%}else{%>
+                    <% if(order.orderStatus !== "canceled"){%>
                   <button onclick="downloadInvoice(`<%= order._id%>`)"  class=" btn text-primary text-decoration-none fw-bold small me-2">Download invoice</button>
-                <%if(order.orderStatus !=="delivered"){%>
+                  <%}%>
+
+                <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled" ){%>
                 <a href="" data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small">Cancel Order</a>
                 <%}%>
                 <%if(order.orderStatus ==="delivered"){%>
                 <a href="/orders/return?orderId=<%=order._id%>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
+                <%}%>
                 <%}%>
             </div>
 
@@ -158,7 +163,8 @@ This action cannot be undone.
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <h4 class="fw-bold mb-1"><%= order.orderId%></h4>
-                        <p class="text-muted small mb-0"><%= order.items.length%> Products  •  Order Placed in <%= order.createdAt.toISOString().slice(0,10)%></p>
+                        <p class="text-muted small mb-0"><%= order.items.length%> Products  •  Order Created in <%= order.createdAt.toISOString().slice(0,10)%></p>
+                        <P class="text-primary"> Order Status:  <%= order.orderStatus%></P>
                     </div>
                     <div class="col-md-4 text-md-end">
                         <h3 class="fw-bold mb-0">₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h3>
@@ -202,6 +208,7 @@ This action cannot be undone.
                             <th>QUANTITY</th>
                             <th>PRICE</th>
                             <th>Option</th>
+                            
                         </tr>
                     </thead>
 
@@ -305,10 +312,10 @@ This action cannot be undone.
                             </td>
                             <% if(item.status !== 'cancelled'){%>
                             <td class="text-muted"><%= item.quantity%></td>
-                            <td class="fw-bold">₹<%= item.price.toLocaleString("en-IN")%>
+                            <td class="fw-bold">₹<%= item.price*item.quantity.toLocaleString("en-IN")%>
                                 <%}else{%>
                             <td class="text-muted"><%= item.quantity%></td>
-                            <td class="fw-bold"><del>₹<%= item.price.toLocaleString("en-IN")%></del>
+                            <td class="fw-bold"><del>₹<%= item.price*item.quantity.toLocaleString("en-IN")%></del>
                                     
                                     
                                     <%}%>
@@ -322,16 +329,19 @@ This action cannot be undone.
 
 
                             <td>
-                                <%if(item.status ==="cancelled"){%>
+                                <%if(item.status ==="cancelled"  ){%>
                                     <button href="" data-toggle="modal" class=" btn  text-danger text-decoration-none fw-bold small"> Order cancelled</button>
                                 <%}else if(item.status === "return"){%>
                                     <p   class=" text-success text-decoration-none fw-bold small"> Return approved</p>
                                 <%}else{%>
-                                      <%if(order.orderStatus !=="delivered"){%>
+                                    <%if(order.orderStatus !== "paymentFailed"){%>
+                                      <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled"){%>
                                 <button href="" data-toggle="modal" onclick="cancleSingleProductModal('<%= item.productId%>','<%= item.variantId %>','<%= item.quantity%>')"  class=" btn text-primary text-decoration-none fw-bold small">Cancel Order</button>
                                 <%}%>
                                 <%if(order.orderStatus ==="delivered"){%>
                                 <a href="/orders/return?orderId=<%=order._id%>&productId=<%= item.productId%>&variantId=<%= item.variantId %>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
+                                <%}%>
+
                                 <%}%>
                                     <%}%>
                                
@@ -341,21 +351,8 @@ This action cannot be undone.
                         </tr>
                         <%})%>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td>
-                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
-                        <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
-                        <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
-                        </td>
-                    </tr>
-                       
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-md-4">
+                        <td> <div class="row mt-5">
+                <div class=" col-sm-4 col-lg-8">
                     <div class="address-box pe-3">
                         <h6 class="fw-bold mb-3">Address</h6>
                         <p class="fw-bold mb-1 small"><%= order.address.userName%></p>
@@ -368,12 +365,30 @@ This action cannot be undone.
                 </div>
                 <div class="col-md-8">
                     </div>
+            </div></td>
+                        <td></td>
+                        <td>
+                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
+                         <p>offer Discount:₹<%= order.pricing?.offerDiscount?.toLocaleString('en-IN')%></p>
+                         <%if(order.coupon){%>
+                            <p>Coupon Discount:₹<%= order.pricing?.couponDiscount?.toLocaleString('en-IN')%></p>
+                            <%}%>
+                        <p>GST AMOUNT: ₹<%= order.pricing.tax.toLocaleString('en-IN')%></p>
+                        <h5 class="fw-bold mb-0"> TOTAL AMOUNT: ₹<%= order.pricing.totalAmount.toLocaleString("en-IN")%></h5>
+                        </td>
+                    </tr>
+                       
+                    </tbody>
+                </table>
             </div>
+
+           
 
         </div>
     </div>
 </div>
 <%- include('../partials/footer.ejs')%>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
 if("<%= order.orderStatus %>" ==='placed' || "<%= order.orderStatus %>" ==='process'){
@@ -475,7 +490,55 @@ if("<%= order.orderStatus %>" ==='delivered'){
        }
         
 
+        async function payNow(){
 
+    
+          const res = await fetch('/oldOrderId',{
+                method:"POST",
+                headers:{'Content-type':'application/json'},
+                body:JSON.stringify({paymentOrderId:'<%= order.payment.paymentOrderId%>'})
+            })
+     const order = await res.json();
+    let options = {
+    key:order.keyId,
+    amount: order.amount,
+    currency: "INR",
+    order_id: order.paymentOrderId,
+    name: "SES",
+    handler: function (response) {
+      fetch('/varifyPayment',{
+        method:'POST',
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(response)
+      }).then(data=>data.json())
+      .then(data=>{
+        if(data.type === "success"){
+            window.location.href=data.href;
+        }
+        if(data.type === "error"){
+            window.location.href=data.href
+        }
+      })
+    }
+  };
+
+  let rzp1 = new Razorpay(options);
+  rzp1.open();
+
+  rzp1.on('payment.failed',function (response){
+   
+    fetch('/paymentFaild',{
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId:response.error.metadata.order_id,reson:response.error.reason})
+    }).then(data=>data.json())
+    .then(data=>{
+        if(data.type === "error"){
+            window.location.href=data.href;
+        }
+    })
+  })
+    }
 
 
 
