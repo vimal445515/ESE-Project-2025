@@ -5,12 +5,13 @@ import { loadLoginPage,authentication,loadUserManagementPage,loadCategoriePage,L
 import product from '../Controllers/product.js'
 import resetPassword from '../Controllers/admin/resetPassword.js'
 import adminOrderController from '../Controllers/admin/adminOrderController.js'
+import adminDashBoardController from '../Controllers/adminDashBoardController.js'
 
 const router = Router()
 
 router.get("/login",isLoggedIn,loadLoginPage)
 router.post("/login",authentication)
-router.get("/home",isAdmin,loadUserManagementPage)
+router.get("/home",isAdmin,adminDashBoardController.loadAdminDashboard)
 router.get("/user",isAdmin,loadUserManagementPage)
 router.get("/categories",isAdmin,loadCategoriePage)
 

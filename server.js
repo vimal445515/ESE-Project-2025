@@ -22,7 +22,7 @@ import couponRouter from './Routers/couponRouter.js';
 import offerRouter from './Routers/offerRouter.js'
 import razorpayRouter from './Routers/razorpayRouter.js'
 import salesReportRouter from './Routers/salesReportRouter.js'
-
+import dashboardRouter from "./Routers/dashboardRouter.js";
 
 
 
@@ -32,8 +32,8 @@ let __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename)
 connectDb()
 cloudinary.api.ping()
-  .then(() => console.log("Cloudinary connected ✅"))
-  .catch(err => console.error("Cloudinary error ❌", err));
+  .then(() => console.log("Cloudinary connected "))
+  .catch(err => console.error("Cloudinary error ", err));
 
 app.use(flash())
 app.use(nocache())
@@ -59,6 +59,7 @@ app.use(couponRouter)
 app.use(razorpayRouter)
 app.use('/offers',offerRouter)
 app.use(salesReportRouter);
+app.use(dashboardRouter);
 app.use(errorHandlingMiddleware.error)
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}`);
