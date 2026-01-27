@@ -162,11 +162,8 @@
     <div class="col-md-4">
         <div class="stat-card premium-card card-sunset p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
-                <p class="text-white-50 small mb-1 fw-bold tracking-wider">TODAYS SALES</p>
-                <h2 class="fw-bold mb-0">₹1,00,999</h2>
-                <div class="mt-2 small">
-                    <span class="badge bg-white bg-opacity-25">+12.5% ↑</span>
-                </div>
+                <p class="text-white-50 small mb-1 fw-bold tracking-wider">TOTAL SALES</p>
+                <h2 class="fw-bold mb-0"><%= data.totalSales%></h2>
             </div>
             <div class="glass-icon">
                 <i class="fas fa-shopping-cart"></i> <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -178,7 +175,7 @@
         <div class="stat-card premium-card card-emerald p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
                 <p class="text-white-50 small mb-1 fw-bold tracking-wider">TODAYS REVENUE</p>
-                <h2 class="fw-bold mb-1">₹30,000</h2>
+                <h2 class="fw-bold mb-1">₹<%= data.totalRevenue.toFixed(2).toLocaleString('en-IN')%></h2>
                 <p class="extra-small mb-0 text-white-50 italic">Profit made so far</p>
             </div>
             <div class="glass-icon">
@@ -191,7 +188,7 @@
         <div class="stat-card premium-card card-ocean p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
                 <p class="text-white-50 small mb-1 fw-bold tracking-wider">TOTAL USERS</p>
-                <h2 class="fw-bold mb-1">20,390</h2>
+                <h2 class="fw-bold mb-1"><%= data.totalUserSginup.toLocaleString('en-IN')%></h2>
                 <p class="extra-small mb-0 text-white-50">New signups today</p>
             </div>
             <div class="glass-icon">
@@ -205,11 +202,7 @@
     <div class="col-lg-8">
         <div class="p-4 bg-white border-dotted rounded-4 h-100 shadow-sm overflow-hidden position-relative">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start mb-4 gap-3">
-                <div>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase tracking-wider">Total Revenue Analysis</p>
-                    <h2 class="fw-bold display-6">₹50,23,780</h2>
-                </div>
-
+              
                 <div class="selection-bar d-flex gap-2 p-2 rounded-3 bg-light shadow-inner">
                     <div class="select-group">
                         <label class="select-label">Frequency</label>
@@ -260,38 +253,17 @@
             <hr class="opacity-10 mb-4">
 
             <div class="space-y-4">
-                <div class="mb-3">
+               <%data.mostSaledProducts.forEach(data=>{%>
+                 <div class="mb-3">
                     <div class="d-flex justify-content-between small mb-1">
-                        <span class="fw-medium">Phone</span> <span class="fw-bold text-primary">70%</span>
+                        <span class="fw-medium">Phone</span> <span class="fw-bold text-primary"><%= data.persentage%>%</span>
                     </div>
                     <div class="progress rounded-pill" style="height: 8px;">
-                        <div class="progress-bar gradient-primary" style="width: 70%"></div>
+                        <div class="progress-bar gradient-primary" style="width: <%= data.persentage%>%"></div>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between small mb-1">
-                        <span class="fw-medium">Laptop</span> <span class="fw-bold text-primary">40%</span>
-                    </div>
-                    <div class="progress rounded-pill" style="height: 8px;">
-                        <div class="progress-bar gradient-primary" style="width: 40%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between small mb-1">
-                        <span class="fw-medium">Watch</span> <span class="fw-bold text-primary">60%</span>
-                    </div>
-                    <div class="progress rounded-pill" style="height: 8px;">
-                        <div class="progress-bar gradient-primary" style="width: 60%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between small mb-1">
-                        <span class="fw-medium">Tablet</span> <span class="fw-bold text-primary">100%</span>
-                    </div>
-                    <div class="progress rounded-pill" style="height: 8px;">
-                        <div class="progress-bar gradient-primary" style="width: 100%"></div>
-                    </div>
-                </div>
+              <% })%>
+            
             </div>
         </div>
     </div>
@@ -299,24 +271,10 @@
     </div> </div> 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
-    const monthlySales = {
-  'january': 50,
-  'february': 90,
-  'march': 30,
-  'april': 65,
-  'may': 20,
-  'june': 32,
-  'july': 80,
-  'august': 60,
-  'september': 5,
-  'october': 50,
-  'november': 80,
-  'december': 109
-};
-   chart(monthlySales);
+    
+   const data = <%- JSON.stringify(data.chartData)%>
+   chart(data)
   function chart(data,labels){
-    console.log(Object.keys(data))
     const ctx = document.getElementById('myChart');
   new Chart(ctx, {
     type: 'bar',
