@@ -73,7 +73,7 @@ const placeOrder =  async(req,res)=>{
                        return res.status(200).json({type:"razorpay",orderId:order.orderId})
                     }else if(req.body.payment === 'wallet'){
                        try{
-                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
@@ -87,18 +87,18 @@ const placeOrder =  async(req,res)=>{
                   
                     const [{product,quantity}] = products
                     if(req.body.payment === 'razorpay'){
-                      order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                      order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
                     }else if(req.body.payment === 'wallet'){
                       try{
-                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
                       }
                       
                     }else{
-                       order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                       order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryIdquantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
                     }
                    
                 }
@@ -141,6 +141,8 @@ const placeOrder =  async(req,res)=>{
                         return res.status(400).json({type:"walletError",message:error.message});
                       }
                      } else{
+
+                     
               order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
              }
           }

@@ -12,7 +12,7 @@ import walletService from './walletService.js'
 import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
-const orderSingleProduct = async(productId,variantId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,coupon=null,orderStatus='placed')=>{
+const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,coupon=null,orderStatus='placed')=>{
 
     
     if(paymentMethod==='wallet'){
@@ -76,6 +76,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
             {
                 productId:productId,
                 variantId:variantId,
+                categoryId:categoryId,
                 quantity:quantity,
                 finalPrice:Number(productFinalPrice+((18/100)*productFinalPrice)),
                 productName:productName,
@@ -117,7 +118,7 @@ const orderSingleProduct = async(productId,variantId,quantity,userId,productName
 const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,paymentMethod)=>{
    let items=[];
 
-     
+     console.log(products)
     if(reqObj.payment==='wallet'){
         
         const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
@@ -144,6 +145,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
         items.push({
             productId:product.productId,
             variantId:product.variantId,
+            categoryId:product.product.categoryId,
             productName:product.product.productName,
             quantity:product.quantity,
             finalPrice:product.finalPrice,

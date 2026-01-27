@@ -163,7 +163,7 @@
         <div class="stat-card premium-card card-sunset p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
                 <p class="text-white-50 small mb-1 fw-bold tracking-wider">TOTAL SALES</p>
-                <h2 class="fw-bold mb-0"><%= data.totalSales%></h2>
+                <h2 id="totalSales" class="fw-bold mb-0"><%= data.totalSales%></h2>
             </div>
             <div class="glass-icon">
                 <i class="fas fa-shopping-cart"></i> <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -174,8 +174,8 @@
     <div class="col-md-4">
         <div class="stat-card premium-card card-emerald p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
-                <p class="text-white-50 small mb-1 fw-bold tracking-wider">TODAYS REVENUE</p>
-                <h2 class="fw-bold mb-1">₹<%= data.totalRevenue.toFixed(2).toLocaleString('en-IN')%></h2>
+                <p class="text-white-50 small mb-1 fw-bold tracking-wider"> REVENUE</p>
+                <h2 id="totalRevenue" class="fw-bold mb-1">₹<%= data.totalRevenue.toFixed(2).toLocaleString('en-IN')%></h2>
                 <p class="extra-small mb-0 text-white-50 italic">Profit made so far</p>
             </div>
             <div class="glass-icon">
@@ -187,9 +187,9 @@
     <div class="col-md-4">
         <div class="stat-card premium-card card-ocean p-4 shadow-lg rounded-4 d-flex justify-content-between align-items-center border-0">
             <div class="text-white">
-                <p class="text-white-50 small mb-1 fw-bold tracking-wider">TOTAL USERS</p>
-                <h2 class="fw-bold mb-1"><%= data.totalUserSginup.toLocaleString('en-IN')%></h2>
-                <p class="extra-small mb-0 text-white-50">New signups today</p>
+                <p class="text-white-50 small mb-1 fw-bold tracking-wider">USERS SGINUP</p>
+                <h2 id="totalUserSginup" class="fw-bold mb-1"><%= data.totalUserSginup.toLocaleString('en-IN')%></h2>
+                <p class="extra-small mb-0 text-white-50">New signups </p>
             </div>
             <div class="glass-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -201,25 +201,19 @@
    <div class="row g-4">
     <div class="col-lg-8">
         <div class="p-4 bg-white border-dotted rounded-4 h-100 shadow-sm overflow-hidden position-relative">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start mb-4 gap-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3">
               
                 <div class="selection-bar d-flex gap-2 p-2 rounded-3 bg-light shadow-inner">
                     <div class="select-group">
-                        <label class="select-label">Frequency</label>
-                        <select class="form-select border-0 bg-transparent py-0">
+                        <label  class="select-label">Frequency</label>
+                        <select id="filter" class="form-select border-0 bg-transparent py-0">
                             <option>Daily</option>
+                            <option>Weekly</option>
                             <option selected>Monthly</option>
                             <option>Yearly</option>
                         </select>
                     </div>
                     <div class="vr mx-1 opacity-10"></div>
-                    <div class="select-group">
-                        <label class="select-label">Year</label>
-                        <select class="form-select border-0 bg-transparent py-0">
-                            <option selected>2026</option>
-                            <option>2025</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -242,21 +236,20 @@
             <div class="mb-4 d-flex flex-column gap-2">
                 <div class="p-2 bg-ocean-light rounded-3">
                     <label class="select-label text-ocean fw-bold">Filter Category</label>
-                    <select class="form-select form-select-sm border-0 bg-transparent shadow-none">
-                        <option selected>All Categories</option>
-                        <option>Electronics</option>
-                        <option>Fashion</option>
+                    <select id="selecte" class="form-select form-select-sm border-0 bg-transparent shadow-none">
+                        <option>Product</option>
+                        <option selected>Category</option>
                     </select>
                 </div>
             </div>
             
             <hr class="opacity-10 mb-4">
 
-            <div class="space-y-4">
-               <%data.mostSaledProducts.forEach(data=>{%>
+            <div class="space-y-4" id="topPerformer">
+               <%data.mostSaled.forEach(data=>{%>
                  <div class="mb-3">
                     <div class="d-flex justify-content-between small mb-1">
-                        <span class="fw-medium">Phone</span> <span class="fw-bold text-primary"><%= data.persentage%>%</span>
+                        <span class="fw-medium"><%= data.productName%></span> <span class="fw-bold text-primary"><%= data.persentage%>%</span>
                     </div>
                     <div class="progress rounded-pill" style="height: 8px;">
                         <div class="progress-bar gradient-primary" style="width: <%= data.persentage%>%"></div>
@@ -271,13 +264,18 @@
     </div> </div> 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    
+    let selectBy =  document.getElementById('selecte').value
+    const filter =  document.getElementById('filter').value
+    let myChart;
    const data = <%- JSON.stringify(data.chartData)%>
    chart(data)
   function chart(data,labels){
+    if(myChart){
+        myChart.destroy()
+    }
     const ctx = document.getElementById('myChart');
-  new Chart(ctx, {
-    type: 'bar',
+  myChart =  new Chart(ctx, {
+    type: 'line',
     data: {
       labels: Object.keys(data),
       datasets: [{
@@ -298,6 +296,50 @@
   });
 
   }
+
+
+
+
+  function getData(type,filter){
+    selectBy =  document.getElementById('selecte').value
+   filter =  document.getElementById('filter').value
+    fetch(`/admin/dashboard?type=${type}&filter=${filter}`).then(data=>data.json())
+    
+    .then(data=>{
+        document.getElementById('topPerformer').innerHTML = ``
+        const element = []
+       
+        chart(data.data.chartData)
+        data.data.mostSaled.forEach((value)=>{
+          
+       elementData =  `   <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="fw-medium">${value.productName}</span> <span class="fw-bold text-primary">${value.persentage}%</span>
+                    </div>
+                    <div class="progress rounded-pill" style="height: 8px;">
+                        <div class="progress-bar gradient-primary" style="width: ${value.persentage}%"></div>
+                    </div>
+                </div>
+
+               `
+             element.push(elementData)
+            })
+             document.getElementById('topPerformer').innerHTML =  element.join('')
+             document.getElementById('totalSales').innerText = data.data.totalSales
+             document.getElementById('totalRevenue').innerText = data.data.totalRevenue
+             document.getElementById('totalUserSginup').innerText = data.data.totalUserSginup;
+    })
+  }
+
+  document.getElementById('filter').addEventListener('change',()=>{
+         const filter =  document.getElementById('filter').value
+         getData(selectBy,filter)
+  })
+
+  document.getElementById('selecte').addEventListener('change',()=>{
+        selectBy =  document.getElementById('selecte').value
+        getData(selectBy,filter)
+  })
 
 </script>
 </body>
