@@ -68,6 +68,7 @@ const placeOrder =  async(req,res)=>{
                     const [{product,quantity}] = orderDetails.products
                     console.log(order,req.body);
                     if(req.body.payment === 'razorpay'){
+                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
                        return res.status(200).json({type:"razorpay",orderId:order.orderId})
                     }else if(req.body.payment === 'wallet'){
                        try{
