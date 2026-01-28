@@ -179,8 +179,8 @@
                         </div>
                         <div>
                             <small class="text-muted d-block font-size-xs">Overall Sales Count</small>
-                            <h4 id="salesCount" value="<%= salesReportData[0].totalOrder%>" class="fw-bold mb-0">
-                                <%= salesReportData[0].totalOrder%>
+                            <h4 id="salesCount" value="<%= salesReportData[0]?.totalOrder%>" class="fw-bold mb-0">
+                                <%= salesReportData[0]?.totalOrder%>
                             </h4>
                         </div>
                     </div>
@@ -193,8 +193,8 @@
                         </div>
                         <div>
                             <small class="text-muted d-block font-size-xs">Overall Order Amount</small>
-                            <h4 id="orderAmount" value="<%= salesReportData[0].overalOrderAmount%>" class="fw-bold mb-0">
-                                ₹<%= salesReportData[0].overalOrderAmount.toFixed(2).toLocaleString('en-IN')%>
+                            <h4 id="orderAmount" value="<%= salesReportData[0]?.overalOrderAmount%>" class="fw-bold mb-0">
+                                ₹<%= salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -207,8 +207,8 @@
                         </div>
                         <div>
                             <small class="text-muted d-block font-size-xs">Overall Discounts</small>
-                            <h4 id="discountAmount" value="<%= salesReportData[0].overalDiscountAmount%>" class="fw-bold mb-0">
-                                ₹<%= salesReportData[0].overalDiscountAmount.toFixed(2).toLocaleString('en-IN')%>
+                            <h4 id="discountAmount" value="<%= salesReportData[0]?.overalDiscountAmount%>" class="fw-bold mb-0">
+                                ₹<%= salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -221,8 +221,8 @@
                         </div>
                         <div>
                             <small class="text-muted d-block font-size-xs">Total Tax (GST)</small>
-                            <h4 id="taxAmount" value="<%= salesReportData[0].totalTax %>" class="fw-bold mb-0">
-                                ₹<%= (salesReportData[0].overalTax.toFixed(2) || 0).toLocaleString('en-IN') %>
+                            <h4 id="taxAmount" value="<%= salesReportData[0]?.totalTax %>" class="fw-bold mb-0">
+                                ₹<%= (salesReportData[0]?.overalTax.toFixed(2) || 0).toLocaleString('en-IN') %>
                             </h4>
                         </div>
                     </div>
@@ -235,8 +235,8 @@
                         </div>
                         <div>
                             <small class="text-muted d-block font-size-xs text-uppercase fw-semibold">Net Revenue</small>
-                            <h4 id="revenue" value="<%= salesReportData[0].netSales%>" class="fw-bold mb-0 text-info">
-                                ₹<%= salesReportData[0].netSales.toFixed(2).toLocaleString('en-IN')%>
+                            <h4 id="revenue" value="<%= salesReportData[0]?.netSales%>" class="fw-bold mb-0 text-info">
+                                ₹<%= salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')%>
                             </h4>
                         </div>
                     </div>
@@ -265,7 +265,7 @@
                                     <tr>
                                         <td class="ps-4 date"><%= order.createdAt.toString().slice(0,10)%></td>
                                         <td class="fw-medium text-muted orderId"><%= order.orderId%></td>
-                                        <td class="userName"><%= order.user[0].userName%></td>
+                                        <td class="userName"><%= order.user[0]?.userName%></td>
                                         <td class="orderAmount">₹<%= order.pricing.subTotal.toFixed(2).toLocaleString('en-IN')%></td>
                                         <td class="text-danger discount">-₹<%= order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')%></td>
                                         <td class="text-danger coupon">-₹<%= order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')%></td>

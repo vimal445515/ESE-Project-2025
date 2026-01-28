@@ -13,7 +13,7 @@ router.post('/createOrder',async (req,res)=>{
 
  
   const order = await razorpay.orders.create({
-    amount: (Number(productsOrder.pricing.totalAmount.toFixed(2))*100), 
+    amount: Math.round((Number(productsOrder.pricing.totalAmount.toFixed(2))*100)), 
     currency: "INR",
     notes:{
       useId:req.session._id,
