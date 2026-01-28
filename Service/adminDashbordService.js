@@ -109,8 +109,10 @@ const analyseDashbordData = async(selectedType,filter)=>{
             },
             {$group:{_id:'$createdAt',totalSales:{$sum:'$pricing.totalAmount'}}}
         ])
-        let date = new Date(analyseData[0]._id).toString().slice(0,10)
-        chartData[date] = analyseData[0].totalSales;
+
+        let today = analyseData[0]?._id||new Date()
+        let date = new Date().toString(today).slice(0,10)
+        chartData[date] = analyseData[0]?.totalSales||0;
     }
 
     
@@ -200,7 +202,7 @@ const analyseDashbordData = async(selectedType,filter)=>{
 
          
      
-    return {totalSales,totalRevenue:totalRevenue[0].totalRevenue,totalUserSginup,mostSaled,analyseData,chartData}
+    return {totalSales:totalSales||0,totalRevenue:totalRevenue[0]?.totalRevenue||0,totalUserSginup:totalUserSginup||0,mostSaled,analyseData,chartData}
 }
 
 export default {analyseDashbordData}
