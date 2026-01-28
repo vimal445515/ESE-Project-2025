@@ -66,8 +66,6 @@ const placeOrder =  async(req,res)=>{
 
                     const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
                     const [{product,quantity}] = orderDetails.products
-                  
-                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,req.body.appliedCoupon)
                     console.log(order,req.body);
                     if(req.body.payment === 'razorpay'){
                        return res.status(200).json({type:"razorpay",orderId:order.orderId})
@@ -78,6 +76,11 @@ const placeOrder =  async(req,res)=>{
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
                       }
+                    }
+                    try{
+                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,req.body.appliedCoupon)
+                    }catch(error){
+                       return res.status(400).json({type:"codError",message:error.message});
                     }
                 }
                 else{

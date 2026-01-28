@@ -368,7 +368,7 @@ This action cannot be undone.
             </div></td>
                         <td></td>
                         <td>
-                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%></p>
+                         <p>SubTotal: ₹<%= order.pricing?.subTotal?.toLocaleString('en-IN')? order.pricing?.subTotal.toLocaleString('en-IN'):order.items[0].price.toLocaleString("en-IN")%> (Before discount)</p>
                          <p>offer Discount:₹<%= order.pricing?.offerDiscount?.toLocaleString('en-IN')%></p>
                          <%if(order.coupon){%>
                             <p>Coupon Discount:₹<%= order.pricing?.couponDiscount?.toLocaleString('en-IN')%></p>
