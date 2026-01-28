@@ -98,7 +98,12 @@ const placeOrder =  async(req,res)=>{
                       }
                       
                     }else{
-                       order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryIdquantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                      try{
+                          order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                      }catch(error){
+                         return res.status(400).json({type:"codError",message:error.message});
+                      }
+                     
                     }
                    
                 }
@@ -142,8 +147,12 @@ const placeOrder =  async(req,res)=>{
                       }
                      } else{
 
-                     
-              order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+                     try{
+                     order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+
+                     }catch(error){
+                      return res.status(400).json({type:"codError",message:error.message});
+                     }
              }
           }
         

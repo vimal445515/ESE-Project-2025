@@ -13,7 +13,9 @@ import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
 const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,coupon=null,orderStatus='placed')=>{
-
+    if(paymentMethod === "cod" && orderDetails.total > 1000) {
+        throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
+    }
     
     if(paymentMethod==='wallet'){
         
@@ -118,7 +120,10 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
 const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,paymentMethod)=>{
    let items=[];
 
-     console.log(products)
+    if(reqObj.payment === "cod" && orderDetails.total > 1000) {
+        throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
+    }  
+
     if(reqObj.payment==='wallet'){
         
         const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
