@@ -328,8 +328,6 @@
     </div>
   </div>
 
-
- 
    <!-- Confirm Delete Variant Modal -->
 <div class="modal fade" id="confirmRemoveVariantModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -393,7 +391,7 @@
           
                 </div>
 
-                <button onclick="openModal()" id="removeButton" class="d-none text-danger">Remove</button>
+                <button onclick="openModal()" id="removeButton" class="d-none btn btn-light text-danger">Remove</button>
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
                     <input type="text" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
@@ -617,7 +615,7 @@
             const description = document.querySelector("#description").value;
             const basePrice   = document.querySelector("#basePrice").value;
             const discount = document.querySelector("#discount").value;
-            const category = document.querySelector("#category").value
+            const category = document.querySelector("#productCategory").value
 
         
             let valid = true;
