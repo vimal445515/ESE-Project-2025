@@ -303,10 +303,12 @@
             <div class="form-card">
                 <h3 class="section-title">Variant</h3>
 
-                <!-- <div class="d-flex align-items-center mb-3">
-                    <div class="variant-pill bg-success me-2 text-white">1</div>
-                    <div class="variant-pill bg-danger me-2 text-white">2</div>
-                </div> -->
+              <div class="d-flex variantSelect align-items-center mb-3">
+                    
+                   
+                  
+                   
+                </div>
 
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
@@ -358,7 +360,8 @@
 </div>
  <div class="d-flex justify-content-end pb-4">
         <button type="submit" onclick="clean()" class="btn btn-primary btn-lg px-5 fw-bold me-2">Clear</button>
-        <button onclick="add()" class="btn btn-primary btn-lg px-5 fw-bold">Add</button>
+        <button onclick="add()" id="addButton" class="btn btn-primary btn-lg px-5 fw-bold">Add</button>
+        <button onclick="save()" id="saveButton" class="btn btn-primary btn-lg px-5 fw-bold" style="display:none">Save</button>
     </div>
 
     </div>
@@ -369,7 +372,8 @@
     const objectArray = []
     let cropper;
     let croppedBlob;
-
+     let i;
+     let index;
     const inputImage = document.getElementById('inputImage');
     const image = document.getElementById('image');
     const cropButton = document.getElementById('cropButton');
@@ -493,8 +497,33 @@
      console.log("value",group)
      console.log("Values ",objectArray)
 
-      
+        // selecting variants
+        let button
+        let divArea = [];
+       
+        for(i = 0; i < objectArray?.length||0; i++){
+            button = `
+            <button type='button' onclick='selectVariant(${i})' class="variant-pill  bg-success me-2 text-white">${i+1}</button>
+            `
+        divArea.push(button)
+        }
+        
+        document.querySelector('.variantSelect').innerHTML = divArea.join("")
+        // document.getElementById('storage').value = ""
+        // document.getElementById('ram').value = ""
+        // document.getElementById('stock').value = ""
+        // document.getElementById('price').value = ""
+
+        // document.getElementById('img1').value = ''
+        // document.getElementById('img2').value = ''
+        // document.getElementById('img2').value = ''
+        // document.getElementById('img2').value = ''
+
     }
+
+
+
+
     function saveData() {
 
          clearErrors();
@@ -586,6 +615,82 @@
         
 
     }
+
+
+    // select variants function 
+   function selectVariant(localIndex){
+    index =localIndex;
+       console.log("hello")
+        document.getElementById('storage').value=objectArray[index].storage
+        document.getElementById('ram').value=objectArray[index].ram
+        document.getElementById('stock').value=objectArray[index].stock
+        document.getElementById('price').value=objectArray[index].price
+        const dataTransfer1 = new DataTransfer()
+        document.getElementById('img1').value = ""
+        dataTransfer1.items.add(objectArray[index].img1)
+        document.getElementById('img1').files = dataTransfer1.files
+
+        const dataTransfer2 = new DataTransfer()
+        document.getElementById('img2').value = ""
+        dataTransfer2.items.add(objectArray[index].img1)
+        document.getElementById('img2').files = dataTransfer2.files
+
+        const dataTransfer3 = new DataTransfer()
+        document.getElementById('img3').value = ""
+        dataTransfer3.items.add(objectArray[index].img1)
+        document.getElementById('img3').files = dataTransfer3.files
+
+         const dataTransfer4 = new DataTransfer()
+        document.getElementById('img4').value = ""
+        dataTransfer4.items.add(objectArray[index].img1)
+        document.getElementById('img4').files = dataTransfer4.files
+        document.getElementById('addButton').style.display = 'none'
+        document.getElementById('saveButton').style.display = 'block';
+
+    }
+
+
+    function save(){
+     objectArray[index]['price'] = document.querySelector("#price").value 
+      objectArray[index]['stock'] =  document.querySelector("#stock").value
+      objectArray[index]['storage'] = document.querySelector("#storage").value 
+      objectArray[index]['ram'] =  document.querySelector("#ram").value 
+      objectArray[index]['img1'] =    document.querySelector("#img1").files[0] 
+        objectArray[index]['img2'] =    document.querySelector("#img2").files[0] 
+       objectArray[index]['img3'] =    document.querySelector("#img3").files[0]
+       objectArray[index]['img4'] =    document.querySelector("#img4").files[0]
+
+
+        document.getElementById('addButton').style.display = 'block'
+        document.getElementById('saveButton').style.display = 'node';
+        console.log("hello i am save button")
+    }
+
+    document.getElementById('img1').addEventListener('change',()=>{
+
+        if(!document.getElementById('img1').value){
+            objectArray[index]['img1'] = document.getElementById('img1').files[0]
+        }
+       
+    })
+
+      document.getElementById('img2').addEventListener('change',()=>{
+        if(!document.getElementById('img2').value){
+         objectArray[index]['img2'] = document.getElementById('img2').files[0] 
+        }
+    })
+
+      document.getElementById('img3').addEventListener('change',()=>{
+        if(!document.getElementById('img3').value){
+             objectArray[index]['img3'] = document.getElementById('img3').files[0] 
+        }
+    })
+
+    document.getElementById('img4').addEventListener('change',()=>{
+        if(!document.getElementById('img4').value){
+         objectArray[index]['img4'] = document.getElementById('img4').files[0] 
+        }
+    })
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
