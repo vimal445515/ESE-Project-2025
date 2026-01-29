@@ -30,18 +30,18 @@ let imgObj = {}
 
 
 for(let i = 0; i < length/4;i++){
-  
-  imgObj[`img1${i}`] = imageObj[`${i}`]?.filename
-  imgObj[`url1${i}`] = imageObj[`${i}`].path
+  let index = i*4;
+  imgObj[`img1${i}`] = imageObj[`${index}`]?.filename
+  imgObj[`url1${i}`] = imageObj[`${index}`].path
 
-  imgObj[`img2${i}`] = imageObj[`${i+1}`]?.filename
-  imgObj[`url2${i}`] = imageObj[`${i+1}`].path
+  imgObj[`img2${i}`] = imageObj[`${index+1}`]?.filename
+  imgObj[`url2${i}`] = imageObj[`${index+1}`].path
 
-  imgObj[`img3${i}`] = imageObj[`${i+2}`]?.filename
-  imgObj[`url3${i}`] = imageObj[`${i+2}`].path
+  imgObj[`img3${i}`] = imageObj[`${index+2}`]?.filename
+  imgObj[`url3${i}`] = imageObj[`${index+2}`].path
 
-  imgObj[`img4${i}`] = imageObj[`${i+3}`]?.filename
-  imgObj[`url4${i}`] = imageObj[`${i+3}`].path
+  imgObj[`img4${i}`] = imageObj[`${index+3}`]?.filename
+  imgObj[`url4${i}`] = imageObj[`${index+3}`].path
 }
 
 
