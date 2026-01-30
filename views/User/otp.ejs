@@ -33,7 +33,9 @@
         </div>
         <p id="error" class="text-danger"></p>
         <button type="submit" id="submit" class="btn  btn-primary w-100 mb-3">verify</button>
-
+        <div class="timer">
+          Resend otp again in <span class="text-bold" id="time">01:00</span>
+        </div>
         </form>
            <form action="/signup" method="post">
              <p  id="resend"  class="text-center text-muted d-none">
@@ -43,7 +45,7 @@
              <input type="hidden" name="password" value="<%= password %>">
              <input type="hidden" name="refferralCode" value="<%= referralCode %>">
              <input type="hidden" name="phoneNumber" value="<%= phoneNumber %>">
-            <button type="submit" class=" btn btn-primary ">resend code</>
+            <button type="submit" class=" btn btn-primary ">resend code</button>
             </p>
            </div>
 
@@ -61,9 +63,29 @@
         }
     })
    const  resendDiv = document.querySelector("#resend")
- 
-   setTimeout(()=>{
-       resendDiv.classList.remove('d-none')
-   },30000)
+   const  timerEl = document.getElementById('time');
+
+
+    time = 50;
+   resendDiv.classList.add('d-none')
+    timerEl.innerText = "01:00";
+
+    setInterval(() => {
+      let min = Math.floor(time / 60);
+      let sec = time % 60;
+
+      timerEl.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+      if (time <= 0) {
+        timerEl.innerText = ''
+        document.querySelector('.timer').classList.add('d-none')
+        resendDiv.classList.remove('d-none')
+      }
+
+      time--;
+    }, 1000);
+
+
+
 </script>
 </html>
