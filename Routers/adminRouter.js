@@ -25,6 +25,7 @@ router.get("/addCategories",isAdmin,LoadAddCategoriesPage)
 router.get("/editCategory/:id",isAdmin,loadEditCategoriesPage)
 router.get("/addProduct",isAdmin,loadAddProductPage)
 router.get("/editProduct/:id",isAdmin,product.loadEditProductPage)
+router.delete('/editproduct/removeVariant',isAdmin,product.removeOneVariant)
 
 router.post("/user/block/:id",isAdmin,blockUser)
 router.post("/user/unBlock/:id",isAdmin,unBlockUser)

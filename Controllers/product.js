@@ -90,6 +90,15 @@ const unDeleteProduct = async (req,res) =>{
 }
 
 
+const removeOneVariant = async (req,res)=>{
+  console.log(req.body.productId,req.body.index);
+  if(await productService.removeVariant(req.body.productId,req.body.index)){
+    return res.status(200).json({type:'success',message:"variant removed successfully"});
+  }else{
+    return res.status(400).json({type:"error",message:"Only one variant is currently available. A product must have at least one active variant."})
+  }
+}
+
 const loadUserSideProductsPage = async(req,res)=>{
     const page = req.query.page||1
 
@@ -170,5 +179,6 @@ export default {
     deleteProduct,
     loadUserSideProductsPage,
     loadProductDetails,
-    unDeleteProduct
+    unDeleteProduct,
+    removeOneVariant
 }

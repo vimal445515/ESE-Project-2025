@@ -3,6 +3,7 @@ import { productModel } from "../Models/productSchema.js";
 import mongoose from "mongoose"
 import offerService from "./offerService.js";
 import offerModel from "../Models/offerSchema.js";
+import productHelpers from '../helpers/productHelper.js'
 
 const storeProductDataInDB = async (generalPhoto,productName,basePrice,description,category,discound,variantsData)=>{
   
@@ -71,6 +72,19 @@ const getProduct = async (_id,index) =>{
   console.log(data[0],"and ",oldData)
   return data[0]
  
+}
+
+
+const removeVariant = async (_id,index)=>{
+  const product = await productModel.findOne({_id})
+  if(product.variants.length > 1){
+     await productHelpers.deleteExeistingImage(null,product.variants[index].images[0],product.variants[index].images[1],product.variants[index].images[2],product.variants[index].images[3])
+     await productModel.updateOne({_id},{$unset:{[`variants.${index}`]:1}})
+     await productModel.updateOne({_id},{$pull:{variants:null}});
+     return true
+  }else{
+    return false
+  } 
 }
 
 const variantCount = async (productId)=>{
@@ -446,7 +460,9 @@ export default {
  unDeleteProductFromDB,
  variantCount,
  getAllProductsForOffer,
- getSingleProductName
+ getSingleProductName,
+removeVariant 
+
 
 
 }

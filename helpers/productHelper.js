@@ -90,7 +90,7 @@ const deleteExeistingImage = (generalPhoto,img1,img2,img3,img4,data) =>{
     cloudinary.uploader.destroy(img4.publicId)
   }
 
-  
+  console.log("image deleted",img1,img2,img3,img4);
 
   // let __filename = fileURLToPath(import.meta.url);
   // let __dirname =path.dirname(path.dirname(__filename))
