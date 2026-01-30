@@ -23,7 +23,8 @@ import offerRouter from './Routers/offerRouter.js'
 import razorpayRouter from './Routers/razorpayRouter.js'
 import salesReportRouter from './Routers/salesReportRouter.js'
 import dashboardRouter from "./Routers/dashboardRouter.js";
-
+import infoRouter from "./Routers/infoRouter.js"
+import errorPage from "./Controllers/errorPageController.js"
 
 
 env.config()
@@ -60,7 +61,9 @@ app.use(razorpayRouter)
 app.use('/offers',offerRouter)
 app.use(salesReportRouter);
 app.use(dashboardRouter);
+app.use(infoRouter);
 app.use(errorHandlingMiddleware.error)
+app.use(errorPage.errorPage)
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on http://localhost:${process.env.PORT}`);
 })

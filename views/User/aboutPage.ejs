@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About SES</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/userStyles/home.css">
+    <style>
+        .about-header { padding: 80px 0 40px; text-align: center; }
+        .about-header h1 { font-size: 4rem; font-weight: 700; color: #6c757d; }
+        .author-meta { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 30px 0; color: #888; }
+        .author-meta img { width: 40px; border-radius: 50%; background: #eee; }
+        .content-body { max-width: 800px; margin: 0 auto; text-align: center; color: #666; line-height: 1.6; padding-bottom: 80px; }
+        .social-share { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .social-share i { border: 1px solid #ddd; padding: 10px; border-radius: 50%; color: #555; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <%- include("../partials/navbar") %>
+
+    <div class="container">
+        <section class="about-header">
+            <h1>About SES</h1>
+
+            <div class="social-share">
+                <i class="fab fa-twitter"></i>
+                <i class="fab fa-youtube"></i>
+                <i class="fab fa-facebook-f"></i>
+                <i class="fab fa-instagram"></i>
+            </div>
+
+            <div class="content-body">
+                <p>This project is a web-based e-commerce platform designed exclusively for Samsung electronics. The website allows users to buy all Samsung products in one place, including smartphones, laptops, tablets, smartwatches, and other electronic devices, helping users build a complete Samsung ecosystem easily.A unique feature of this platform is that it also provides access to Samsung products that are no longer in production. These discontinued products are made available through verified stock or resale channels, giving users the opportunity to purchase classic or rare Samsung devices that are not easily found in the market.The website offers a user-friendly interface, secure login with OTP authentication, product filtering, detailed product descriptions, and a smooth checkout process. The goal of this project is to create a centralized marketplace for Samsung users, making it easier to explore, compare, and purchase Samsung devices while maintaining ecosystem compatibility.</p>
+            </div>
+        </section>
+    </div>
+
+    <%- include("../partials/footer") %>
+</body>
+</html>

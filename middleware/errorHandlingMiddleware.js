@@ -22,6 +22,8 @@ const error =(error,req,res,next)=>{
              res.status(415).redirect(req.originalUrl)
          }
     }
+
+    res.status(404).redirect('/404Page');
     next()
    
 }
