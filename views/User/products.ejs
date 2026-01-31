@@ -181,8 +181,8 @@
                             <span aria-hidden="true">&laquo;</span>
                         </button>
                     </li> 
-                    <% for(let i = 1; i <= Math.ceil(count/limit)+1; i++) {%> 
-                    <li class="page-item active"><button class="page-link pagination-link"  value="<%= i %>" onclick="search(`<%= i %>`)"><%= i %></button></li>
+                    <% for(let i = 1; i <= (count/limit)+1; i++) {%> 
+                    <li class="page-item <%= page==i?"active":''%>"><button class="page-link pagination-link"  value="<%= i %>" onclick="search(`<%= i %>`)"><%= i %></button></li>
                     <% } %>
                     <li class="page-item">
                         <button class="page-link pagination-link" onclick="nextPage('<%= page%>')" aria-label="Next">

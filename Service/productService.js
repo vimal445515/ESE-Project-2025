@@ -125,7 +125,7 @@ const unDeleteProductFromDB = async(_id)=>{
 }
 
 const getAllProductsCount = async ()=>{
-  return await productModel.countDocuments();
+  return await productModel.countDocuments({isDeleted:false});
 }
 
 const getWatches = async ()=>{
@@ -289,8 +289,10 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
     pipeline.push({$match:{productName:{$regex:searchValue,$options:"i"}}});
   }
 
-  pipeline.push({$skip:skip},
+if( limit){
+    pipeline.push({$skip:skip},
   {$limit:limit})
+}
    
   const products =  await productModel.aggregate(pipeline)
   return products

@@ -111,9 +111,8 @@ const loadUserSideProductsPage = async(req,res)=>{
     const skip = helpers.paginationSkip(page,limit)
     let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     products = await wishlistService.addLikeToProduct(products,req.session._id);
-    const toatalCount = await productService.countPages()
-    const {count} =toatalCount[0]||0
-  
+    const toatalCount = await productService.getAllProductsUserSide(null,null,sort,category,priceRange,searchValue);
+    const count = toatalCount.length;
     const categoryNames =  await categoryService.getAllCategory();
     res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile,categoryNames})
 }
