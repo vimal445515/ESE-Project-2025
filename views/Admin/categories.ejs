@@ -59,8 +59,7 @@
                                     <thead class="bg-light">
                                         <tr class="text-muted">
                                             <th class="ps-4 py-3 border-0"> Category name</th>
-                                            <th class="py-3 border-0">Offer</th>
-                                            <th class="py-3 border-0">Stock</th>
+                                            <th class="py-3 border-0">Offer(%)</th>
                                             <th class="py-3 border-0">Added</th>
                                             <th class="py-3 border-0">Status</th>
                                             <th class="pe-4 py-3 border-0 text-center">Action</th>
@@ -75,8 +74,7 @@
                                                     <span class="fw-bold"><%= value.categoryName %></span>
                                                 </div>
                                             </td>
-                                            <td class="text-muted">-</td>
-                                            <td class="text-muted">-</td>
+                                            <td class="text-muted"><%= value?.offer[0]?.discount? value?.offer[0]?.discount:'-'%></td>
                                             <td><%= value.createdAt.toISOString().split("T")[0]; %></td>
                                             <% if(!value.isBlocked) { %>
                                               <td><a  class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Active</a></td>  

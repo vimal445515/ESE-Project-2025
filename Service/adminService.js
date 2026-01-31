@@ -61,6 +61,24 @@ const getCategories = async (skip,limit,search)=>{
   if(search){
     pipeline.push({$match:{categoryName:{$regex:search,$options:"i"}}});
   }
+
+  pipeline.push({
+    $lookup:{
+      from:"offers",
+      let:{targetId:'$_id'},
+      pipeline:[{
+        $match:{
+          $expr:{
+            $and:[
+              {$eq:['$targetId','$$targetId']},
+              {$eq:["$isActive",true]}
+            ]
+          }}
+      }],
+      as:"offer"
+    }
+  }
+)
   
   pipeline.push({$skip:skip})
   pipeline.push({$limit:limit});
