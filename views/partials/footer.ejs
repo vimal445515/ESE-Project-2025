@@ -191,7 +191,7 @@
     </style>
 </head>
 <body>
-
+<%- include("./notification")%>
 <footer class="app-footer">
     <div class="container-xl">
         <div class="row">
@@ -209,34 +209,46 @@
                         </div>
                         
                         <div class="d-flex flex-column" style="gap: 16px;">
-                            <form>
+                            <form id="requestForm">
                                 <div class="mb-3">
                                     <label class="form-label-custom" for="emailInput">Email</label>
                                     <div class="input-group input-group-custom">
                                         <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8B8E99" class="bi bi-envelope" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.566-7 4.25-7-4.25V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/></svg></span>
-                                        <input type="email" class="form-control" id="emailInput" placeholder="Text">
+                                        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
+                                        
                                     </div>
+                                    <p id="reqEmailError" class=" text-danger"></p>
                                 </div>
                                 
                                 <div class="mb-4">
                                     <label class="form-label-custom" for="nameInput">Name</label>
                                     <div class="input-group input-group-custom">
                                         <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8B8E99" class="bi bi-person" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.28 10 8 10c-2.28 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z"/></svg></span>
-                                        <input type="text" class="form-control" id="nameInput" placeholder="Text">
+                                        <input type="text" name="name" class="form-control" id="nameInput" placeholder="Text">
+                                    </div>
+                                    <p id="reqNameError" class=" text-danger"></p>
+                                </div>
+
+                                 <div class="mb-2">
+                                    <label class="form-label-custom" for="nameInput">phone</label>
+                                    <div class="input-group input-group-custom">
+                                        <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-phone" viewBox="0 0 16 16">
+                                        <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                        <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                                        </svg></span>
+                                        <input type="number" name="phoneNumber" class="form-control" id="nameInput" placeholder="Phone Number">
                                     </div>
                                 </div>
-                            </form>
-                            
-                            <button class="btn bg-accent-blue text-white fw-700">
+                                <p id="reqPhoneNumberError" class="text-danger"></p>
+                                 <button type="submit" class="btn bg-accent-blue text-white fw-700 ">
                                 Send Request
                             </button>
+                            </form>
+                      
                         </div>
 
                     </div>
-                    
-                    <p class="privacy-text mb-0">
-                        By sending request, you agree to our <a href="#" class="text-decoration-underline" style="color: inherit; opacity: 1;">Privacy Policy</a>.
-                    </p>
+                
                 </div>
             </div>
             
@@ -323,7 +335,66 @@
         </div>
     </div>
 </footer>
+ <script>
+       console.log( document.getElementById('emailError'))
+        const form = document.querySelector("#requestForm");
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+             let valid = true;
+              
+            if(form.email.value === ""){
+               
+                document.getElementById('reqEmailError').innerText="email required"
+                valid = false;
+            }
+           if(  !form.email.value.includes("@") || !form.email.value.includes('.')){
+                 document.getElementById('reqEmailError').innerText="email required"
+                 valid = false;
+            }
+           if(!form.name.value || typeof form.name.value != 'string' ){
+                document.getElementById('reqNameError').innerText="invalid name"
+                valid =  false
+            }
+            if(!form.phoneNumber.value  || form.phoneNumber.value.toString().length !== 10 ){
+                document.getElementById('reqPhoneNumberError').innerText = "invalid"
+                valid = false
+            }
 
+            if(valid){
+
+         
+            const formData = {
+                email:form.email.value,
+                name:form.name.value,
+                subject:`Contact request`,
+                message:`Constomer contact number: ${form.phoneNumber.value}`
+            }
+
+            fetch('/contact',{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(formData)
+            })
+            .then(data=>data.json())
+            .then(data=>{
+                if(data.type== "success"){
+                    
+                    form.email.value = ""
+                    form.name.value =  ""
+                    form.phoneNumber.value = ""
+                    showToast("Request send successfully")
+                }else if( data.type =="error"){
+                   
+                    showToast(data.message,'error')
+                }
+            }).catch((error)=>{
+                console.log(error)
+                showToast("somthing was wrong we can't send data",'error');
+            })
+               }
+        })
+    </script>
+    <script src="/script/tost.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
