@@ -153,6 +153,8 @@ const resetPassword = async(req,res) =>{
   req.session.email = req.user.email
   req.session.role = req.user.role
   req.session.phoneNumber  = req.user.phoneNumber;
+  req.session._id = req.user._id
+  req.session.profile = req.user.profile.url
   res.redirect('/home');
  }
 
