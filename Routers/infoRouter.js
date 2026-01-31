@@ -1,4 +1,4 @@
-import { profile } from "console";
+import infoController from "../Controllers/infoController.js";
 import {Router} from "express"
 
 const router = new Router();
@@ -13,4 +13,6 @@ router.get('/404Page',(req,res)=>{
 router.get('/contact',(req,res)=>{
     res.status(200).render('User/contactPage',{userName:req.session?.userName||null,profile:req.session?.profile||null})
 })
+
+router.post('/contact',infoController.sendMessage)
 export default router

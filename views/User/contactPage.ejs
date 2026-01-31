@@ -19,7 +19,7 @@
 </head>
 <body>
     <%- include("../partials/navbar") %>
-
+    <%- include('../partials/notification')%>
     <section class="contact-section">
         <div class="container">
             <div class="contact-card">
@@ -50,41 +50,68 @@
                 </div>
 
                 <div class="contact-form-container">
-                    <form action="/contact" method="POST">
+                    <form action="/contact" method="POST" id="form">
                         <div class="row g-3 mb-4">
                             <div class="col">
-                                <label class="form-label small text-muted">First Name</label>
-                                <input type="text" class="form-control border-0 border-bottom" placeholder="Vimal">
+                                <label class="form-label small text-muted">Name</label>
+                                <input type="text" class="form-control border-0 border-bottom" name="name" placeholder="Vimal">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col">
                                 <label class="form-label small text-muted">Email</label>
-                                <input type="email" class="form-control border-0 border-bottom" placeholder="example@gmail.com">
-                            </div>
-                            <div class="col">
-                                <label class="form-label small text-muted">Phone Number</label>
-                                <input type="text" class="form-control border-0 border-bottom" placeholder="+91">
+                                <input type="email" class="form-control border-0 border-bottom" name="email" placeholder="example@gmail.com">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="form-label d-block small text-muted">Select Subject?</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="subject" checked>
-                                <label class="form-check-label">General Inquiry</label>
+                            <div class="form-label text-muted ">
+                                <input class="form-control border-0 border-bottom" type="text" name="subject" checked>
                             </div>
                             </div>
                         <div class="mb-4">
                             <label class="form-label small text-muted">Message</label>
-                            <textarea class="form-control border-0 border-bottom" placeholder="Write your message.."></textarea>
+                            <textarea class="form-control border-0 border-bottom" name="message" placeholder="Write your message.."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-send">Send Message</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
-
     <%- include("../partials/footer") %>
+
+    <script>
+        const form = document.querySelector("#form");
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+
+            const formData = {
+                email:form.email.value,
+                name:form.name.value,
+                subject:form.subject.value,
+                message:form.message.value
+            }
+
+            fetch('/contact',{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(formData)
+            })
+            .then(data=>data.json())
+            .then(data=>{
+                if(data.type== "success"){
+                    showToast(data.message)
+                }else if( data.type =="error"){
+
+                    showToast(data.message,'error')
+                }
+            }).catch((error)=>{
+                console.log(error)
+                showToast("somthing was wrong we can't send data",'error');
+            })
+        })
+    </script>
+    <script src="/script/tost.js"></script>
 </body>
 </html>
