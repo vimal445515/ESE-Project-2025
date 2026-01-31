@@ -54,24 +54,28 @@
                         <div class="row g-3 mb-4">
                             <div class="col">
                                 <label class="form-label small text-muted">Name</label>
-                                <input type="text" class="form-control border-0 border-bottom" name="name" placeholder="Vimal">
+                                <input type="text" class="form-control border-0 border-bottom" name="name">
+                                <p id="nameError" class="text-danger"></p>
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col">
                                 <label class="form-label small text-muted">Email</label>
-                                <input type="email" class="form-control border-0 border-bottom" name="email" placeholder="example@gmail.com">
+                                <input type="email" class="form-control border-0 border-bottom" name="email">
+                                 <p id="emailError" class="text-danger"></p>
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="form-label d-block small text-muted">Select Subject?</label>
                             <div class="form-label text-muted ">
-                                <input class="form-control border-0 border-bottom" type="text" name="subject" checked>
+                                <input class="form-control border-0 border-bottom" type="text" name="subject" >
+                                 <p id="subjectError" class="text-danger"></p>
                             </div>
                             </div>
                         <div class="mb-4">
                             <label class="form-label small text-muted">Message</label>
                             <textarea class="form-control border-0 border-bottom" name="message" placeholder="Write your message.."></textarea>
+                             <p id="messageError" class="text-danger"></p>
                         </div>
                         <button type="submit" class="btn btn-primary">Send Message</button>
                     </form>
@@ -85,6 +89,45 @@
         const form = document.querySelector("#form");
         form.addEventListener('submit',(e)=>{
             e.preventDefault()
+
+             
+    document.getElementById("nameError").innerText = "";
+    document.getElementById("emailError").innerText = "";
+    document.getElementById("subjectError").innerText = "";
+    document.getElementById("messageError").innerText = "";
+
+    let valid = true;
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const subject = form.subject.value.trim();
+    const message = form.message.value.trim();
+
+   
+    if (!name) {
+        document.getElementById("nameError").innerText = "Name is required";
+        valid = false;
+    }
+
+    
+    if (!email || !email.includes("@") || !email.includes(".")) {
+        document.getElementById("emailError").innerText = "Enter a valid email";
+        valid = false;
+    }
+
+   
+    if (!subject) {
+        document.getElementById("subjectError").innerText = "Subject is required";
+        valid = false;
+    }
+
+ 
+    if (!message || message.length < 5) {
+        document.getElementById("messageError").innerText = "Message must be at least 5 characters";
+        valid = false;
+    }
+
+    if(!valid) return
 
             const formData = {
                 email:form.email.value,
@@ -100,6 +143,10 @@
             })
             .then(data=>data.json())
             .then(data=>{
+               form.email.value=""
+                form.name.value=''
+               form.subject.value=''
+               form.message.value=''
                 if(data.type== "success"){
                     showToast(data.message)
                 }else if( data.type =="error"){

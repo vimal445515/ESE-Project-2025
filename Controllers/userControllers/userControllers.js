@@ -174,7 +174,9 @@ const editProfile=(req,res)=>{
         delete req.session.newImageId
         delete req.session.newImageUrl  
         delete req.session.newEmail
+      try{
 
+     
       const data = await userService.verifyData(req.session,req.body?.userName,req.body?.email,req.body?.phoneNumber,req.file)
         if(data === "error"){
            return res.status(409).json({status:"error",message:"User alredy exists"});
@@ -194,6 +196,10 @@ const editProfile=(req,res)=>{
         res.status(200).json({status:"updated",message:"Data updated",href:"/EditUser"})
         
        }
+        }catch(error){
+          console.log("error from user profile edit",error)
+          res.status(500).json({status:"error", message:"Something went wrong"})
+        }
    
 }
 

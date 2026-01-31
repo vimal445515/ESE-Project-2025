@@ -337,25 +337,25 @@
 </footer>
  <script>
        console.log( document.getElementById('emailError'))
-        const form = document.querySelector("#requestForm");
-        form.addEventListener('submit',(e)=>{
+        const reqForm = document.querySelector("#requestForm");
+        reqForm.addEventListener('submit',(e)=>{
             e.preventDefault()
              let valid = true;
               
-            if(form.email.value === ""){
+            if(reqForm.email.value === ""){
                
                 document.getElementById('reqEmailError').innerText="email required"
                 valid = false;
             }
-           if(  !form.email.value.includes("@") || !form.email.value.includes('.')){
+           if(  !reqForm.email.value.includes("@") || !reqForm.email.value.includes('.')){
                  document.getElementById('reqEmailError').innerText="email required"
                  valid = false;
             }
-           if(!form.name.value || typeof form.name.value != 'string' ){
+           if(!reqForm.name.value || typeof reqForm.name.value != 'string' ){
                 document.getElementById('reqNameError').innerText="invalid name"
                 valid =  false
             }
-            if(!form.phoneNumber.value  || form.phoneNumber.value.toString().length !== 10 ){
+            if(!reqForm.phoneNumber.value  || reqForm.phoneNumber.value.toString().length !== 10 ){
                 document.getElementById('reqPhoneNumberError').innerText = "invalid"
                 valid = false
             }
@@ -364,10 +364,10 @@
 
          
             const formData = {
-                email:form.email.value,
-                name:form.name.value,
+                email:reqForm.email.value,
+                name:reqForm.name.value,
                 subject:`Contact request`,
-                message:`Constomer contact number: ${form.phoneNumber.value}`
+                message:`Constomer contact number: ${reqForm.phoneNumber.value}`
             }
 
             fetch('/contact',{
@@ -379,9 +379,9 @@
             .then(data=>{
                 if(data.type== "success"){
                     
-                    form.email.value = ""
-                    form.name.value =  ""
-                    form.phoneNumber.value = ""
+                    reqForm.email.value = ""
+                    reqForm.name.value =  ""
+                    reqForm.phoneNumber.value = ""
                     showToast("Request send successfully")
                 }else if( data.type =="error"){
                    
