@@ -8,11 +8,15 @@ const createWallet = async(userId) =>{
     })
 }
 
-const getWallet = async(userId)=>{
+const getWallet = async(userId,skip,limit)=>{
     
    const  walletData =  await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)})
-    const walletTransactionData = await walletTransaction.find({userId:new mongoose.Types.ObjectId(userId)}).sort({createdAt:-1})
+    const walletTransactionData = await walletTransaction.find({userId:new mongoose.Types.ObjectId(userId)}).sort({createdAt:-1}).skip(skip).limit(limit);
     return {walletData,walletTransactionData};
+}
+
+const countTransaction = async(userId)=>{
+      return await walletTransaction.countDocuments({userId:new mongoose.Types.ObjectId(userId)})
 }
 
 
@@ -64,5 +68,6 @@ export default{
     createWallet,
     getWallet,
     craditWallet,
-    referralReward
+    referralReward,
+    countTransaction
 }
