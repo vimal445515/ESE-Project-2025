@@ -48,7 +48,7 @@ const editProduct = async  (req,res) =>{
      let variantsData = productHelper.structureProductDataForEdit(req.files,req.body,0)
      let generalPhoto = productHelper.extractGeneralImage(req?.files)
      console.log("price this ist",data.variants.price)
-
+    
     
 
     
@@ -75,6 +75,11 @@ const editProduct = async  (req,res) =>{
     res.status(200).json({_id:data._id})
     }catch(error){
       console.log(error)
+      if(error.message === 'Invalid stock'){
+        
+        res.status(400).json({type:'error',message:error.message});
+      }
+      res.status(500).json({type:'error',message:"somthing was wrong!"})
     }
 }
 

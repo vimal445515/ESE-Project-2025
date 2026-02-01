@@ -382,7 +382,7 @@
                 <h3 class="section-title">Variant</h3>
 
                 <div class="d-flex align-items-center mb-3">
-                    <% for(let i =0; i < variantsData.variants.length; i++){%>
+                    <% for(let i =0; i < variantsData?.variants?.length; i++){%>
                     <div class="d-flex border border-primary align-items-center flex-column">
                    
                     <a href="/admin/editProduct/<%= product._id%>?variant=<%=i%>" class="variant-pill bg-success me-2 text-white"><%= i+1%></a>
@@ -395,23 +395,23 @@
 
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
-                    <input type="text" value="<%= product.variants.storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
+                    <input type="text" value="<%= product?.variants?.storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
                     <p id="storageError" class="text-danger small"></p>
                      <p id="categoryError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="ram" class="form-label">Enter Ram</label>
-                    <input type="text" name="ram" value="<%= product.variants.ram %>" class="form-control" id="ram" placeholder="Enter Ram">
+                    <input type="text" name="ram" value="<%= product?.variants?.ram %>" class="form-control" id="ram" placeholder="Enter Ram">
                     <p id="ramError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="stock" class="form-label">Stock</label>
-                    <input type="number" name="stock" value="<%= product.variants.stock %>" class="form-control" id="stock" placeholder="Stock">
+                    <input type="number" name="stock" value="<%= product?.variants?.stock %>" class="form-control" id="stock" placeholder="Stock">
                     <p id="stockError" class="text-danger small"></p>
                 </div>
                 <div class="mb-0">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" value="<%= product.variants.price %>" class="form-control" id="price" placeholder="price">
+                    <input type="text" name="price" value="<%= product?.variants?.price %>" class="form-control" id="price" placeholder="price">
                     <p id="variantPriceError" class="text-danger small"></p>
                 </div>
             </div>
@@ -422,7 +422,7 @@
                <div class="d-flex gap-2 flex-wrap">
                     <div class="input-group">
                         <label class="input-group-text image-label" for="img1">
-                            <img class="previewImg" src="<%= product.variants.images[0].url %>" alt="preview">
+                            <img class="previewImg" src="<%= product?.variants?.images[0]?.url %>" alt="preview">
                         </label>
 
                         <input type="file" name="img1" class="form-control" onchange="preview(this)" id="img1">
@@ -431,13 +431,13 @@
                         <p id="img1Error" class="text-danger small"></p>
                     </div>
 
-                      <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product.variants.images[1].url %>" alt="preview"></label><input type="file" onchange="preview(this)" name="img2" class="form-control" id="img2">
+                      <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product?.variants?.images[1]?.url %>" alt="preview"></label><input type="file" onchange="preview(this)" name="img2" class="form-control" id="img2">
                     <p id="img2Error" class="text-danger small"></p>
                     </div>
-                       <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product.variants.images[2].url %>" alt="preview"> </label><input type="file" name="img3" onchange="preview(this)" class="form-control" id="img3">
+                       <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product?.variants?.images[2]?.url %>" alt="preview"> </label><input type="file" name="img3" onchange="preview(this)" class="form-control" id="img3">
                     <p id="img3Error" class="text-danger small"></p>
                     </div>
-                        <div class="input-group"><label class="input-group-text image-label" for="imageInput"><img class="previewImg" src="<%= product.variants.images[3].url %>" alt="preview"> </label><input type="file" name="img4" onchange="preview(this)" class="form-control" id="img4">
+                        <div class="input-group"><label class="input-group-text image-label" for="imageInput"><img class="previewImg" src="<%= product?.variants?.images[3]?.url %>" alt="preview"> </label><input type="file" name="img4" onchange="preview(this)" class="form-control" id="img4">
                         <p id="img4Error" class="text-danger small"></p>
                         </div>
             </div>
@@ -557,12 +557,12 @@ function preview(e){
         showError("variantPriceError", "Enter a valid price."); valid = false;
     }
 
-    if (!stock || isNaN(stock) || Number(stock) < 0) {
+    if (!stock || isNaN(stock) || Number(stock) <0 ) {
         showError("stockError", "Enter valid stock."); valid = false;
     }
 
     
-    if (!valid) return;
+    if (!valid) return false;
 
 
            const group = {
@@ -577,21 +577,21 @@ function preview(e){
         }
        for(let value of objectArray)
        {
-        if(price ===value.price && stock === value.stock && storage ===value.storage && ram == value.ram)
+        if(price ===value.price && stock === value.stock && storage === value.storage && ram == value.ram)
        {
         alert("Repeat varients not allowed");
-        return
+        return false
        }
        }
 
      objectArray.push(group);
      console.log("value",group)
      console.log("Values ",objectArray)
-
+    return true
       
     }
     function saveData() {
-        add()
+         if( !add()) return ;
          clearErrors();
 
          const productName = document.querySelector("#productName").value;
@@ -652,6 +652,16 @@ function preview(e){
         .then(data =>data.json())
         .then(data =>{
             console.log(data)
+            if(data?.type){
+                if(data.type === 'error'){
+                    showToast(data.message,"error")
+                    hideLoader();
+                    setTimeout(()=>{
+                        window.location.reload()
+                    },1000)
+                    return
+                }
+            }
             if(data?.obj){
               data =  data.obj.split('/')
               data = data[data.length-1]
@@ -665,7 +675,7 @@ function preview(e){
         })
         .catch(()=>{
              hideLoader();
-            window.location.href="/admin/login"
+             window.location.href="/admin/login"
         })
     }
 

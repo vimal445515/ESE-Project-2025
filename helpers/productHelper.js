@@ -181,6 +181,9 @@ for(let i = 0; i < length/4; i++){
 
 for(let i = 0; i < objArray.length/4; i++)
 {
+   if(obj[`stock${i}`] < 0 ){
+    throw new Error("Invalid stock");
+   }
    resultArray.push({
      price: obj[`price${i}`],
      stock: obj[`stock${i}`],
