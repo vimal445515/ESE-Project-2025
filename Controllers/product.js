@@ -6,11 +6,21 @@ import wishlistService from '../Service/wishlistService.js'
 import categoryService from '../Service/categoryService.js'
 import reviewService from '../Service/reviewService.js'
 const storeProducts = async (req,res)=>{
+  try{
     const {productName,basePrice,description,category,discound} = req.body
     const generalPhoto = productHelper.extractGeneralImage(req.files)
     const VariantsData = productHelper.structureProductData(req.files,req.body)
     const data = await productService.storeProductDataInDB(generalPhoto,productName,basePrice,description,category,discound,VariantsData)
    return res.status(201).json("product added Successfully"); 
+  }catch(error){
+    console.log(error)
+    if(error.message = "Invaid input"){
+      res.status(400).json({type:"error",message:error.message});
+    }else{
+      res.status(500).json({type:error,message:"upload faild"});
+    }
+  }
+    
     
 }
  const loadProductsPage = async(req,res)=>{
@@ -76,7 +86,7 @@ const editProduct = async  (req,res) =>{
     }catch(error){
       console.log(error)
       if(error.message === 'Invalid stock'){
-        
+
         res.status(400).json({type:'error',message:error.message});
       }
       res.status(500).json({type:'error',message:"somthing was wrong!"})

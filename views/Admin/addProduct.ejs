@@ -544,7 +544,7 @@
         showError("variantPriceError", "Enter a valid price."); valid = false;
     }
 
-    if (!stock || isNaN(stock) || Number(stock) < 0) {
+    if (!stock || isNaN(stock)|| Number(stock) < 0) {
         showError("stockError", "Enter valid stock."); valid = false;
     }
 
@@ -672,6 +672,13 @@
             body:formData
         }).then(data =>data.json())
         .then(data =>{
+            if(data?.type){
+                if(data?.type ==='error'){
+                     hideLoader();
+                showToast(data.message,'error');
+                return
+                }
+            }
              if(data?.obj){
               data =  data.obj.split('/')
               data = data[data.length-1]

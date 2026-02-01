@@ -47,6 +47,9 @@ for(let i = 0; i < length/4;i++){
 
 for(let i = 0; i < objArray.length/4; i++)
 {
+  if(obj[`price${i}`] < 0 || isNaN(obj[`price${i}`]) || obj[`stock${i}`] <0 || isNaN(obj[`stock${i}`]) ){
+    throw new Error("Invaid input");
+  }
    resultArray.push({
      price: obj[`price${i}`],
      stock: obj[`stock${i}`],
