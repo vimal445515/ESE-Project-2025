@@ -391,7 +391,7 @@
           
                 </div>
 
-                <button onclick="openModal()" id="removeButton" class="d-none btn btn-light text-danger">Remove</button>
+                <button onclick="openModal()"  class="removeButton d-none btn btn-light text-danger">Remove</button>
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
                     <input type="text" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
@@ -610,7 +610,7 @@
     function saveData() {
 
          clearErrors();
-
+         document.querySelector('.removeButton').classList.add('d-none')
          const productName = document.querySelector("#productName").value;
             const description = document.querySelector("#description").value;
             const basePrice   = document.querySelector("#basePrice").value;
@@ -701,7 +701,7 @@
     document.querySelector("#img4").value = "";
 
     console.log("All fields cleared!");
-        
+       
 
     }
 
@@ -741,11 +741,42 @@
 
         document.getElementById('addButton').style.display = 'none'
         document.getElementById('saveButton').style.display = 'block';
-        document.getElementById('removeButton').classList.remove('d-none')
+        document.querySelector('.removeButton').classList.remove('d-none')
     }
 
 
     function save(){
+
+           clearErrors();
+         const price = document.querySelector("#price").value;
+            const stock = document.querySelector("#stock").value;
+            const storage =  document.querySelector("#storage").value;
+            const ram = document.querySelector("#ram").value;
+            const img1 =   document.querySelector("#img1").files[0];
+            const img2 =   document.querySelector("#img2").files[0];
+            const img3 =   document.querySelector("#img3").files[0];
+            const img4 =   document.querySelector("#img4").files[0];
+
+         let valid = true;
+
+    if (!storage || isNaN(storage)) { showError("storageError", "Storage is invalid."); valid = false; }
+    if (!ram || isNaN(storage)) { showError("ramError", "RAM is invalid."); valid = false; }
+
+    if (!price || isNaN(price) || Number(price) <= 0) {
+        showError("variantPriceError", "Enter a valid price."); valid = false;
+    }
+
+    if (!stock || isNaN(stock) || Number(stock) < 0) {
+        showError("stockError", "Enter valid stock."); valid = false;
+    }
+
+    if (!img1) { showError("img1Error", "Image 1 required."); valid = false; }
+    if (!img2) { showError("img2Error", "Image 2 required."); valid = false; }
+    if (!img3) { showError("img3Error", "Image 3 required."); valid = false; }
+    if (!img4) { showError("img4Error", "Image 4 required."); valid = false; }
+    if(!valid) return ;
+
+
      objectArray[index]['price'] = document.querySelector("#price").value 
       objectArray[index]['stock'] = document.querySelector("#stock").value
       objectArray[index]['storage'] = document.querySelector("#storage").value 
