@@ -591,7 +591,7 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
 }
 
 
-const getOrdersForSalesReport= async(startDate,endDate)=>{
+const getOrdersForSalesReport= async(startDate,endDate,skip,limit)=>{
     if(startDate){
           return await orderModel.aggregate([
         {$match:{orderStatus:'delivered',createdAt:{$gte:startDate,$lte:endDate}}},
@@ -607,7 +607,9 @@ const getOrdersForSalesReport= async(startDate,endDate)=>{
             'user.userName':1,
             pricing:1
         }},
-        {$sort:{createdAt:-1}}
+        {$sort:{createdAt:-1}},
+        {$skip:skip},
+         {$limit:limit}
     ])
     }
     return  await orderModel.aggregate([
@@ -624,11 +626,24 @@ const getOrdersForSalesReport= async(startDate,endDate)=>{
             'user.userName':1,
             pricing:1
         }},
-         {$sort:{createdAt:-1}}
+         {$sort:{createdAt:-1}},
+         {$skip:skip},
+         {$limit:limit}
     ])
   
 }
 
+
+const countDeliveredOrders = async(startDate,endDate)=>{
+    const query = {}
+    
+    query.orderStatus ='delivered'
+    if(startDate){
+       
+        query.createdAt={$gte:startDate,$lte:endDate}
+    }
+    return await orderModel.countDocuments(query)
+}
 
 
 
@@ -658,6 +673,7 @@ export default {
     storeSingleReturnOrderData,
     rejectSingleReturnProduct,
     aproveSingleReturnProduct,
-    getOrdersForSalesReport
+    getOrdersForSalesReport,
+    countDeliveredOrders
    
 }

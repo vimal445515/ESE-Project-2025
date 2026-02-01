@@ -275,6 +275,27 @@
                                    <%})%>
                                 </tbody>
                             </table>
+                               <nav class="d-flex justify-content-center">
+                                <ul class="pagination">
+                                    <li class="page-item ">
+                                        <button class="page-link pagination-link" onclick="previousPage('<%= page%>')" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </button>
+                                    </li> 
+                                    <div id="page" class="d-flex">
+                                    <% for(let i = 1; i <= (count/limit); i++) {%> 
+                                    
+                                    <li class="page-item"><button class="page-link pagination-link"  value="<%= i %>" onclick="search(`<%= i %>`)"><%= i %></button></li>
+                                   
+                                    <% } %>
+                                     </div>
+                                    <li class="page-item">
+                                        <button class="page-link pagination-link" onclick="nextPage('<%= page%>')" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -284,6 +305,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
+     
         //  logic for the filter button active state
         const filterBtns = document.querySelectorAll('.btn-filter');
         filterBtns.forEach(btn => {
@@ -339,7 +362,29 @@
 
                 })      
 
+                 let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
 
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+           
             })
         }
 
@@ -387,7 +432,29 @@
 
                 })      
 
-               
+                let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
+
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+        
 
 
             })
@@ -437,7 +504,29 @@
 
                 })      
 
+ let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
 
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+         
 
             })
             
@@ -482,8 +571,32 @@
 
                 })      
 
+                 let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
+
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+         
 
             })
+
             
         }
 
@@ -556,7 +669,30 @@
                             `
                                     table.append(row)
 
-                })      
+                })    
+                 let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
+
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+            
             })
 
 
@@ -570,6 +706,90 @@
         function downloadPDF(){
              window.location.href= `/report/downloadPDF?startDate=${globalStartDate||''}&endDate=${globalEndDate||''}`
         }
+
+
+
+
+           let correntPage = 1;
+
+           function search(page){
+          correntPage = page
+          console.log(globalEndDate,globalStartDate)
+             fetch(`/reports?startDate=${globalStartDate}&endDate=${globalEndDate}&page=${correntPage}`)
+             .then(data=>data.json())
+            .then(data=>{
+           
+
+                orderAmount.innerText = `₹${data.salesReportData[0]?.overalOrderAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+                salesCount.innerText = `${data.salesReportData[0]?.totalOrder.toFixed(2).toLocaleString('en-IN')||0}`
+                tax.innerText = `₹${data.salesReportData[0]?.overalTax.toFixed(2).toLocaleString('en-IN')||0}`
+                discountAmount.innerText = `₹${data.salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                revenue.innerText = `₹${data.salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}`;
+
+                const table = document.getElementById('tableBody')
+                table.innerHTML = ''
+                data.orders.forEach(order =>{
+                    let row = document.createElement('tr')
+                            row.innerHTML =    `
+                            <tr>
+                                        <td class="ps-4 date">${innerText = order.createdAt.toString().slice(0,10)}</td>
+                                        <td class="fw-medium text-muted orderId">${innerText = order.orderId}</td>
+                                        <td class="userName">${innerText =order.user[0].userName}</td>
+                                        <td class="orderAmount">₹${order.pricing.subTotal.toLocaleString('en-IN')}</td>
+                                        <td class="text-danger discount">-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-danger coupon">+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
+                                        <td class="text-end pe-4 fw-bold text-success finalAmount">₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</td>
+                                    </tr>
+                            
+                            `
+                                    table.append(row)
+
+                })      
+
+                let pageButtonArea = document.getElementById('page');
+                pageButtonArea.innerHTML = '';
+
+                let totalPages = (data.count / data.limit);
+                console.log("totalPage",totalPages)
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+
+                  
+
+                    const button = document.createElement('button');
+                    button.classList.add('page-link', 'pagination-link');
+                    button.innerText = i;
+
+                    button.onclick = () => search(i);
+
+                    li.appendChild(button);
+                    pageButtonArea.appendChild(li);
+                }
+
+
+            })
+        }
+
+
+       
+
+
+        function nextPage(correntPgae){
+           correntPgae++;
+          search(correntPgae)  
+             }
+
+        function previousPage(page){
+                correntPage--;
+                if(correntPage>0){
+                     search(correntPage)
+                }
+             }
+
+           
     </script>
 </body>
 </html>

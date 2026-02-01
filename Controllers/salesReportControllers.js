@@ -1,19 +1,26 @@
 import salesReportService from "../Service/salesReportService.js"
 import orderService from '../Service/orderSevice.js'
+import helpers from "../helpers/helpers.js"
 
 const loadSalesReportPage = async(req,res)=>{
-    const startDate = req.query.startDate?new Date( req.query.startDate):null
-    const endDate = req.query.endDate?new Date(req.query.endDate):null
-    console.log(startDate,endDate)
+    console.log(req.query?.page)
+    const page = req.query?.page||1
+    const limit = 12;
+    console.log(req.query.startDate,req.query.endDate)
+    const skip = helpers.paginationSkip(page,limit)
+    const startDate = req.query.startDate === 'undefined'?undefined:req.query.startDate?new Date( req.query.startDate):null
+    const endDate = req.query.endDate ==='undefined'?undefined:req.query.endDate?new Date(req.query.endDate):null
+    
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
-    const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
- 
-    if(startDate){
+    const orders = await orderService.getOrdersForSalesReport(startDate,endDate,skip,limit);
+    
+    const count = await orderService.countDeliveredOrders(startDate,endDate)
+    if(startDate||req.query.startDate === 'undefined'){
         console.log(salesReport)
-        return  res.status(200).json({salesReportData:salesReport,orders});
+        return  res.status(200).json({salesReportData:salesReport,orders,count,limit,page});
     }
    
-    res.status(200).render('Admin/SalesReportPage',{salesReportData:salesReport,orders});
+    res.status(200).render('Admin/SalesReportPage',{salesReportData:salesReport,orders,count,limit,page});
 }
 
 
