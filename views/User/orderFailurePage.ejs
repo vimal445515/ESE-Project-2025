@@ -102,7 +102,7 @@
 <body>
 
     <%- include('../partials/navbar.ejs') %>
-
+    <%- include('../partials/notification.ejs')%>
     <div class="main-content">
         <div class="failure-card">
             <div class="error-container">
@@ -140,9 +140,16 @@
           const res = await   fetch('/oldOrderId',{
                 method:"POST",
                 headers:{'Content-type':'application/json'},
-                body:JSON.stringify({paymentOrderId:'<%= orderId%>'})
+                body:JSON.stringify({paymentOrderId:'<%= orderId%>',productOrderId:'<%= productOrderId%>'})
             })
      const order = await res.json();
+            if(order?.type ==='StockError'){
+                showToast(order.message,"error");
+                return
+            }else if(order?.type == "ServerError"){
+               showToast(order.message,"error");
+               return
+            }
     let options = {
     key:order.keyId,
     amount: order.amount,
@@ -184,5 +191,6 @@
   })
     }
 </script>
+<script src="/script/tost.js"></script>
 </body>
 </html>

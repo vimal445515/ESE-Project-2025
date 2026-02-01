@@ -5,7 +5,8 @@ import mongoose from 'mongoose'
 import crypto from 'crypto'
 import orderSchema from '../Models/orderSchema.js'
 import { productModel } from '../Models/productSchema.js'
-import { error } from 'console'
+import orderModel from '../Models/orderSchema.js'
+
 
 const createOrder = async(productsOrderId,_id)=>{
     const productsOrder = await orderSchema.findOne({orderId:productsOrderId})
@@ -81,7 +82,25 @@ const paymentFaild = async (paymentOrderId)=>{
     return order;
 }
 
-const getPaymentDetails = async(paymentOrderId)=>{
+const getPaymentDetails = async(paymentOrderId,productOrderId)=>{
+  const orderItems = await orderModel.aggregate([
+    {$match:{_id:new mongoose.Types.ObjectId(productOrderId)}},
+    {$unwind:'$items'}
+  ]);
+  console.log(orderItems);
+  for(let orderItem of orderItems){
+   let product =  await productModel.aggregate([
+      {$match:{_id:orderItem.items.productId}},
+      {$unwind:"$variants"},
+      {$match:{'variants._id':orderItem.items.variantId}}
+    ])
+    console.log("expected:",product[0].variants,orderItem.items)
+    if(product[0].variants.stock < orderItem.items.quantity) {
+      throw new Error(`${product[0].productName}:Out of Stock`)
+    }
+  }
+
+
   const  data =  await paymentModel.findOne({paymentOrderId:paymentOrderId})
   return data;
 }

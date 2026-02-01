@@ -59,11 +59,26 @@ const razorpayPaymentFaild = async(req,res)=>{
 
 const retryPayment = async(req,res)=>{
   console.log("payment order id:",req.body.paymentOrderId)
- const order =  await razorpayService.getPaymentDetails(req.body.paymentOrderId);
+  try{
+
+
+ const order =  await razorpayService.getPaymentDetails(req.body.paymentOrderId,req.body.productOrderId);
 
  const {amount,paymentOrderId,currency} = order
  res.status(200).json({type:"success",amount,paymentOrderId,currency,keyId:process.env.RAZORPAY_KEY_ID})
+   }catch(error){
+    console.log(error)
+    if(error.message.includes('Out of Stock')){
+      
+       res.status(400).json({type:"stockError",message:error.message})
+    }
+    else{
+      res.status(500).json({type:"ServerError",message:"somthing was wrong"});
+    }
+   }
 }
+
+
 
 export default{
     createOrderForRazorpay,
