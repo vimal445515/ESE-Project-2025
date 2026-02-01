@@ -572,7 +572,11 @@
     }
     );
     const order = await res.json();
-   
+    if(order?.type === 'error'){
+        showToast(order.message,"error");
+        return
+    }
+   console.log("this is order amount",order)
     let options = {
     key:order.keyId,
     amount: order.amount,
@@ -588,6 +592,9 @@
       .then(data=>{
         if(data.type === "success"){
             window.location.href=data.href;
+        }
+        if(data.type== "serverError"){
+            showToast(data.message,"error");
         }
         if(data.type === "error"){
             window.location.href=data.href
