@@ -634,6 +634,48 @@ const getOrdersForSalesReport= async(startDate,endDate,skip,limit)=>{
 }
 
 
+const getOrdersForSalesReportDownload= async(startDate,endDate)=>{
+    if(startDate){
+          return await orderModel.aggregate([
+        {$match:{orderStatus:'delivered',createdAt:{$gte:startDate,$lte:endDate}}},
+        {$lookup:{
+            from:'users',
+            localField:"userId",
+            foreignField:"_id",
+            as:"user"
+        }},
+        {$project:{
+            createdAt:1,
+            orderId:1,
+            'user.userName':1,
+            pricing:1
+        }},
+        {$sort:{createdAt:-1}},
+        
+    ])
+    }
+    return  await orderModel.aggregate([
+        {$match:{orderStatus:'delivered'}},
+        {$lookup:{
+            from:'users',
+            localField:"userId",
+            foreignField:"_id",
+            as:"user"
+        }},
+        {$project:{
+            createdAt:1,
+            orderId:1,
+            'user.userName':1,
+            pricing:1
+        }},
+         {$sort:{createdAt:-1}},
+        
+    ])
+  
+}
+
+
+
 const countDeliveredOrders = async(startDate,endDate)=>{
     const query = {}
     
@@ -674,6 +716,7 @@ export default {
     rejectSingleReturnProduct,
     aproveSingleReturnProduct,
     getOrdersForSalesReport,
-    countDeliveredOrders
+    countDeliveredOrders,
+    getOrdersForSalesReportDownload
    
 }

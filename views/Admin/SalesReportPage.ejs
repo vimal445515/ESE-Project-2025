@@ -283,7 +283,7 @@
                                         </button>
                                     </li> 
                                     <div id="page" class="d-flex">
-                                    <% for(let i = 1; i <= (count/limit); i++) {%> 
+                                    <% for(let i = 1; i <= (count/limit)+1; i++) {%> 
                                     
                                     <li class="page-item"><button class="page-link pagination-link"  value="<%= i %>" onclick="search(`<%= i %>`)"><%= i %></button></li>
                                    
@@ -435,7 +435,7 @@
                 let pageButtonArea = document.getElementById('page');
                 pageButtonArea.innerHTML = '';
 
-                let totalPages = (data.count / data.limit);
+                let totalPages = (data.count / data.limit)+1;
                 console.log("totalPage",totalPages)
                 for (let i = 1; i <= totalPages; i++) {
                     const li = document.createElement('li');
@@ -507,7 +507,7 @@
  let pageButtonArea = document.getElementById('page');
                 pageButtonArea.innerHTML = '';
 
-                let totalPages = (data.count / data.limit);
+                let totalPages = (data.count / data.limit)+1;
                 console.log("totalPage",totalPages)
                 for (let i = 1; i <= totalPages; i++) {
                     const li = document.createElement('li');
@@ -673,7 +673,7 @@
                  let pageButtonArea = document.getElementById('page');
                 pageButtonArea.innerHTML = '';
 
-                let totalPages = (data.count / data.limit);
+                let totalPages = (data.count / data.limit)+1;
                 console.log("totalPage",totalPages)
                 for (let i = 1; i <= totalPages; i++) {
                     const li = document.createElement('li');
@@ -751,7 +751,7 @@
                 let pageButtonArea = document.getElementById('page');
                 pageButtonArea.innerHTML = '';
 
-                let totalPages = (data.count / data.limit);
+                let totalPages = (data.count / data.limit)+1;
                 console.log("totalPage",totalPages)
                 for (let i = 1; i <= totalPages; i++) {
                     const li = document.createElement('li');

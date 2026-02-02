@@ -53,7 +53,7 @@ const placeOrder =  async(req,res)=>{
               const isBlock = await productService.isBlocked(req.body.productId)
             if(isBlock.length === 0) {
              req.flash("error","This product currently unavailable")
-              return res.status(410).json({type:"errro",href:`/productDetails/${req.body.productId}`})
+              return res.status(410).json({type:"error",href:`/productDetails/${req.body.productId}`})
               // return res.redirect(`/productDetails/${req.body.productId}`);
                         };
 
@@ -119,14 +119,14 @@ const placeOrder =  async(req,res)=>{
         const signal = await cartService.cartItemsBlocked(req.session._id)
         if(signal.flag){
           req.flash("error",`[${signal.message}] unavailable`);
-          return res.status(410).json({type:"errro",href:`/cart`})
+          return res.status(410).json({type:"error",href:`/cart`})
           // return res.redirect('/cart')
         }
         const products =  await cartService.getCartItems(req.session._id)
         const status = await orderSevice.checkOrderStockForCart(products)
         if(! status.flag || products.length === 0){
           req.flash('error',`!Oops [${status.outOfStockProducts}]  out of stock`);
-          return res.status(410).json({type:"errro",href:`/cart`})
+          return res.status(410).json({type:"error",href:`/cart`})
         //  return res.redirect('/cart')
         }
         else{

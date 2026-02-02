@@ -497,7 +497,7 @@ if("<%= order.orderStatus %>" ==='delivered'){
           const res = await fetch('/oldOrderId',{
                 method:"POST",
                 headers:{'Content-type':'application/json'},
-                body:JSON.stringify({paymentOrderId:'<%= order.payment.paymentOrderId%>',productOrderId:"<%= order._id%>"})
+                body:JSON.stringify({paymentOrderId:'<%= order.payment.paymentOrderId%>',productOrderId:"<%= order.orderId%>"})
             })
      const order = await res.json();
      console.log(order);

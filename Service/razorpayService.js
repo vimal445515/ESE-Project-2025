@@ -83,8 +83,9 @@ const paymentFaild = async (paymentOrderId)=>{
 }
 
 const getPaymentDetails = async(paymentOrderId,productOrderId)=>{
+  console.log("thisis tne target",productOrderId);
   const orderItems = await orderModel.aggregate([
-    {$match:{_id:new mongoose.Types.ObjectId(productOrderId)}},
+    {$match:{orderId:productOrderId}},
     {$unwind:'$items'}
   ]);
   console.log(orderItems);

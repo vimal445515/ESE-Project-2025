@@ -29,7 +29,7 @@ const downloadExcelSheet = async(req,res)=>{
      const startDate = req.query.startDate?new Date( req.query.startDate):null
     const endDate = req.query.endDate?new Date( req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
-    const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
+    const orders = await orderService.getOrdersForSalesReportDownload(startDate,endDate);
     const workbook =  salesReportService.generateExcelSheet(salesReport,orders)
 
     res.setHeader(
@@ -49,7 +49,7 @@ const downloadPDF = async(req,res)=>{
        const startDate = req.query.startDate?new Date( req.query.startDate):null
     const endDate = req.query.endDate?new Date( req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
-    const orders = await orderService.getOrdersForSalesReport(startDate,endDate);
+    const orders = await orderService.getOrdersForSalesReportDownload(startDate,endDate);
     const report = await salesReportService.generateReportPDF(salesReport,orders)
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
