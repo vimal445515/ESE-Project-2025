@@ -235,7 +235,7 @@
             
             <div class="mb-4 d-flex flex-column gap-2">
                 <div class="p-2 bg-ocean-light rounded-3">
-                    <label class="select-label text-ocean fw-bold">Filter Category</label>
+                    <label class="select-label text-ocean fw-bold">Choose Category or Product to View Top 10 Performers</label>
                     <select id="selecte" class="form-select form-select-sm border-0 bg-transparent shadow-none">
                         <option>Product</option>
                         <option selected>Category</option>
@@ -326,7 +326,7 @@
             })
              document.getElementById('topPerformer').innerHTML =  element.join('')
              document.getElementById('totalSales').innerText = data.data.totalSales
-             document.getElementById('totalRevenue').innerText = data.data.totalRevenue
+             document.getElementById('totalRevenue').innerText = `₹${data.data.totalRevenue.toFixed(2)}`
              document.getElementById('totalUserSginup').innerText = data.data.totalUserSginup;
     })
   }

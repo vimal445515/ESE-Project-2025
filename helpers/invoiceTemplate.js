@@ -144,11 +144,11 @@ export function invoiceHTML(order) {
           <div class="section-title">Bill To</div>
           <p>
             <strong>${order.address.userName}</strong><br />
-            ${order.address.companyName}<br />
+            ${order.address?.companyName||''}<br />
             ${order.address.address}<br />
             ${order.address.district}, ${order.address.state} - ${order.address.pinCode}<br />
             ${order.address.country}<br />
-            Phone: ${order.address.phoneNumber}<br />
+            Phone: ${order.address.phoneNumber||""}<br />
             Email: ${order.address.email}
           </p>
         </div>
@@ -183,8 +183,8 @@ export function invoiceHTML(order) {
               <td>${index + 1}</td>
               <td>${item.productName}</td>
               <td class="text-right">${item.quantity}</td>
-              <td class="text-right">₹${item.price}</td>
-              <td class="text-right">₹${item.price * item.quantity}</td>
+              <td class="text-right">₹${(item.price).toFixed(2)}</td>
+              <td class="text-right">₹${(item.price * item.quantity).toFixed(2)}</td>
             </tr>
           `).join("")}
         </tbody>
@@ -194,17 +194,21 @@ export function invoiceHTML(order) {
     <!-- PRICE SUMMARY -->
     <div class="summary">
       <table>
+       <tr>
+          <td>SubTotal</td>
+          <td class="text-right">₹${(order.pricing.subTotal).toFixed(2)} (Before discount)</td>
+        </tr>
         <tr>
           <td>Discount</td>
-          <td class="text-right">₹${order.pricing.discount}</td>
+          <td class="text-right">₹${(order.pricing.discount).toFixed(2)}</td>
         </tr>
         <tr>
           <td>Tax</td>
-          <td class="text-right">₹${order.pricing.tax}</td>
+          <td class="text-right">₹${(order.pricing.tax).toFixed(2)}</td>
         </tr>
         <tr class="total-row">
           <td>Total Amount</td>
-          <td class="text-right">₹${order.pricing.totalAmount}</td>
+          <td class="text-right">₹${(order.pricing.totalAmount).toFixed(2)}</td>
         </tr>
       </table>
     </div>
