@@ -63,7 +63,7 @@ const analyseDashbordData = async(selectedType,filter)=>{
                 $match:{orderStatus:"delivered",createdAt:{$gte:startDate,$lte:endDate}},
                 
             },
-            {$group:{_id:{$dayOfWeek:'$createdAt'},totalSales:{$sum:'$pricing.totalAmount'}}},
+            {$group:{_id:{$dayOfWeek:'$createdAt',timezone: "Asia/Kolkata"},totalSales:{$sum:'$pricing.totalAmount'}}},
             
         ])
         analyseData.forEach(item=>{
