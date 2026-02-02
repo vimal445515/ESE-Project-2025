@@ -55,15 +55,18 @@ const analyseDashbordData = async(selectedType,filter)=>{
                 endDate.setDate(startDate.getDate() + 6);
                 endDate.setHours(23,59,59,999);
 
-             chartData = {"Sun":0,"Mon":0,"Tue":0,"Wed":0,"Thu":0,"Fri":0,"Sat":0}
-             const dayName = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+             chartData = {"Mon":0,"Tue":0,"Wed":0,"Thu":0,"Fri":0,"Sat":0,"Sun":0}
+             const dayName = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
 
               analyseData = await orderModel.aggregate([
             {
                 $match:{orderStatus:"delivered",createdAt:{$gte:startDate,$lte:endDate}},
                 
             },
-            {$group:{_id:{$dayOfWeek:'$createdAt',timezone: "Asia/Kolkata"},totalSales:{$sum:'$pricing.totalAmount'}}},
+            {$group:{_id: {$isoDayOfWeek: {
+        date: "$createdAt",
+        timezone: "Asia/Kolkata"
+      }},totalSales:{$sum:'$pricing.totalAmount'}}},
             
         ])
         analyseData.forEach(item=>{
