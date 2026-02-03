@@ -106,9 +106,16 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     }
 
     if (!valid) {
-        e.preventDefault(); // stop form submit
+        e.preventDefault(); 
     }
 });
+
+ window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      
+      window.location.reload();
+    }
+  });
 </script>
 
 </body>

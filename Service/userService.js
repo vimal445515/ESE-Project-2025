@@ -20,14 +20,15 @@ const storeOtpInDb = async (email,otp) =>{
 const checkOtp = async(otp,email) =>{
     
     const data = await OtpModel.findOne({email})
+    console.log(otp,data?.otp);
     if(otp == data?.otp) return true;
     return false;
 
 }
 
-const storeUserData  = async (req,referralId,role)=>
+const storeUserData  = async (otp,userName,email,password,phoneNumber,referralCode,referralId,role)=>
 {
-    const {otp,userName,email,password,phoneNumber,referralCode} = req.body;
+    
     const passwordHashed = hash.passwordHash(password);
    return await User.create({userName,email,password:passwordHashed,phoneNumber,referralCode,referralId,role,isBlocked:false,createdAt:new Date(),deleted:false})
 }

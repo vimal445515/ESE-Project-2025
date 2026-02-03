@@ -11,34 +11,83 @@ import addressService from "../../Service/addressService.js";
 import orderSevice from "../../Service/orderSevice.js";
 import walletController from "../walletController.js";
 import walletService from "../../Service/walletService.js";
+import { ConnectionClosedError } from "puppeteer";
 
 
 
 const otpGenerator= async (req,res)=>{
-    const {email,userName,password,phoneNumber = null,referralCode = null} = req.body;
+    let {email,userName,password,phoneNumber = null,referralCode = null} = req.body;
+   
+    if(typeof email === 'object'){
+    email = email[0];
+  }
+  if(typeof userName === 'object'){
+    userName = userName[0];
+    
+  }
+  if(typeof password === 'object'){
+    password = password[0];
+    
+  }
+  console.log(phoneNumber,typeof phoneNumber )
+  console.log(referralCode,typeof referralCode)
+   if(typeof phoneNumber === 'object'&& phoneNumber !== null){
+    if(phoneNumber[0] !== ""){
+       phoneNumber = phoneNumber[0];
+    }
+    else{
+      phoneNumber = null
+    }
+   
+    
+  }
+   if(typeof referralCode === 'object' && referralCode !== null  ){
+    if(referralCode[0] !== ""){
+       referralCode = referralCode[0];
+    }else{
+      referralCode = null
+    }
+   
+    
+  }
+  
+    req.session.email = email;
+    req.session.tempUserName = userName;
+    req.session.password = password
+    req.session.phoneNumber = phoneNumber;
+    req.session.referralCode = referralCode;
     const OTP = otp.otpGenerator();
     await user.clearOtp(email)
     await user.storeOtpInDb(email,OTP)
     otp.sendEmail(email,OTP);
-    return res.status(200).render('User/otp',{userName,email,password,phoneNumber,referralCode,status:null,message:null})
+    return res.status(200).render('User/otp',{email,userName,password,phoneNumber,referralCode })
 }
 
 const verifyOtp = async (req,res) => {
-  const {otp,userName,email,password,phoneNumber} = req.body;
+  const {otp} = req.body;
+   const email = req.session.email
+   const userName =  req.session.tempUserName
+   const password =  req.session.password 
+   const phoneNumber =  req.session.phoneNumber 
    const referralCode = req.session.referralCode;
   const result = await user.checkOtp(otp,email);
-
+  
+  
    if(result){
     const code =  generateReferralCode(userName)
     
-    const userData =  await user.storeUserData(req,code,"user");
+    const userData =  await user.storeUserData(otp,userName,email,password,phoneNumber,referralCode,code,"user");
     await walletService.createWallet(userData._id)
     if(referralCode){
       await walletService.referralReward(userData._id,referralCode);
     }
-    return res.status(200).redirect('/login');
+     delete req.session.email
+     delete req.session.tempUserName
+     delete req.session.password 
+     delete req.session.phoneNumber 
+    return res.status(200).json({type:"success",href:"/login"});
   }
-  return res.status(400).render('User/otp',{userName,email,password,phoneNumber,referralCode,status:"error",message:"invalid OTP"});
+  return res.status(400).json({type:'error',message:"invalid OTP"});
 }
 
 const loadLoginPage = async(req,res) =>{
@@ -59,7 +108,9 @@ const authentication = async (req,res)=>{
   req.session.referralCode = data.referralId;
   req.session.profile = data.profile.url; 
   req.session._id = data._id
-  return res.status(200).redirect("/home");
+  req.session.save(() => {
+    res.render("User/redirectHome");
+   });
 }
 const loadSignupPage = (req,res)=>{
     res.render('User/sginup',{userName:null})
@@ -70,7 +121,7 @@ const loadHomePage=async(req,res)=>{
   const data =  await user.getAllCategory()
   const newProducts = await productService.getNewProducts()
   const watches = await productService.getWatches()
-
+  
   res.render('User/home',{userName,data,newProducts,watches,profile:req.session.profile});
 } 
 
@@ -116,12 +167,16 @@ const loadOtpPageForResetPassword = (req,res) =>{
 const resetPasswordOtpVarification = async (req,res) =>{
   const {otp} = req.body
   const {email} = req.session
-  
+
   const result = await user.checkOtp(otp,email);
  
-  if(result) return res.render('User/resetPassword')
-  return res.status(400).render('User/otpResetPassword',{email,status:"error",message:"invalid OTP"});
+  if(result) return res.json({type:"success",href:'/resetPasswordUser'})
+  return res.status(400).json({type:'error',message:"invalid OTP"})
 
+}
+
+const loadresetPasswordPage = async (req,res)=>{
+  res.status(200).render('User/resetPassword');
 }
 const resetPassword = async(req,res) =>{
  
@@ -224,16 +279,20 @@ const loadOtpPageForUpdateEmail = (req,res)=>{
 
 const verifyOptforUpdateEmail = async (req,res,next)=>{
   const email =req.session.newEmail
+  try{
+
 
    const result = await user.checkOtp(req.body.otp,email);
    console.log("otp resllt",result)
    if(result){
    await userService.updateUserData(req)
-    res.redirect("/userProfile");
+    return res.status(200).json({type:'success',href:"/userProfile"})
    }else{
-    req.flash("error","invalid otp");
-    res.redirect('/profile/otp')
+   return res.status(400).json({type:"error",message:"invalid otp"})
    }
+     }catch(error){
+       return res.status(500).json({type:"error",message:"Somthing was wrong"})
+     }
 }
 
 const userProfileResetPassword =async(req,res)=>{
@@ -276,6 +335,7 @@ export default {
     loadOtpPageForUpdateEmail,
     verifyOptforUpdateEmail,
     userProfileResetPassword,
-     resendOtp
+     resendOtp,
+     loadresetPasswordPage
     
 }

@@ -1,6 +1,7 @@
 import user from "../Service/userService.js"
 
 
+
 const checkEmailExists= async (req,res,next)=>{
     
     const {email,referralCode} = req.body;
@@ -9,7 +10,7 @@ const checkEmailExists= async (req,res,next)=>{
     const referredUser = await user.findReferralUser(referralCode.trim())
     if(!referredUser){
         req.flash("error","Invaid referral code")
-        res.status(404).redirect(req.originalUrl)
+      return  res.status(404).redirect(req.originalUrl)
        return res.status(404).json({status:"error",message:"Invaid referral code"});
     }
     else{
@@ -27,15 +28,18 @@ const checkEmailExists= async (req,res,next)=>{
 
 const isLoggedIn=(req,res,next) =>
 {
+     
     if(!req.session.userName) return next();
-    res.redirect('/home')
+    res.render("User/redirectHome");
 }
 const isUser = (req,res,next) =>{
+   
+    console.log("is userr",req.session.userName)
     if(req.session.role !== "user") {
-        return res.render('User/login',{userName:null,status:null,message:null});
+        return res.redirect('/login')
     }
     else{
-  return next()
+         next()
     }
 }
 
@@ -63,5 +67,7 @@ export default {
     isLoggedIn,
     isUser,
     checkEmail,
-    checkUser
+    checkUser,
+    
+   
 }

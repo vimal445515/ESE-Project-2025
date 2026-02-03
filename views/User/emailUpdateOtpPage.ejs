@@ -9,11 +9,6 @@
 </head>
 <body>
 
-    <% if(status==="error"){ %>
-    <div class="alert alert-danger" role="alert">
-  <%= message%>
-</div>
-    <%}%>
     <%- include("../partials/notification.ejs")%>
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="p-5 bg-light border rounded" style="width: 360px;">
@@ -47,10 +42,28 @@
 <script>
 
     document.getElementById("submit").addEventListener('click',(e)=>{
-        if(document.getElementById("otp").value===""){
-             e.preventDefault()
+     e.preventDefault()
+      const otp = document.getElementById('otp').value
+        if(otp===""){
              document.getElementById("error").textContent="OTP Required";
 
+        }
+        else{
+            fetch("/emailUpdateOtpVarification",
+                {method:'POST',
+                    headers:{'Content-Type':"application/json"},
+                    body:JSON.stringify({otp})
+                }
+
+            ).then(data=>data.json())
+            .then(data=>{
+                if(data.type === "success"){
+                    window.location.href = data.href;
+                }
+                else if(data.type === 'error'){
+                    showToast(data.message,'error');
+                }
+            })
         }
     })
   const  resendDiv = document.querySelector("#resend")
@@ -78,4 +91,5 @@
 
 
 </script>
+<script src="/script/tost.js"></script>
 </html>

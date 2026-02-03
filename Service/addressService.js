@@ -1,6 +1,6 @@
 
 import addressSchema from '../Models/addressSchema.js'
-
+import mongoose from 'mongoose'
 
 const storeAddress = async(data,id)=>{
 
@@ -21,11 +21,11 @@ const storeAddress = async(data,id)=>{
     address.country = data.country
    try{ 
       await addressSchema.create(address)
-    
+      return false
    }
    catch(error){
     console.log(error)
-    return "Somthing was wrong!"
+    return true
    }
 
 
@@ -43,12 +43,14 @@ const storeAddress = async(data,id)=>{
     address.phoneNumber = data.phoneNumber
     address.userId = id
     address.country = data.country
- 
+
    try{
-     await addressSchema.findOneAndUpdate({_id:data.addressId},data,{upsert:true,setDefaultsOnInsert:true})
+     await addressSchema.findOneAndUpdate({_id:new mongoose.Types.ObjectId(data.addressId)},data,{upsert:true,setDefaultsOnInsert:true})
+     false
    }
    catch(error){
-    return "Somthing was wrong!"
+    console.log(error)
+    return true
    }
 
   }else{
@@ -68,9 +70,11 @@ const storeAddress = async(data,id)=>{
     address.default = true
    try{
      await addressSchema.findOneAndUpdate({userId:id,default:true},data,{upsert:true,setDefaultsOnInsert:true})
+    return false
    }
    catch(error){
-    return "Somthing was wrong!"
+     console.log(error)
+    return true
    }
    }
 }

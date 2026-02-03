@@ -226,6 +226,8 @@ const returnSingleProduct= async(req,res)=>{
 
 
 
+
+
 export default {
     loadOrdersHistory,
     loadOrderDetailPage,
