@@ -328,11 +328,17 @@
       }).then(data=>data.json())
       .then(data=>{
         if(data.status=='error'){
-          alert(data.message)
+          showToast(data.message,'error')
         }
         if(data.status =="success"){
-          alert(data.message)
+          document.getElementById("password").value = "";
+          document.getElementById("newPassword").value = "";
+           document.getElementById("confirmPassword").value = "";
+          showToast(data.message)
         }
+      })
+      .catch((error)=>{
+        showToast('Somthing was Wrong',"error");
       })
     }
     else{
