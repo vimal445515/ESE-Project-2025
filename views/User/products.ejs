@@ -137,11 +137,11 @@
                     <button class="me-2 btn btn-light" onclick="Clear()">Clear</button>
                     <label for="sortPrice" class="me-2 text-nowrap">Sort By:</label>
                     <select class="form-select form-select-sm" id="sort" style="width: auto;">
-                        <option value="" selected>sort</option>
-                        <option value="ltoH">Low to high</option>
-                        <option value="htoL">High to low</option>
-                        <option value="AZ">Name (A-Z)</option>
-                        <option value="ZA">Name (Z-A)</option>
+                        <option value=""  <%= !sort?'selected':''%>>sort</option>
+                        <option  <%= sort=== 'ltoH'?'selected':''%> value="ltoH">Low to high</option>
+                        <option <%= sort=== 'htoL'?'selected':''%> value="htoL">High to low</option>
+                        <option <%= sort=== 'AZ'?'selected':''%> value="AZ">Name (A-Z)</option>
+                        <option <%= sort=== 'ZA'?'selected':''%> value="ZA">Name (Z-A)</option>
                     </select>
                 </div>
             </div>
