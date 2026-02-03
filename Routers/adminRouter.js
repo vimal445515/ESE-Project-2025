@@ -1,7 +1,7 @@
 import {Router} from 'express'
 import { isLoggedIn,isAdmin,checkEmail} from '../middleware/adminMiddleware.js'
 import categoryThumbnail from '../Config/categoryThumbnail.js'
-import { loadLoginPage,authentication,loadUserManagementPage,loadCategoriePage,LoadAddCategoriesPage, logout,loadEditCategoriesPage, loadAddProductPage, blockUser, unBlockUser, deleteUser, ActiveUsers,blockedUsers,saveCategoryData ,handleImage,blockCategory,editCategory,handleEditImage} from '../Controllers/admin/controller.js'
+import { loadLoginPage,authentication,loadUserManagementPage,loadCategoriePage,LoadAddCategoriesPage, logout,loadEditCategoriesPage, loadAddProductPage, blockUser, unBlockUser, deleteUser, ActiveUsers,blockedUsers,saveCategoryData ,handleImage,blockCategory,editCategory} from '../Controllers/admin/controller.js'
 import product from '../Controllers/product.js'
 import resetPassword from '../Controllers/admin/resetPassword.js'
 import adminOrderController from '../Controllers/admin/adminOrderController.js'
@@ -34,7 +34,7 @@ router.get('/user/active',isAdmin,ActiveUsers)
 router.get('/user/block',isAdmin,blockedUsers)
 router.post('/category',isAdmin,handleImage,saveCategoryData)
 router.post('/category/block/:id/:isBlocked',isAdmin,blockCategory,loadCategoriePage)
-router.post('/category/edit/:id',isAdmin,handleEditImage,editCategory)
+router.post('/category/edit/:id',isAdmin,handleImage,editCategory)
 
 router.post('/product/add', isAdmin,categoryThumbnail.any(),product.storeProducts)
 router.patch('/product/edit/:id',isAdmin,categoryThumbnail.any(),product.editProduct)

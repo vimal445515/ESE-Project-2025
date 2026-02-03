@@ -105,22 +105,31 @@ export const loadUserManagementPage = async(req,res) =>{
 export const handleImage = (req,res,next)=>{
     categoryThumbnail.single("image")(req,res,(error)=>{
     if(error?.code==="LIMIT_FILE_SIZE"){
-        return res.status(400).render("Admin/addCategory",{status:"error",message:"File have a limit 2MB"})
+        return res.status(400).json({type:'error',message:"File have a limit 2MB"})
+       
     }
-    if(error?.message ==='only image file are allowed'){
-        return res.status(400).render("Admin/addCategory",{status:"error",message:"Only image file are allowed"});
+    if( error?.message?.includes("Invalid image") ||error?.message?.includes("Format") || error?.message?.includes("allowed")){
+        return res.status(400).json({type:'error',message:"Only image file are allowed"})
     }
     next()
 })
 }
 
 export const saveCategoryData =async (req,res)=>{
-    if(!req.file) res.status(400).render("Admin/addCategory",{status:"error",message:"invalid image upload"})
+    try{
+    if(!req.file) return res.status(400).json({type:"error",message:'image Required'});
     const publicId = req.file.filename
     const url = req.file.path
-    if( await categoryService.findCategoryByName(req.body.categoryName)) return res.status(401).render("Admin/addCategory",{status:"error",message:"category already exists"});
-    adminService.addCategorInDB(req.body.categoryName,publicId,url)
-    res.redirect('/admin/categories')
+    if( await categoryService.findCategoryByName(req.body.categoryName)) {
+         await cloudinary.uploader.destroy(req.file.filename)
+        return res.status(401).json({type:'error',message:"Category already exists"});
+    }
+    await adminService.addCategorInDB(req.body.categoryName,publicId,url)
+    res.status(200).json({type:"success",href:'/admin/categories'})
+    }catch(error){
+        console.log(error);
+        res.status(500).json({type:'error',message:"Connection failed"})
+    }
 }
 
 export const loadCategoriePage =  async (req,res) =>{
@@ -141,46 +150,17 @@ export const blockCategory = async (req,res,next)=>{
  next()
 }
 
-export const handleEditImage = (req,res,next)=>{
-    console.log(req.file)
-    categoryThumbnail.single("image")(req,res, async(error)=>{
 
-        if(error?.code==="LIMIT_FILE_SIZE"){
-            
-            const isFetch = req.headers["content-type"]?.includes("application/json") || req.headers["x-requested-with"] === "XMLHttpRequest";
-            if(isFetch){
-                return res.status(400).json('File size is only allowed 2MP')
-            }
-                const parts = req.originalUrl.split("/");
-                const root = parts[2];
-                if(root ==="category"){
-                    const id = req.params.id
-               const data = await adminService.getCategoryFromDB(id)
-               return  res.status(400).render('Admin/editCategory',{data,status:"error",message:"File size is only allowed 2MP"})
-                }
-                
-        
-    }
-    if (
-    error?.message.includes("Invalid image file") ||
-    error?.message.includes("allowed formats") ||
-    error?.message.includes("format")
-  ){
-       req.flash("error","Please upload a valid image file.");
-       let url = req.originalUrl.split("/")
-        let id = url.pop()
-       
-       res.redirect(`/admin/editCategory/${id}`);
-    }
-      next()
-    })
-
-}
 export const editCategory = async (req,res)=>{
+    try{
     const data = await adminService.getCategoryFromDB({_id:req.params.id})
-    if( await categoryService.findCategoryByName(req.body.categoryName)){
-        req.flash("error","category already exists");
-        return res.status(401).render("Admin/editCategory",{data,status:"error",message:"category already exists"})
+    
+    if( await categoryService.findCategoryByName(req.body.categoryName,data._id)){
+        if(req?.file){
+           await cloudinary.uploader.destroy(req.file.filename)
+        }
+       return res.status(409).json({type:"error",message:"category already exists"})
+       
          
     };
    
@@ -188,9 +168,13 @@ export const editCategory = async (req,res)=>{
     const publicId = req.file?req.file.filename:data.thumbnail.publicId;
     if( req?.file)
     { 
-       cloudinary.uploader.destroy(data.thumbnail.publicId)
+      await cloudinary.uploader.destroy(data.thumbnail.publicId)
     }
     adminService.updateCategory(req.params.id,req.body.categoryName,url,publicId)
-    return res.redirect('/admin/categories')
+    return res.status(200).json({type:'success',href:'/admin/categories'})
+}catch(error){
+ console.log(error);
+ return res.status(500).json({type:'error',message:"Something was wrong"})
+}
 }
 

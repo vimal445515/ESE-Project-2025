@@ -1,12 +1,12 @@
 import { categoryModel } from "../Models/categorySchema.js";
 import mongoose from "mongoose"
-const findCategoryByName = async (name)=>{
+const findCategoryByName = async (name,_id=null)=>{
     let inputName = name.toLowerCase()
-    let  dBNames = await categoryModel.find({},{categoryName:1,_id:0});
+    let  dBNames = await categoryModel.find({},{categoryName:1});
     
     for(let categoryObj of dBNames)
     {
-        if(categoryObj.categoryName.toLowerCase() === inputName)
+        if(categoryObj.categoryName.toLowerCase() === inputName && categoryObj._id.toString() !== _id?.toString())
         {
           
            return true
