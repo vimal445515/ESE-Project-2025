@@ -20,7 +20,10 @@ const storeAddress = async(data,id)=>{
     address.userId = id
     address.country = data.country
    try{ 
-      await addressSchema.create(address)
+    const newData = await addressSchema.create(address)
+      if(data.newDefault){
+        await updateAddressAsDefault(newData._id,id);
+      }
       return false
    }
    catch(error){
@@ -87,6 +90,13 @@ const getUserAddress= async (_id)=>{
 }
 
 
+const updateAddressAsDefault = async(_id,userId)=>{
+  
+ const data =await addressSchema.findOneAndUpdate({userId:new mongoose.Types.ObjectId(userId),default:true},{$set:{default:false}});
+
+  await addressSchema.findOneAndUpdate({_id:new mongoose.Types.ObjectId(_id)},{$set:{default:true}});
+}
+
 
 const getAllAddressForCheckout = async(_id) =>{
   const data = await addressSchema.find({userId:_id})
@@ -113,5 +123,6 @@ export default
     getUserAddress,
     getAllAddressForCheckout,
     findAddressFromDB,
-    deleteAddressFromDB
+    deleteAddressFromDB,
+    updateAddressAsDefault
 }

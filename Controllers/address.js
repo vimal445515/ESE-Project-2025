@@ -23,6 +23,7 @@ const loadAddressPage = async(req,res)=>{
     let allAddress = await addressService.getAllAddressForCheckout(req.session._id);
     data = data||null
     if(allAddress.length ===0) allAddress = null;
+    console.log(data);
     res.render('User/address',{userName:req.session.userName,profile:req.session.profile,data,allAddress})
 }
 
@@ -38,11 +39,23 @@ const deleteAddress = async (req,res)=>{
      res.status(200).json({message:"address Deleted successfully"});
 }
 
+const updateAddressAsDefault = async(req,res)=>{
+  const {addressId} = req.body;
+   try{
+    await addressService.updateAddressAsDefault(addressId,req.session._id);
+    res.status(200).json({type:'success',href:'/address'})
+   }catch(error){
+    console.log(error);
+    res.status(500).json({type:'error',message:"Connection faild"});
+   }
+
+}
 
 export default
 {
 address,
 loadAddressPage,
 loadSelectedAddress,
-deleteAddress
+deleteAddress,
+updateAddressAsDefault
 }

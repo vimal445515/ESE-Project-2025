@@ -96,10 +96,16 @@
                             <div class="col-lg-4 mb-3 mb-lg-0">
                                 <label class="form-label" >Company Name <span class="text-muted fw-light">(Optional)</span></label>
                                 <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>" class="form-control">
-                            </div>
-
+                               
                             
                         </div>
+                          <div class="col-lg-3  mb-lg-0">
+                            Default address:
+                         <input type="checkbox" id="defaultAddress" >
+                          <input type="checkbox" class="d-none" id="newDefaultAddress" >
+                         </div>
+                            </div>
+                            
 
                         <div class="mb-4">
                             <label class="form-label">Address *</label>
@@ -206,7 +212,7 @@
                                 <select name="addresses" id="addressSelect" class="form-select">
                                    <% if(allAddress){%> 
                                     <% allAddress.forEach(address=>{%>
-                                    <option value="<%= address?._id||``%>" "<%= address?.default === true?'selected':''%>"><%= address?.address||``%></option>
+                                    <option value="<%= address?._id||``%>" "<%= address?.default === true?'selected':''%>" ><%= address?.address||``%></option>
                                     <%})%>
                                     <%}%>
                                 
@@ -230,6 +236,12 @@
                             </div>
             </form> </div> </div> <%- include("../partials/footer") %>
             <script>
+                
+     <%if(data.default===true){%>
+      
+            document.getElementById('defaultAddress').checked = true
+        <%}%>
+
              let  tempState ='';
              let  tempCountry='';
               let  tempDistrict='';
@@ -238,7 +250,6 @@
     e.preventDefault()
     let isValid = true;
 
-     
   
 
   console.log( tempState )
@@ -261,7 +272,16 @@
     const pinCode = form.pinCode.value.trim();
     const email = form.email.value.trim();
     const phoneNumber = form.phoneNumber.value.trim();
-
+    let newDefault = null;
+    if(form.isNew.value){
+        if(document.getElementById('newDefaultAddress').checked === true){
+            newDefault = true;
+    }
+    else{
+       newDefault = false;
+    }
+    }
+    
 
 
        
@@ -359,7 +379,8 @@
             phoneNumber,
             companyName:form.companyName.value,
             isNew:form.isNew.value,
-            addressId:form.addresses.value
+            addressId:form.addresses.value,
+            newDefault
      })
    
     if (isValid) {
@@ -432,11 +453,23 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
                 document.getElementById('email').value  = data.email
                 document.getElementById('phoneNumber').value = data.phoneNumber
                 e.vaule = data.address;
+
+                if(data.default == true){
+                     document.getElementById('defaultAddress').checked = true
+                }else{
+                     document.getElementById('defaultAddress').checked = false
+                }
      })
    })
    })
 
+
+
+
    function addNewAddress(){
+    document.getElementById('defaultAddress').classList.add('d-none')
+    document.getElementById('newDefaultAddress').classList.remove('d-none')
+    document.getElementById('newDefaultAddress').classList.add('d-inline-block')
             document.getElementById('new').value= "newAddress";
             document.getElementById('userName').value =''
             document.getElementById('address').value =''
@@ -464,6 +497,11 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
         
         window.location.reload()
     })
+     .catch((error) => {
+    console.log(error)
+    showToast('Something went wrong', 'error');
+    e.target.checked = false;
+   });
     }
   
  }
@@ -489,7 +527,34 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
   }
 }
 
-   
+
+document.getElementById('defaultAddress').addEventListener('click',(e)=>{
+   if (!e.target.checked) {
+    e.target.checked = true;
+    return;
+  }
+     fetch('/address/defaultAddress', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      addressId: document.getElementById('addressSelect').value
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.type === 'success') {
+      window.location.href = result.href;
+    } else {
+      showToast(result.message, 'error');
+      e.target.checked = false; 
+    }
+  })
+  .catch((error) => {
+    console.log(error)
+    showToast('Something went wrong', 'error');
+    e.target.checked = false;
+  });
+})
 
   
 

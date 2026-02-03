@@ -7,5 +7,5 @@ router.get('/',auth.isUser,auth.checkUser,addressController.loadAddressPage)
 router.get('/:id',auth.isUser,addressController.loadSelectedAddress)
 router.post('/',auth.isUser,auth.checkUser,addressController.address) 
 router.delete("/",auth.isUser,auth.checkUser,addressController.deleteAddress)
-
+router.patch('/defaultAddress',auth.isUser,addressController.updateAddressAsDefault)
 export default router;
