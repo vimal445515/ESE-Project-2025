@@ -1,10 +1,15 @@
 
 export const isLoggedIn=(req,res,next) =>
-{
-    if(!req.session.adminName ) return next();
+{    console.log("isLoggedIn first")
+    if(!req.session.adminName ) {
+        console.log(req.session.adminName)
+        return next();
+    }
+    console.log("isLoggedIn first")
     res.redirect('/admin/home')
 }
 export const isAdmin = (req,res,next) =>{
+    console.log('isAdmin',req.session?.adminRole)
      if(req.session.adminRole ==="admin") return next();
      res.redirect('/admin/login');
 }

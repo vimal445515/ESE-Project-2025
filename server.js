@@ -36,12 +36,13 @@ cloudinary.api.ping()
   .then(() => console.log("Cloudinary connected "))
   .catch(err => console.error("Cloudinary error ", err));
 
-app.use(flash())
-app.use(nocache())
 app.use(sessionMiddleware)
-app.use(express.static(path.join(__dirname,"public")))
+app.use(flash())
+
 app.use(express.json())
 app.set("view engine","ejs")
+app.use(nocache())
+app.use(express.static(path.join(__dirname,"public")))
 app.use(express.urlencoded({extended:true}))
 app.set("views",path.join(__dirname,"views"))
 app.use(passport.initialize());

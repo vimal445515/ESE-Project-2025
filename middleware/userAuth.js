@@ -30,7 +30,7 @@ const isLoggedIn=(req,res,next) =>
 {
      
     if(!req.session.userName) return next();
-    res.render("User/redirectHome");
+    res.status(200).redirect("/home");
 }
 const isUser = (req,res,next) =>{
    

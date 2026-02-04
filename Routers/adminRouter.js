@@ -10,7 +10,7 @@ import adminDashBoardController from '../Controllers/adminDashBoardController.js
 const router = Router()
 
 router.get("/login",isLoggedIn,loadLoginPage)
-router.post("/login",authentication)
+router.post("/login",isLoggedIn,authentication)
 router.get("/home",isAdmin,adminDashBoardController.loadAdminDashboard)
 router.get("/user",isAdmin,loadUserManagementPage)
 router.get("/categories",isAdmin,loadCategoriePage)

@@ -4,7 +4,7 @@ export const sessionMiddleware =  session({
     secret:"this is a password",
     resave:false,
     saveUninitialized:false,
-    Cookie:{
+    cookie:{
         maxAge:100*60*60
     }
 })

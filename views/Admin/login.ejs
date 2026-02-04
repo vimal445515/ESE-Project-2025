@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
+    <%- include("../partials/notification.ejs")%>
     <% if(status === "error"){%>
             <p class="alert alert-danger">Error! <%= message%></p>
            <%} %>
@@ -54,7 +55,7 @@
         emailError.classList.remove("d-none");
         valid = false;
     } else {
-        console.log("hello")
+        
         emailError.classList.add("d-none");
         const data = JSON.stringify({email:email})
        
@@ -72,12 +73,6 @@
     }
 }
 
- window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      
-      window.location.reload();
-    }
-  });
 </script>
 </body>
 </html>

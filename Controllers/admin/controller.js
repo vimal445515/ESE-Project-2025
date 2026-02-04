@@ -5,15 +5,24 @@ import categoryThumbnail from '../../Config/categoryThumbnail.js'
 import fs from 'fs'
 import categoryService from '../../Service/categoryService.js'
 import cloudinary from '../../Config/cloudinary.js'
+import { error } from 'console'
 export const loadLoginPage=(req,res)=>{
     res.status(200).render('Admin/login',{status:"success",message:"login page loaded successfully"})
 }
 
 export const authentication = async (req,res)=>{
    const {email,password} = req.body
+   console.log(email,password)
    const  data =  await adminService.getAdminFromDB(email);
-   if(!data) return res.status(401).render('admin/login',{status:"error",message:"Admin not found"})
-   if(!data||data.role != "admin") return res.status(401).render('admin/login',{status:"error",message:"Sorry access denieted You are not Admin"})
+   console.log(data);
+   if(!data) {
+    req.flash('error',"Admin not found",error)
+    return res.status(401).redirect('/admin/login')
+   }
+   if(data.role !== "admin"){
+    req.flash('error',"Sorry access denieted You are not Admin")
+    return res.status(401).redirect('/admin/login')
+   } 
    if(hash.comparePassword(password,data.password))
    {
     req.session.adminName = data.userName;
@@ -22,7 +31,8 @@ export const authentication = async (req,res)=>{
    }
    else
    {
-    res.status(400).render('admin/login',{status:"error",message:"invalid password"})
+    req.flash('error',"invalid password",'error')
+    res.status(400).redirect('/admin/login')
    }
    
 }

@@ -98,8 +98,15 @@ const loadLoginPage = async(req,res) =>{
 const authentication = async (req,res)=>{
   const {email,password}= req.body
   const data = await user.findUserFromDB(email)
-  if(!data) return res.status(404).render('User/login',{userName:null,status:"error",message:"User Not found"});
-  if(!hash.comparePassword(password,data.password)) return res.status(401).render("User/login",{userName:null,status:'error',message:"invaid password"});
+ 
+  if(!data){
+     req.flash('error',"User Not found")
+     return res.status(404).json('/login');
+  } 
+  if(!hash.comparePassword(password,data.password)){
+    req.flash('error',"invaid password")
+      return res.status(401).redirect("/login");
+  } 
 
   req.session.userName = data.userName
   req.session.email = data.email
@@ -109,7 +116,7 @@ const authentication = async (req,res)=>{
   req.session.profile = data.profile.url; 
   req.session._id = data._id
   req.session.save(() => {
-    res.render("User/redirectHome");
+    res.status(200).redirect('/home');
    });
 }
 const loadSignupPage = (req,res)=>{

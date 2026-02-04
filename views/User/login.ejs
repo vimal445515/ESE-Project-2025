@@ -39,11 +39,8 @@ input[type="password"]::-ms-clear {
 <body>
 
 <%- include("../partials/navbar") %>
-<% if(status==="error"){ %>
-    <div  class="alert alert-danger" role="alert">
-  <%= message%>
-</div>
-    <%}%>
+
+
     <div id="error"></div>
 <div class="container d-flex justify-content-center py-5">
 
@@ -143,12 +140,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     }
 });
 
- window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      
-      window.location.reload();
-    }
-  });
+
 
 
   const password = document.getElementById('password');
