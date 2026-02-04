@@ -17,53 +17,58 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
         throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
     }
     
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    let errorMessage = 'orderFaild'
+  
+   try{
     if(paymentMethod==='wallet'){
         
-        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
+        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)}).session(session);
         
         if(wallet.balance < orderDetails.total){
-            throw new Error('"Your wallet balance is less than the order total. Please use another payment method ');
+            errorMessage = 'Your wallet balance is less than the order total. Please use another payment method ';
+            throw new Error('Your wallet balance is less than the order total. Please use another payment method ');
         }else{
             wallet.balance = wallet.balance-orderDetails.total;
-            await wallet.save();
+            await wallet.save({session});
 
              let transactionId = helpers.generateTransactionId()
-                await walletTransaction.create({
+                await walletTransaction.create([{
                     transactionId:transactionId,
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:orderDetails.total,
                     type:"debit",
                     orderId:null
-                })
+                }],{session})
         }
     }
 
-    //store address
-    await addressModel.create()
+   
 
     // Reduce stock
-
+  
     
         await productModel.findOneAndUpdate(
         {_id: new mongoose.Types.ObjectId(productId)},
         {$inc:{'variants.$[variant].stock':-Number(quantity)}},
         {arrayFilters:[
             {'variant._id':variantId}
-        ]}
+        ],session}
     )
    
     
 
     let couponData
     if(coupon){
-       couponData =  await couponModel.findOne({couponCode:coupon})
+       couponData =  await couponModel.findOne({couponCode:coupon}).session(session)
        couponData = {
         couponCode:couponData.couponCode,
         discount:couponData.discount,
         maximumDiscount:couponData.maximumDiscount,
         minimumOrder:couponData.minimumOrder
        }
-        await couponUseCount.create({userId,couponCode:coupon})
+        await couponUseCount.create([{userId,couponCode:coupon}],{session})
     }
     else{
         couponData = null;
@@ -71,7 +76,7 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
 
     //create order
     const orderId = helper.generateOrderId()
-    const data = await orderModel.create({
+    const data = await orderModel.create([{
         userId:userId,
         orderId:orderId,
         items:[
@@ -112,8 +117,18 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
         },
         coupon:couponData,
         orderStatus:paymentMethod==='razorpay'?'pending':"placed"
-    })
+    }],{session})
+    await session.commitTransaction();
+     session.endSession();
     return data
+
+}catch(error){
+     await session.abortTransaction(); 
+    console.error('Transaction failed:', error);
+    throw new Error(errorMessage)
+}finally{
+    session.endSession();
+}
 }
 
 
@@ -123,30 +138,34 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
     if(reqObj.payment === "cod" && orderDetails.total > 1000) {
         throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
     }  
-
+    let errorMessage = "order Faild"
+     const session = await mongoose.startSession();
+    session.startTransaction();
+    try{
     if(reqObj.payment==='wallet'){
         
-        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)});
+        const wallet = await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)}).session(session);
         
         if(wallet.balance < orderDetails.total){
-            throw new Error('"Your wallet balance is less than the order total. Please use another payment method ');
+            errorMessage = 'Your wallet balance is less than the order total. Please use another payment method '
+            throw new Error('Your wallet balance is less than the order total. Please use another payment method ');
         }else{
             wallet.balance = wallet.balance-orderDetails.total;
-            await wallet.save();
+            await wallet.save({session});
 
              let transactionId = helpers.generateTransactionId()
-                await walletTransaction.create({
+                await walletTransaction.create([{
                     transactionId:transactionId,
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:orderDetails.total,
                     type:"debit",
                     orderId:null
-                })
+                }],{session})
         }
     }
 
    
-    products.forEach(async (product)=>{
+    for(let product of products){
         items.push({
             productId:product.productId,
             variantId:product.variantId,
@@ -164,24 +183,24 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
             {
                 arrayFilters:[
                     {'variant._id':product.variantId}
-                ]
+                ],session
             }
 
         )
 
-        await wishlistModel.deleteOne({productId:product.productId,variantId:product.variantId})
+        await wishlistModel.deleteOne({productId:product.productId,variantId:product.variantId},{session})
 
-    })
+    }
     let couponData
     if(coupon){
-        couponData =  await couponModel.findOne({couponCode:coupon})
+        couponData =  await couponModel.findOne({couponCode:coupon}).session(session)
        couponData = {
         couponCode:couponData.couponCode,
         discount:couponData.discount,
         maximumDiscount:couponData.maximumDiscount,
         minimumOrder:couponData.minimumOrder
        }
-        await couponUseCount.create({userId,couponCode:coupon})
+        await couponUseCount.create([{userId,couponCode:coupon}],{session})
     }
     else{
         couponData = null;
@@ -189,7 +208,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
 
     const orderId = helper.generateOrderId()
 
-  const data =   await orderModel.create({
+  const data =   await orderModel.create([{
         userId:userId,
         orderId:orderId,
         items:items,
@@ -217,11 +236,19 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
         },
         coupon:couponData
     
-    })
+    }],{session})
  
-    await cartModel.deleteMany({userId:userId})
+    await cartModel.deleteMany({userId:userId},{session})
+    await session.commitTransaction();
+     session.endSession();
     return data;
-
+}catch(error){
+      await session.abortTransaction(); 
+    console.error('Transaction failed:', error);
+    throw new Error(errorMessage) 
+}finally{
+     session.endSession();
+}
 }
 
 const checkOrderStock= async(productId,variantId)=>{

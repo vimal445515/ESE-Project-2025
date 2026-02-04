@@ -524,11 +524,17 @@
             payNow(data.orderId)
             return 
          }
+         if(data.type === 'razorpayError'){
+             showToast(data.message,'error',)
+             return
+         }
          if(data.type === 'walletError'){
             showToast(data.message,'error',)
+            return
          } 
          if(data.type ==='codError'){
             showToast(data.message,'error');
+            return
          }
         if(data.type ==="error"){
             window.location.href = data.href;
