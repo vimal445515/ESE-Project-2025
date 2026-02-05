@@ -15,8 +15,9 @@ router.get('/login',Auth.isLoggedIn,userControllers.loadLoginPage);
 router.post('/login',userControllers.authentication);
 router.get("/home",Auth.isUser,Auth.checkUser,userControllers.loadHomePage);
 router.get("/logout",userControllers.logout);
+
 router.post("/resetPassword",userControllers.findEmail,userControllers.generateOtpForPasswordReset)
-router.get("/resetPassowrdOtp",Auth.checkEmail,userControllers.loadOtpPageForResetPassword)
+router.get("/resetPassowrdOtp",Auth.otpCheck,Auth.checkEmail,userControllers.loadOtpPageForResetPassword)
 router.post('/otpVerificationResetPassword',Auth.checkEmail,userControllers.resetPasswordOtpVarification)
 router.get('/resetPasswordUser',userControllers.loadresetPasswordPage)
 router.post('/resetPasswordUser',Auth.checkEmail,userControllers.resetPassword)

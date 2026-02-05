@@ -78,7 +78,7 @@ const editProduct = async  (req,res) =>{
      ]
       
 
-    productHelper.deleteExeistingImage(data.generalPhoto,data.variants.images[0],data.variants.images[1],data.variants.images[2],data.variants.images[0]);
+    productHelper.deleteExeistingImage(data.generalPhoto,data.variants.images[0],data.variants.images[1],data.variants.images[2],data.variants.images[3],variant.images,generalPhoto);
     
     data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variant,req.params.id,index)
     console.log(data.variants[0].images[0]);

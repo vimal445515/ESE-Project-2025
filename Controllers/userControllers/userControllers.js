@@ -97,6 +97,7 @@ const loadLoginPage = async(req,res) =>{
 
 const authentication = async (req,res)=>{
   const {email,password}= req.body
+  try{
   const data = await user.findUserFromDB(email)
  
   if(!data){
@@ -118,6 +119,10 @@ const authentication = async (req,res)=>{
   req.session.save(() => {
     res.status(200).redirect('/home');
    });
+  }catch(error){
+     req.flash('error',"Connection Faild")
+      return res.status(401).redirect("/login");
+  }
 }
 const loadSignupPage = (req,res)=>{
     res.render('User/sginup',{userName:null})
@@ -174,13 +179,18 @@ const loadOtpPageForResetPassword = (req,res) =>{
 const resetPasswordOtpVarification = async (req,res) =>{
   const {otp} = req.body
   const {email} = req.session
-
+try{
   const result = await user.checkOtp(otp,email);
  
   if(result) return res.json({type:"success",href:'/resetPasswordUser'})
   return res.status(400).json({type:'error',message:"invalid OTP"})
+}catch(error){
+  console.log(error)
+  return  res.status(500).json({type:'error',message:"Connection failed"})
+}
 
 }
+
 
 const loadresetPasswordPage = async (req,res)=>{
   res.status(200).render('User/resetPassword');
@@ -343,6 +353,7 @@ export default {
     verifyOptforUpdateEmail,
     userProfileResetPassword,
      resendOtp,
-     loadresetPasswordPage
+     loadresetPasswordPage,
+  
     
 }

@@ -19,12 +19,18 @@ const storeOtpInDb = async (email,otp) =>{
 
 const checkOtp = async(otp,email) =>{
     
-    const data = await OtpModel.findOne({email})
+    const data = await OtpModel.findOne({email,expiresAt:{$gte:new Date()}})
+    if(data?.expiresAt.getTime() <= Date.now())return false;
     console.log(otp,data?.otp);
-    if(otp == data?.otp) return true;
+    if(otp == data?.otp){
+        console.log(data.expiresAt, new Date())
+        await OtpModel.findOneAndDelete({email})
+        return true;
+    } 
     return false;
 
 }
+
 
 const storeUserData  = async (otp,userName,email,password,phoneNumber,referralCode,referralId,role)=>
 {
@@ -154,6 +160,7 @@ export default {
     verifyData,
     updateUserData,
     getCorrentPassword,
-    findReferralUser
+    findReferralUser,
+  
 
 }

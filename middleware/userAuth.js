@@ -1,3 +1,4 @@
+import { OtpModel } from "../Models/otpSchema.js";
 import user from "../Service/userService.js"
 
 
@@ -59,7 +60,14 @@ const checkUser = async (req,res,next)=>{
     res.redirect("/login");
 }
 
-
+const otpCheck = async (req,res,next)=>{
+   const isValid =  await OtpModel.findOne({email:req.session.email});
+    if(isValid){
+        next()
+    }else{
+        res.status(400).redirect('/forgotPasswordEmail');
+    }
+}
 
 
 export default {
@@ -68,6 +76,7 @@ export default {
     isUser,
     checkEmail,
     checkUser,
+    otpCheck
     
    
 }

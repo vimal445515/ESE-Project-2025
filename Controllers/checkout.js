@@ -30,7 +30,7 @@ const loadCheckOutPage = async (req,res)=>{
     else{
             if(!await orderSevice.checkOrderStock(req.query.productId,req.query.variantId)){
                 req.flash('error','product is out of stock!')
-                return res.redirect(`/productDetails/${req.query.productId}`)
+                return res.redirect(`/productDetails/${req.query.productId}?variantId=${req.query.variantId}`)
             }
 
         products = await checkoutService.getProduct(req.query.productId,req.query.variantId)
