@@ -9,10 +9,12 @@ import couponService from "../Service/couponService.js";
 
 const loadCheckOutPage = async (req,res)=>{
 
-    const path = req.headers.referer.split('/').pop().trim()
+    const path = req.headers?.referer?.split('/')?.pop()?.trim()
     let products;
     if(path ==="cart"){
           products =  await cartService.getCartItems(req.session._id)
+          console.log(products)
+          if(products.length === 0) return res.status(200).redirect('/cart');
           const status =  await orderSevice.checkOrderStockForCart(products)
             if(! status.flag || products.length ==0){
                 console.log("this is working")
@@ -30,6 +32,11 @@ const loadCheckOutPage = async (req,res)=>{
     else{
             if(!await orderSevice.checkOrderStock(req.query.productId,req.query.variantId)){
                 req.flash('error','product is out of stock!')
+                return res.redirect(`/productDetails/${req.query.productId}?variantId=${req.query.variantId}`)
+            }
+            const validationData = await orderSevice.checkOrderStockAndQuantity(req.query.productId,req.query.variantId,Number(req.query.quantity))
+            if(!validationData.valid){
+                 req.flash('error',`Only ${validationData.stock} Stock available!`)
                 return res.redirect(`/productDetails/${req.query.productId}?variantId=${req.query.variantId}`)
             }
 

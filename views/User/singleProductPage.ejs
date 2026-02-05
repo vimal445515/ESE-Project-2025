@@ -544,6 +544,11 @@ document.getElementById('incrementButton').addEventListener("click",()=>{
     sessionStorage.setItem('quantity',quantity);
     window.location.reload()
 
+ }else{
+    showToast(`Only ${stock} stock is available`,'error');
+    setTimeout(()=>{
+        window.location.reload()
+    },2000)
  }
 })
 

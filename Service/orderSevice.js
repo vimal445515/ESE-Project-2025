@@ -259,11 +259,29 @@ const checkOrderStock= async(productId,variantId)=>{
         {$match:{"variants._id": new mongoose.Types.ObjectId(variantId)}}
     ])
         
-        if(product.length===0 || Number(product[0]?.variants?.stock) < 1){
+        if(product.length===0 || Number(product[0]?.variants?.stock) < 1  ){
             return false;
         }
 
     return true;
+
+
+}
+
+
+const checkOrderStockAndQuantity= async(productId,variantId,quantity)=>{
+   
+   const product = await productModel.aggregate([
+        {$match:{_id:new mongoose.Types.ObjectId(productId)}},
+        {$unwind:"$variants"},
+        {$match:{"variants._id": new mongoose.Types.ObjectId(variantId)}}
+    ])
+        
+        if(quantity > Number(product[0]?.variants?.stock) ){
+            return {stock: Number(product[0]?.variants?.stock),valid:false}
+        }
+
+    return {valid:true};
 
 
 }
@@ -279,7 +297,7 @@ const checkOrderStockForCart= async(products)=>{
         {$match:{"variants._id":item.variantId}}
     ])
         
-        if(product[0].variants.stock < 1){
+        if(product[0].variants.stock < 1 || item.quantity > product[0].variants.stock){
             flag = false;
            outOfStockProducts += " "+product[0].productName;     
         }
@@ -744,6 +762,7 @@ export default {
     aproveSingleReturnProduct,
     getOrdersForSalesReport,
     countDeliveredOrders,
-    getOrdersForSalesReportDownload
+    getOrdersForSalesReportDownload,
+    checkOrderStockAndQuantity
    
 }
