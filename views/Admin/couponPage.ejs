@@ -199,7 +199,7 @@
                                         <td class="text-muted"><%= coupon.createdAt.toString().slice(0,16)%></td>
                                         <td class="text-muted"><%= coupon.expiryDate?.toString().slice(0,16)%></td>
                                         <td class="text-center">
-                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','coupon.expiryDate')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
+                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','<%=coupon.expiryDate%>')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
                                              <%if(coupon.isActive){%>
                                             <button type="button" onclick="deactive('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
                                              <%}else{%>

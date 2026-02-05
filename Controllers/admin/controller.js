@@ -135,7 +135,7 @@ export const saveCategoryData =async (req,res)=>{
         return res.status(401).json({type:'error',message:"Category already exists"});
     }
     await adminService.addCategorInDB(req.body.categoryName,publicId,url)
-    res.status(200).json({type:"success",href:'/admin/categories'})
+    return res.status(200).json({type:"success",href:'/admin/categories'})
     }catch(error){
         console.log(error);
         res.status(500).json({type:'error',message:"Connection failed"})
@@ -157,7 +157,7 @@ export const blockCategory = async (req,res,next)=>{
     const id = req.params.id;
     const isBlocked = req.params.isBlocked
     await adminService.blockCategoryFromDB(id,isBlocked)
- next()
+  next()
 }
 
 

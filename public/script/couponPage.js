@@ -6,7 +6,7 @@
         document.getElementById('discount').value= discount;
         document.getElementById('minimumOrder').value= minimumOrder;
         document.getElementById('maximumDiscount').value= maximumDiscount;
-        document.getElementById('expiryDate').value= expiryDate;
+        document.getElementById('expiryDate').value=new Date(expiryDate).toISOString().split('T')[0];;
 
         const editCouponModal = document.getElementById('editCouponModal');
         const modal = new bootstrap.Modal(editCouponModal);
