@@ -101,7 +101,7 @@ const authentication = async (req,res)=>{
  
   if(!data){
      req.flash('error',"User Not found")
-     return res.status(404).json('/login');
+     return res.status(404).redirect('/login');
   } 
   if(!hash.comparePassword(password,data.password)){
     req.flash('error',"invaid password")
