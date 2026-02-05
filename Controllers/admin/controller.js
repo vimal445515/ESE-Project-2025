@@ -130,7 +130,7 @@ export const saveCategoryData =async (req,res)=>{
     if(!req.file) return res.status(400).json({type:"error",message:'image Required'});
     const publicId = req.file.filename
     const url = req.file.path
-    if( await categoryService.findCategoryByName(req.body.categoryName)) {
+    if( await categoryService.findCategoryByName(req.body.categoryName.trim())) {
          await cloudinary.uploader.destroy(req.file.filename)
         return res.status(401).json({type:'error',message:"Category already exists"});
     }
@@ -165,7 +165,7 @@ export const editCategory = async (req,res)=>{
     try{
     const data = await adminService.getCategoryFromDB({_id:req.params.id})
     
-    if( await categoryService.findCategoryByName(req.body.categoryName,data._id)){
+    if( await categoryService.findCategoryByName(req.body.categoryName.trim(),data._id)){
         if(req?.file){
            await cloudinary.uploader.destroy(req.file.filename)
         }
