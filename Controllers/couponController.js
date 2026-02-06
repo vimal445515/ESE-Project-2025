@@ -49,9 +49,9 @@ const applayCoupon = async(req,res)=>{
 
     const couponCode = req.body.couponCode;
    try{
-    const {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount} =  await couponService.applayCouponCodeInTotalAmount(products,couponCode,req.session._id)
+    const {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,offerDiscount} =  await couponService.applayCouponCodeInTotalAmount(products,couponCode,req.session._id)
     console.log(totalPriceCartItem," ",totalDiscountPrice," ",tax," ",total," ",couponDiscount)
-    res.status(200).json({type:"success",totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,couponCode})
+    res.status(200).json({type:"success",totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,couponCode,offerDiscount})
    }
    catch(error){
     res.status(400).json({type:"error",message:error.message});

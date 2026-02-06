@@ -246,11 +246,12 @@
                         <span class="text-muted">Discount</span>
                         <span id="discount" class="fw-bold">₹<%=orderDetails?.totalDiscountPrice%></span>
                     </div>
+                     <div id="couponDiscount" class="d-flex justify-content-between mb-2"></div>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="text-muted">Tax</span>
                         <span id="tax" class="fw-bold">₹<%= orderDetails?.tax%></span>
                     </div>
-                    <div id="couponDiscount"></div>
+                   
                 </div>
 
                 <div class="total-row d-flex justify-content-between align-items-center mb-4">
@@ -779,12 +780,12 @@ function applayCoupon(couponCode=couponInput.value.trim()){
         console.log(data)
         if(data.type==="success"){
             subTotal.innerText =`₹${ data.totalPriceCartItem.toFixed(2).toLocaleString('en-IN')}`
-             discount.innerText = `₹${data.totalDiscountPrice.toFixed(2).toLocaleString('en-IN')}`
+             discount.innerText = `₹${data.offerDiscount.toFixed(2).toLocaleString('en-IN')}`
              tax.innerText = `₹${data.tax.toFixed(2).toLocaleString('en-IN')}`
              total.innerText =`₹${data.total.toFixed(2).toLocaleString('en-IN')}` 
-             document.getElementById("couponDiscount").innerHTML=`<p class="text-success fw-semibold">
-            You saved ₹<span>${parseInt(data.couponDiscount)}</span> on this order
-            </p>`
+             document.getElementById("couponDiscount").innerHTML=`
+              <span class="text-muted">Coupon Discount:</span>
+                        <span id="discount" class="fw-bold">₹${parseInt(data.couponDiscount.toFixed(2).toLocaleString('en-IN'))}</span>`
             document.querySelector("#appiledCoupon").innerText = data.couponCode
             document.getElementById('couponHolder').value = data.couponCode
             document.querySelector('.coupon-card').style.display = 'none';

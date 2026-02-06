@@ -150,7 +150,7 @@ const placeOrder =  async(req,res)=>{
               try{
                        
                        order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon);
-                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
+                       return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
                        }catch(error){
                          console.log(error);
                         return res.status(500).json({type:"razorpayError",message:error.message})

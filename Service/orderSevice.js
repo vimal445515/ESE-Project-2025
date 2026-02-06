@@ -240,7 +240,6 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
  
     await cartModel.deleteMany({userId:userId},{session})
     await session.commitTransaction();
-     session.endSession();
     return data;
 }catch(error){
       await session.abortTransaction(); 
