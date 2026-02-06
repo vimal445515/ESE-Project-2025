@@ -3,6 +3,7 @@ import orderService from '../../Service/orderSevice.js'
 import helpers from '../../helpers/helpers.js'
 import mongoose from 'mongoose'
 const loadOrderPage = async(req,res)=>{
+    try{
     const page = req.query.page||1
     const limit = 8;
     const sort = req.query.sort
@@ -12,7 +13,11 @@ const loadOrderPage = async(req,res)=>{
     const count = await orderService.getAllOrdersCount()
     const orders = await orderService.getAllOrders(skip,limit,sort,search,filter)
     const notifications = await orderSevice.getAllReturnNotifications()
+    console.log(count,limit)
    res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter,notifications:notifications||[]})
+    }catch(error){
+        console.log(error)
+    }
 }
 
 const loadEditOrderPage = async (req,res)=>{
@@ -34,20 +39,32 @@ const deleteOrder = async(req,res)=>{
    res.redirect("/admin/order")
 }
 
-const updateOrderStatus = async(req,res)=>{
+const updateOrderStatus = async(req,res,next)=>{
+    try{
     console.log(req.body)
     await orderSevice.updateData(req.body.id,req.body.value)
-    res.status(200).json({data:"success"});
+    res.status(200).json({type:"success"});
+    }catch(error){
+        console.log(error)
+        next(new Error('Internal server error'))
+    }
 }
 
 const search = async(req,res)=>{
     const search = req.query.value
     const sort = req.query.sort
     console.log("this is sort",sort)
+
+    try{
   const data =  await orderSevice.getOrderById(search,sort)
   const notifications = await orderSevice.getAllReturnNotifications()
   
   res.render('Admin/orderPage',{orders:data,page:1,count:null,limit:null,sort,notifications:notifications||[]});
+    }catch(error){
+        console.log(error)
+        flash('error','Internal server error')
+        res.status(500).redirect('admin/order')
+    }
 }
 
 

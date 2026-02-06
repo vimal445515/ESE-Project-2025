@@ -83,12 +83,13 @@
         <div id="page-content-wrapper">
             
             <%- include('../partials/adminNavBar.ejs') %>
+            <%- include('../partials/notification')%>
             <div class="container-fluid px-4">
                 <div class="d-flex justify-content-between">
                   <div class=" ms-2  input-group d-flex " style="max-width: 400px;">
                   
-                    <input type="text" id="searchInput" name="value" class="form-control" placeholder="Search..." aria-label="Search" required>
-                    <button type="button" onclick="searchText()" id="search" class="btn btn-light">Search</button>
+                    <input type="text" id="searchInput" value="<%= search%>" name="value" class="form-control" placeholder="Search..." aria-label="Search" required>
+                    <button type="button" onclick="searchText()" id="search"  class="btn btn-light">Search</button>
                 
                      <button class="btn btn-light" onclick="showNotification()">
                       <i class="bi bi-bell"></i>
@@ -155,21 +156,21 @@
                      <a id="clear" href="/admin/order" class="btn btn-light me-2">Clear</a>
                     <label for="sortPrice" class="me-2 text-nowrap">Sort By:</label>
                     <select class="form-select form-select-sm" id="sort" style="width: auto;">
-                        <option value="" selected>sort</option>
-                        <option value="ltoH">Low to high</option>
-                        <option value="htoL">High to low</option>
-                        <option value="new">New to old</option>
-                        <option value="old">old to New</option>
+                        <option value="" >sort</option>
+                        <option value="ltoH" <%= sort === 'ltoH' ? 'selected' : '' %>>Low to high</option>
+                        <option value="htoL" <%= sort === 'htoL' ? 'selected' : '' %>>High to low</option>
+                        <option value="new"  <%= sort === 'new' ? 'selected' : '' %> >New to old</option>
+                        <option value="old"  <%= sort === 'old' ? 'selected' : '' %>>old to New</option>
                     </select>
 
 
                       <label for="sortPrice" class="mx-2 text-nowrap">filter:</label>
                     <select class="form-select form-select-sm" id="filter" style="width: auto;">
-                        <option value="" selected>filter</option>
-                        <option value="processing"> Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="canceled">canceled</option>
+                        <option value="" >filter</option>
+                         <option value="processing" <%= filter === 'processing' ? 'selected' : '' %>> Processing</option>
+                        <option value="shipped" <%= filter === 'shipped'?'selected':''%>>Shipped</option>
+                        <option value="delivered" <%= filter === 'delivered'?'selected':''%>>Delivered</option>
+                        <option value="canceled" <%= filter === 'canceled'?'selected':''%>>canceled</option>
                     </select>
                 </div>
                 </div>
@@ -268,7 +269,7 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
                                 <li class="page-item"><button onclick="previousPage('<%= page%>')" class="page-link" href=""><i class="fas fa-arrow-left"></i></button></li>
-                                 <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                                 <% for(let i = 1; i <= (count/limit); i++) {%> 
                                 <li class="page-item"><button id="page" onclick="search('<%= i%>')" value="<%= i %>" class="page-link active-page" ><%= i%></button></li>
                                  <% } %>
                                 <li class="page-item"><button class="page-link" onclick="nextPage('<%= page%>')"><i class="fas fa-arrow-right"></i></button></li>
