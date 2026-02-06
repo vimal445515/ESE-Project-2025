@@ -13,6 +13,7 @@ export const loadLoginPage=(req,res)=>{
 export const authentication = async (req,res)=>{
    const {email,password} = req.body
    console.log(email,password)
+   try{
    const  data =  await adminService.getAdminFromDB(email);
    console.log(data);
    if(!data) {
@@ -22,6 +23,7 @@ export const authentication = async (req,res)=>{
    if(data.role !== "admin"){
     req.flash('error',"Sorry access denieted You are not Admin")
     return res.status(401).redirect('/admin/login')
+   
    } 
    if(hash.comparePassword(password,data.password))
    {
@@ -31,10 +33,13 @@ export const authentication = async (req,res)=>{
    }
    else
    {
-    req.flash('error',"invalid password",'error')
+    req.flash('error',"invalid password")
     res.status(400).redirect('/admin/login')
    }
-   
+   }catch(error){
+     req.flash('error',"Something was wrong please try again later");
+    res.status(400).redirect('/admin/login')
+   }
 }
 export const logout = (req,res)=>{
  if(req.session.role == 'user'){
@@ -50,39 +55,64 @@ export const logout = (req,res)=>{
  }
 }
 export const blockUser = async(req,res)=>{
+    try{
       await adminService.blockUserInDB(req.params.id)
-     res.redirect('/admin/user')
+      req.flash('success','User blocked')
+     return res.redirect('/admin/user')
+     }catch(error){
+        console.log(error)
+        req.flash('error','Something was wrong please try again later!')
+        return res.redirect('/admin/user')
+     }
 }
 
 export const unBlockUser = async (req,res)=>{
-    console.log("heloog")
+   try{ 
    await adminService.UnBlockUserInDB(req.params.id)
+    req.flash('success','User Unblocked')
     res.redirect('/admin/user')
+    }catch(error){
+         console.log(error)
+        req.flash('error','something was wrong please try again later!')
+        return res.redirect('/admin/user')
+    }
 }
 
 export const deleteUser = async (req,res)=>{
     await adminService.deleteUser(req.params.id);
+    req.flash('success','User blocked')
     res.redirect('/admin/user')
 }
 
 export const ActiveUsers = async(req,res)=>{
-   
+   try{
     const page = req.query.page||1;
     const limit = 8;
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.findActiveUsers(skip,limit)
     const count = await adminService.getAllUsersCount();
     
-    res.render('admin/userManage',{data,page,limit,count,search:null})
+    return res.render('admin/userManage',{data,page,limit,count,search:null})
+   }catch(error){
+      req.flash('error','something was wrong please try again later!')
+        return res.redirect('/admin/user')
+   }
 }
 export const blockedUsers = async (req,res)=>{
-
+    try{
+  
      const page = req.query.page||1;
     const limit = 8;
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.findBlockedUsers(skip,limit);
     const count = await adminService.getAllUsersCount();
-    res.render('admin/userManage',{data,page,limit,count,search:null});
+   return  res.render('admin/userManage',{data,page,limit,count,search:null});
+          
+    }catch(error){
+        console.log(error);
+        req.flash('error','something was wrong please try again later!')
+        return res.redirect('/admin/user')
+    }
 }
 
 export const LoadAddCategoriesPage =(req,res)=>{
@@ -142,22 +172,37 @@ export const saveCategoryData =async (req,res)=>{
     }
 }
 
-export const loadCategoriePage =  async (req,res) =>{
+export const loadCategoriePage =  async (req,res,next) =>{
+  try{
     const page = req.query.page||1
     const search = req.query.search
     const limit = 18;
     const skip = helpers.paginationSkip(page,limit)
     const data = await adminService.getCategories(skip,limit,search)
     const count = await adminService.getAllCategoriesCount()
+    if(req.params?.isBlocked){
+      return res.status(200).json({type:"success",message:"category blocked successfully"});
+    }
     res.render('admin/categories',{data,page,limit,count});
+    }catch(error){
+        console.log(error)
+        if(req.params?.isBlocked){
+            next(error)
+        }
+        
+    }
 }
 
 export const blockCategory = async (req,res,next)=>{
     
-    const id = req.params.id;
+   try{ const id = req.params.id;
     const isBlocked = req.params.isBlocked
     await adminService.blockCategoryFromDB(id,isBlocked)
   next()
+   }catch(error){
+    console.log("error");
+    next(new Error('Internal server error'));
+   }
 }
 
 

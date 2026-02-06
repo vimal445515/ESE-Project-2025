@@ -4,27 +4,32 @@ const error =(error,req,res,next)=>{
     if(isFetch){
          if(error?.code==="LIMIT_FILE_SIZE"){
             req.flash("error",'File have a limit 2MB')
-            res.status(415).json({obj:req.originalUrl})
+           return res.status(415).json({obj:req.originalUrl})
          }
          else if(error.message === "Image file format ogg not allowed"){
             req.flash("error","Please upload a valid image file.")
-            res.status(415).json({obj:req.originalUrl})
+           return res.status(415).json({obj:req.originalUrl})
          }
+
+         
 
 
     }else{
          if(error?.code==="LIMIT_FILE_SIZE"){
         req.flash("error",'File have a limit 2MB')
-        res.status(415).redirect(req.originalUrl)
+      return  res.status(415).redirect(req.originalUrl)
     }
     else if(error.message === 'Image file format ogg not allowed'){
             req.flash("error","Please upload a valid image file.")
-             res.status(415).redirect(req.originalUrl)
+            return res.status(415).redirect(req.originalUrl)
          }
     }
 
+    if(error.message === 'Internal server error'){
+         return res.status(500).json({type:'error',message: "Internal server error"})
+    }
     res.status(404).redirect('/404Page');
-    next()
+   
    
 }
 

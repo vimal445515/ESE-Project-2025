@@ -3,6 +3,7 @@ import {User as Admin} from '../Models/userSchema.js'
 import {User} from '../Models/userSchema.js'
 import { categoryModel } from '../Models/categorySchema.js'
 import fs from 'fs'
+import { error } from 'console'
 const getAdminFromDB  = async (email)=>{
   return  await Admin.findOne({email,role:"admin"})
 }
@@ -43,7 +44,7 @@ const addCategorInDB = async (categoryName,publicId,url) =>{
 
 const blockCategoryFromDB = async(_id,blockOrActive)=>
 {
-   
+  
    await categoryModel.findByIdAndUpdate({_id},{$set:{isBlocked:blockOrActive}})
 
 }
