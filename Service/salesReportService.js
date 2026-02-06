@@ -77,12 +77,12 @@ export async function generateReportPDF(salesReport,orders) {
   const page = await browser.newPage();
 
   await page.setContent(salesReportHtml(salesReport,orders), {
-    waitUntil: "networkidle0"
+    waitUntil: "domcontentloaded"
   });
 
   const pdfBuffer = await page.pdf({ format: "A4" });
-
-  await browser.close();
+  
+  await page.close();
   return pdfBuffer;
   }catch(error){
     console.log(error)
