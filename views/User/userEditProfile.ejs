@@ -187,18 +187,26 @@
                        .then(data=>{
                         
                         if(data?.status=='success'){
+                           showToast('Updated successfully')
+                           setTimeout(()=>{
+                             window.location.href=data.href
+                           },1000)
                            
-                            window.location.href=data.href
                         }
                       
                         else if(data.status=='updated'){
-
-                          window.location.href=data.href
+                         showToast('Updated successfully')
+                           setTimeout(()=>{
+                             window.location.href=data.href
+                           },1000)
                         }
                         if(data.status=="error")
                         {
                             showToast(data.message,'error');
                         }
+                       }).catch((error)=>{
+                        console.log(error);
+                        showToast('connection failed');
                        })
                  
                   }

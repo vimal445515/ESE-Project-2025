@@ -132,6 +132,7 @@ This action cannot be undone.
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <form action="/orders/cancel" method="post">
                         <input type="hidden" name="orderId" value="<%= order._id%>">
+                          <input type="hidden" name="createdOrderId" value="<%= order.orderId%>">
                         <button type="submit" class="btn btn-primary">Cancel order</button>
                         </form>
                     </div>
@@ -289,6 +290,7 @@ This action cannot be undone.
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <form action="/orders/cancleSingleProduct" method="post">
                         <input type="hidden" name="orderId" value="<%= order._id%>">
+                        <input type="hidden" name="CreatedOrderId" value="<%= order.orderId%>">
                         <input type="hidden" name="productId" id="productidInput" value="">
                         <input type="hidden" name="variantId" id="variantIdInput" value="">
                         <input type="hidden" name="quantity" id="quantityInput" value=" ">
@@ -389,9 +391,12 @@ This action cannot be undone.
     </div>
 </div>
 <%- include('../partials/footer.ejs')%>
+    <script src="/script/tost.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-
+<% if(success?.length > 0){%>
+    showToast('<%= success[0]%>')
+<%}%>
 if("<%= order.orderStatus %>" ==='placed' || "<%= order.orderStatus %>" ==='process'){
     document.querySelector('#placed').classList.add('completed')
     document.querySelector('#packaging').classList.add('active')

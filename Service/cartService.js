@@ -144,6 +144,19 @@ const getCartItems = async (id) =>{
     }}
   )
 
+  
+    //calculating final product price for refund
+  pipeline.push({
+    $addFields:{
+      offerDiscountAmount:{
+        $multiply:[
+          '$product.variants.price',
+          {$divide:['$finalDiscount',100]}
+        ]
+      }
+    }
+  })
+
 
 
    

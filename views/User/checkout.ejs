@@ -537,6 +537,10 @@
             showToast(data.message,'error');
             return
          }
+         if(data.type === 'serverError'){
+               showToast(data.message,'error');
+               return
+         }
         if(data.type ==="error"){
             window.location.href = data.href;
         }

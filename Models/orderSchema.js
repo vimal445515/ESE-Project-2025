@@ -24,6 +24,7 @@ const orderSchema = new mongoose.Schema({
             price:{type:Number},
             productName:{type:String},
             quantity:{type:Number},
+            offerPrice:{type:Number},
             image:{type:String},
             finalPrice:{type:Number},
             status:{

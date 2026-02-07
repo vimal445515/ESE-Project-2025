@@ -494,8 +494,17 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
     })
     .then((data)=>data.json())
     .then((data)=>{
-        
-        window.location.reload()
+        if(data.type === 'error'){
+          showToast(data.message,'error');
+        }
+        if(data.type === 'success'){
+            showToast('Address Deleted')
+          setTimeout(()=>{
+           window.location.reload()
+          },500)
+          
+        }
+       
     })
      .catch((error) => {
     console.log(error)

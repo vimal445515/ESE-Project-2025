@@ -102,11 +102,13 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
 
 
      products = products.map((item)=>{
+        console.log("this is :",item.offerDiscountAmount)
        let itemCouponDiscountAmount = (item.finalPrice/oldAmount.total) * couponDiscount
         return {
             ...item,
             finalPrice:(item.finalPrice*item.quantity)-itemCouponDiscountAmount,
-            itemCouponDiscountAmount
+            itemCouponDiscountAmount,
+            offerDiscountAmount:item.offerDiscountAmount
         }
        
     })

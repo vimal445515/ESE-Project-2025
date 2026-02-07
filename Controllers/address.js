@@ -34,9 +34,12 @@ const loadSelectedAddress = async(req,res)=>{
 }
 
 const deleteAddress = async (req,res)=>{
-     
+     try{
      await addressService.deleteAddressFromDB(req.body.addressId,req.session._id)
-     res.status(200).json({message:"address Deleted successfully"});
+     res.status(200).json({type:'success',message:"address Deleted successfully"});
+     }catch(error){
+      res.status(500).json({type:'error',message:"Internal server error"});
+     }
 }
 
 const updateAddressAsDefault = async(req,res)=>{

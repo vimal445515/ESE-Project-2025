@@ -12,7 +12,7 @@ import walletService from './walletService.js'
 import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
-const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,coupon=null,orderStatus='placed')=>{
+const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,productOfferPrice,coupon=null,orderStatus='placed')=>{
     if(paymentMethod === "cod" && orderDetails.total > 1000) {
         throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
     }
@@ -85,6 +85,7 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
                 variantId:variantId,
                 categoryId:categoryId,
                 quantity:quantity,
+                offerPrice:productOfferPrice,
                 finalPrice:Number(productFinalPrice+((18/100)*productFinalPrice)),
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
@@ -172,6 +173,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
             categoryId:product.product.categoryId,
             productName:product.product.productName,
             quantity:product.quantity,
+            offerPrice:product.offerDiscountAmount,
             finalPrice:product.finalPrice,
             price:parseInt(product.product.variants.price-((product.product.discound/100)*product.product.variants.price)),
             image:product.product.generalPhoto.url
@@ -378,7 +380,7 @@ const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
 }
 
 const getAllOrdersCount = async() =>{
-     return await orderModel.countDocuments();
+     return await orderModel.countDocuments({orderStatus:{$ne:'pending'}});
 }
 
 const unlistOrder = async(orderId)=>{
@@ -515,6 +517,7 @@ const getOrderDataForDashbord = async(userId)=>{
 }
 
 const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =>{
+   
    await orderModel.findOneAndUpdate({_id:orderId},
         {
             $set:{'items.$[product].status':"cancelled"}
@@ -544,19 +547,38 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =
         let tax = (subTotal * 18) / 100;
         let totalAmount = subTotal+tax;
          
-
-     order =  await orderModel.findOneAndUpdate({_id:orderId},{$set:{
-            'pricing.subTotal':subTotal,
-             'pricing.tax':tax,
-             "pricing.totalAmount":totalAmount
-        }})
+      
+  
 
         const orderData =  await orderModel.aggregate([
             {$match:{_id: new mongoose.Types.ObjectId(orderId)}},
             {$unwind:'$items'},
             {$match:{'items.variantId':new mongoose.Types.ObjectId(variantId)}}
         ]);
+        let coupon = null;
+        let couponDiscount = 0;
+        if(orderData[0].coupon){
+            if( totalAmount > orderData[0].coupon.minimumOrder){
+                coupon = orderData[0].coupon
+             couponDiscount =   Math.round((totalAmount *orderData[0].coupon.discount)/100)
+             if(couponDiscount > orderData[0].coupon.maximumDiscount){
+                couponDiscount = orderData[0].coupon.maximumDiscount;
+             }
+            }
+        }
 
+        let discount = Math.round(orderData[0].pricing.offerDiscount) - Math.round(orderData[0].items.offerPrice )
+       
+
+           order =  await orderModel.findOneAndUpdate({_id:orderId},{$set:{
+            'pricing.subTotal':subTotal,
+             'pricing.tax':tax,
+             'pricing.offerDiscount':discount,
+             'pricing.couponDiscount':couponDiscount,
+             "pricing.totalAmount":totalAmount,
+             "pricing.discount":discount + couponDiscount,
+             'coupon':coupon
+        }})
  
             
             if(orderData[0].payment.method === 'razorpay' || orderData[0].payment.method === 'wallet' ){

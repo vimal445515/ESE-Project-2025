@@ -19,25 +19,30 @@ const loadOrdersHistory = async(req,res)=>{
 
 const loadOrderDetailPage = async(req,res)=>{
     const order = await orderSevice.getSingleOrder(req.params.id)
-   
+    console.log(order[0]?._id,req.params.id)
     res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0],type:null})
 }
 
 const cancelOrder = async(req,res)=>{
-   
-  await orderSevice.updateOrderCancel(req.body.orderId);
-  res.redirect('/orders');
+   try{
+  const order = await orderSevice.updateOrderCancel(req.body.orderId);
+  req.flash('success','Order canceled succussfuly');
+   res.status(200).redirect(`/orders/orderDetails/${order.orderId}`)
+   }catch(error){
+    req.flash('error','cancellation faild!')
+    res.status(500).redirect(`/orders/orderDetails/${req.body.createdOrderId}`)
+   }
 }
 
 const placeOrder =  async(req,res)=>{
 
     // single product order
-    
- 
+     try{
+  
     let order;
       if(req.body?.productId){
         let products;
-            
+           
               if( !await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
                req.flash("error","This product is out of stock now");
                return res.status(410).json({type:"error",href:`/productDetails/${req.body.productId}`})
@@ -61,15 +66,15 @@ const placeOrder =  async(req,res)=>{
         
                  products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
                  products[0].quantity = Number(req.body.quantity);
-
+              
                 if(req.body.appliedCoupon){
 
                     const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
                     const [{product,quantity}] = orderDetails.products
-                  
+                 
                     if(req.body.payment === 'razorpay'){
                       try{
-                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
                         
                        return res.status(200).json({type:"razorpay",orderId:order.orderId})
                       }catch(error){
@@ -78,14 +83,14 @@ const placeOrder =  async(req,res)=>{
                       }
                     }else if(req.body.payment === 'wallet'){
                        try{
-                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
                       }
                     }
                     try{
-                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,req.body.appliedCoupon)
+                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
                     }catch(error){
                        return res.status(400).json({type:"codError",message:error.message});
                     }
@@ -96,9 +101,10 @@ const placeOrder =  async(req,res)=>{
                     const orderDetails =  cartService.cartSummary(products)
                   
                     const [{product,quantity}] = products
+                    console.log('test single product :',products[0].offerDiscountAmount)
                     if(req.body.payment === 'razorpay'){
                       try{
-                      order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                      order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount)
                      
                       return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
                       }catch(error){
@@ -107,7 +113,7 @@ const placeOrder =  async(req,res)=>{
                       }
                     }else if(req.body.payment === 'wallet'){
                       try{
-                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount)
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
@@ -115,7 +121,7 @@ const placeOrder =  async(req,res)=>{
                       
                     }else{
                       try{
-                          order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice)
+                          order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount)
                       }catch(error){
                          return res.status(400).json({type:"codError",message:error.message});
                       }
@@ -144,12 +150,12 @@ const placeOrder =  async(req,res)=>{
         else{
           if(req.body.appliedCoupon){
             const orderDetails = await couponService.applayCouponCodeInTotalAmount(products,req.body.appliedCoupon,req.session._id)
-            
+           
              
              if(req.body.payment === 'razorpay'){
               try{
                        
-                       order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon);
+                       order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon,req.body.payment );
                        return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
                        }catch(error){
                          console.log(error);
@@ -157,7 +163,7 @@ const placeOrder =  async(req,res)=>{
                        }
               }else if(req.body.payment === 'wallet'){
                       try{
-                           order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+                           order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon,req.body.payment);
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
@@ -165,7 +171,7 @@ const placeOrder =  async(req,res)=>{
                      } else{
 
                      try{
-                     order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
+                     order = await  orderSevice.orderCartItmes(orderDetails.products,orderDetails,req.body,req.session._id,req.body.appliedCoupon,req.body.payment);
 
                      }catch(error){
                       return res.status(400).json({type:"codError",message:error.message});
@@ -175,10 +181,10 @@ const placeOrder =  async(req,res)=>{
 
           }else{
             const orderDetails =  cartService.cartSummary(products)
+            console.log('this is order details:',orderDetails)
              if(req.body.payment === 'razorpay'){
               try{
 
-              
               order = await  orderSevice.orderCartItmes(products,orderDetails,req.body,req.session._id);
               return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
               }catch(error){
@@ -208,7 +214,9 @@ const placeOrder =  async(req,res)=>{
       }
       const orderId = order[0].orderId;
        return res.status(200).json({type:'success',href:`orders/orderSuccess?orderId=${orderId}`})
-      res.render('User/orderPlacedPage',{userName:req.session.userName,profile:req.session.profile,orderId})
+    }catch(error){
+      return res.status(500).json({type:'serverError',message:'Internal server error'});
+    }
 }
 
 const loadOrPlacedPage = (req,res)=>{
@@ -252,9 +260,15 @@ const storeReturOrder  = async(req,res)=>{
 }
 
 const cancelProduct = async(req,res)=>{
+  try{
    const orderId = await orderSevice.cancelSingleProduct(req.body.orderId,req.body.productId,req.body.variantId,req.body.quantity,req.session._id);
-   
+   req.flash('success','Order item canceled successfully');
     res.redirect(`/orders/orderDetails/${orderId.orderId}`)
+    }catch(error){
+      console.log(error)
+      req.flash('error','cancellation faild!')
+      res.redirect(`/orders/orderDetails/${req.body.CreatedOrderId}`)
+    }
 }
 
 
