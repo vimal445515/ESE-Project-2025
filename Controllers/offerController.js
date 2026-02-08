@@ -36,7 +36,8 @@ const createOfferForProduct = async(req,res)=>{
 
 
 const enableDisableOffer = async(req,res)=>{
-
+ try{
+   
     const action = req.body.action ==='true'?true:false;
     if(action){
         await offerService.enableOffer('product',req.body.offerId,req.body.productId)
@@ -45,6 +46,10 @@ const enableDisableOffer = async(req,res)=>{
         await offerService.desebleOffer(req.body.offerId) 
     }
     res.status(200).json({href:`/offers/product?page=${Number(req.query.page)}`})
+    }catch(error){
+        console.log(error);
+        res.status(500).json({type:"error",message:"internal server error"})
+    }
 }
 
 const updateProductOffer = async (req,res)=>{
@@ -69,6 +74,7 @@ const createOfferForCategory = async(req,res)=>{
 
 
 const enableDisableOfferForCategoryOffer = async(req,res)=>{
+    try{
     const action = req.body.action ==='true'?true:false;
     if(action){
         await offerService.enableOffer('category',req.body.offerId,req.body.categoryId)
@@ -77,6 +83,10 @@ const enableDisableOfferForCategoryOffer = async(req,res)=>{
         await offerService.desebleOffer(req.body.offerId) 
     }
     res.status(200).json({href:`/offers/category?page=${Number(req.query.page)}`})
+    }catch(error){
+         console.log(error);
+        res.status(500).json({type:"error",message:"internal server error"})
+    }
 }
 
 

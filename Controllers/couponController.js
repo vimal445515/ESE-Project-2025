@@ -17,17 +17,26 @@ const createCoupon = async(req,res)=>{
     return  res.redirect('/coupon');
 }
 const activateCoupon = async(req,res)=>{
+    try{
     const couponId = req.body.couponId;
-    console.log(couponId)
     await couponService.activate(couponId)
     return res.status(200).json({type:"success"});
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({type:'error',message:'Internal server error'})
+    }
 
 }
 
 const deactiveCoupon = async(req,res)=>{
+    try{
      const couponId = req.body.couponId;
     await couponService.deactive(couponId)
     return res.status(200).json({type:"success"});
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({type:'error',message:'Internal server error'})
+    }
 }
 
 const editCoupon = async(req,res)=>{
@@ -39,14 +48,13 @@ const editCoupon = async(req,res)=>{
 
 const applayCoupon = async(req,res)=>{
     let products;
-
+try{
     if(req.body?.productId){
         products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
         products[0].quantity = Number(req.body.quantity);
     }else{
          products =  await cartService.getCartItems(req.session._id)
     }
-
     const couponCode = req.body.couponCode;
    try{
     const {totalPriceCartItem,totalDiscountPrice,tax,total,couponDiscount,offerDiscount} =  await couponService.applayCouponCodeInTotalAmount(products,couponCode,req.session._id)
@@ -56,11 +64,17 @@ const applayCoupon = async(req,res)=>{
    catch(error){
     res.status(400).json({type:"error",message:error.message});
    }
+   }catch(error){
+    console.log(error)
+    res.status(500).json({type:'error',message:'Internal server error'})
+   }
 
 }
 
 const removeCoupon = async(req,res)=>{
    let products
+   try{
+   
      if(req.body?.productId){
         products = await checkoutService.getProduct(req.body.productId,req.body.variantId)
         products[0].quantity = Number(req.body.quantity);
@@ -70,6 +84,9 @@ const removeCoupon = async(req,res)=>{
     const {totalPriceCartItem,totalDiscountPrice,tax,total} = couponService.calculateTotalAmount(products)
     
     return res.status(200).json({totalPriceCartItem,totalDiscountPrice,tax,total})
+    }catch(error){
+        return res.status(500).json({type:"error",message:"Internal server error"});
+    }
 }
 
 

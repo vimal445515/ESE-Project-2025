@@ -52,8 +52,13 @@
                 method:'PATCH',
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify({couponId:couponId})
-            }).then(data=>{
+            }).then(data=>data.json())
+            .then(data=>{
+              if(data.type === 'error') return showToast(data.message,'error');
                 search(1)
+            }).catch(error=>{
+              console.log(error)
+              return showToast('Something was wrong!','error');
             })
         }
 
@@ -63,8 +68,13 @@
                 method:'PATCH',
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify({couponId:couponId})
-            }).then(data=>{
+            }).then(data=>data.json())
+            .then(data=>{
+              if(data.type === 'error') return showToast(data.message,'error');
                 search(1)
+            }).catch(error=>{
+              console.log(error)
+              return showToast('Something was wrong!','error');
             })
         }
 

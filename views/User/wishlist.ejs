@@ -97,6 +97,7 @@
 </head>
 <body class="pt-0">
     <%- include('../partials/navbar.ejs')%>
+    <%- include('../partials/notification.ejs')%>
 
     <div class="container-fluid page-container mt-5">
         
@@ -182,13 +183,26 @@
                             method:"DELETE",
                             headers:{"Content-Type":"application/json"},
                             body:JSON.stringify({_id:data})
-                        }).then((data)=>{
+                        })
+                        .then(data=>data.json())                        
+                        .then((data)=>{
+                            if(data?.type === 'error') return showToast(data.message,"error");
+                            showToast("item removed successfully");
+                            setTimeout(()=>{
                             window.location.href='/wishlist'
+                            },500)
+             
+                        }).cathc(error=>{
+                            console.log(errro)
+                            return showToast('Something was wrong!',"error");
                         })
                     })
                 })
 
+                
+
             </script>
+            <script src="/script/tost.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

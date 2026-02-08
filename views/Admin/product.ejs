@@ -39,6 +39,7 @@
         <div id="page-content-wrapper">
             
            <%- include('../partials/adminNavBar') %>
+           <%- include('../partials/notification')%>
             <div class="container-fluid px-4">
                   <div class=" ms-2  input-group" style="max-width: 400px;">
                     <input type="text" id="search" class="form-control" placeholder="Search..." aria-label="Search">
@@ -191,9 +192,14 @@
             fetch(`/admin/deleteProduct/${productId}`,{
                 method:'DELETE'
             }).then(data=>data.json())
-            .then(data=>showSuccessToast(data))
-            .catch(data=>errorToast(data));
-            window.location.reload()
+            .then(data=>{
+                if(data?.type === 'error') return showToast(data.message,'error');
+                showSuccessToast(data)})
+               setTimeout(()=>{
+                  window.location.reload()
+               },500)
+            .catch(data=>errorToast('something was wrong'));
+           
 
 
         }
@@ -203,10 +209,13 @@
             fetch(`/admin/unDeleteProduct/${productId}`,{
                 method:'PATCH'
             }).then(data=>data.json())
-            .then(data=>showSuccessToast(data))
-            .catch(data=>errorToast(data));
-            window.location.reload()
-
+            .then(data=>{
+                if(data?.type === 'error') return showToast(data.message,'error');
+                showSuccessToast(data)})
+               setTimeout(()=>{
+                  window.location.reload()
+               },500)
+            .catch(data=>errorToast('something was wrong'));
 
         }
 
@@ -267,6 +276,7 @@
              })
 
     </script>
+    <script src="/script/tost.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -730,8 +730,11 @@ function confirmRemove(){
                  window.location.href= `/admin/editProduct/<%= product._id%>`
             },2000)
         }
-        else if(data.type === "error"){
+        else if(data.type === "warning"){
             showToast(data.message,'warning');
+        }
+        else if(data.type === 'error'){
+            showToast(data.message,'error')
         }
         
     })

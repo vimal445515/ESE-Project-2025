@@ -37,11 +37,13 @@ const productSchema = new mongoose.Schema({
    },
    categoryId:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:'category'
+    ref:'category',
+    index:true
    },
    createdAt:{
     type:Date,
-    default:new Date()
+    default:new Date(),
+    index:true
    },
    discound:{
     type:Number
@@ -52,9 +54,12 @@ const productSchema = new mongoose.Schema({
    },
    isDeleted:{
     type:Boolean,
-    default:false
+    default:false,
    },
    variants:[variantSchema]
 })
+
+productSchema.index({categoryId:1,createdAt:-1,isDeleted:1})
+productSchema.index({categoryId:1,'variants.price':1})
 
 export const productModel = mongoose.model('product',productSchema)

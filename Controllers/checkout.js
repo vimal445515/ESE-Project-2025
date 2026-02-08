@@ -70,8 +70,13 @@ const loadCheckOutPage = async (req,res)=>{
 
 const displayAddress = async (req,res) =>{
     const {addressId} = req.body
+    try{
+    
     const addressData =  await address.findAddressFromDB(addressId)
     res.status(200).json(addressData)
+    }catch(error){
+        res.status(500).json({type:'error',message:"Internal server error"});
+    }
 }
 
 export default {

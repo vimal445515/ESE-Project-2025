@@ -87,7 +87,7 @@ const editProduct = async  (req,res) =>{
       console.log(error)
       if(error.message === 'Invalid stock'){
 
-        res.status(400).json({type:'error',message:error.message});
+       return res.status(400).json({type:'error',message:error.message});
       }
       res.status(500).json({type:'error',message:"somthing was wrong!"})
     }
@@ -95,22 +95,38 @@ const editProduct = async  (req,res) =>{
 
 
 const deleteProduct = async (req,res)=>{
+  try{
+  
     await productService.deleteProductFromDB(req.params.id)
     res.status(200).json("deleted succusfully");
+    }catch(error){
+      console.log(error);
+      return res.status(500).json({type:"error",message:"Internal server error"});
+    }
 }
 
 const unDeleteProduct = async (req,res) =>{
+  try{
   await productService.unDeleteProductFromDB(req.params.id)
   res.status(200).json("product listed");
+  }catch(error){
+    console.log(error)
+     return res.status(500).json({type:"error",message:"Internal server error"});
+  }
 }
 
 
 const removeOneVariant = async (req,res)=>{
-  console.log(req.body.productId,req.body.index);
+  try{
+   
   if(await productService.removeVariant(req.body.productId,req.body.index)){
     return res.status(200).json({type:'success',message:"variant removed successfully"});
   }else{
-    return res.status(400).json({type:"error",message:"Only one variant is currently available. A product must have at least one active variant."})
+    return res.status(400).json({type:"warning",message:"Only one variant is currently available. A product must have at least one active variant."})
+  }
+  }catch(error){
+    console.log(error)
+    return res.status(500).json({type:"error",message:"Internal server error"});
   }
 }
 

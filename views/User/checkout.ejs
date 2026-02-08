@@ -640,6 +640,9 @@
         if(data.type === "error"){
             window.location.href=data.href;
         }
+        else if(data.type === 'error'){
+          return showToast(data.message,'error');
+        }
     })
   })
   }
@@ -670,6 +673,7 @@
             body:JSON.stringify({addressId:"<%= defaultAddressId %>"})
         }).then(data=>data.json())
                 .then(data=>{
+                    if(data?.type === 'error') return  showToast(data.message,'error');
                     console.log(data)
                     userName.value = data.userName 
                     companyName.value = data.companyName
@@ -694,6 +698,7 @@
                     body:JSON.stringify({addressId:e.target.value})
                 }).then(data=>data.json())
                 .then(data=>{
+                    if(data?.type === 'error') return  showToast(data.message,'error');
                     console.log(data)
                     userName.value = data.userName 
                     companyName.value = data.companyName
@@ -828,6 +833,7 @@ function removerCoupon(){
     ).then(data=>data.json())
     .then(data=>{
         
+        if(data?.type === 'error') return showToast(data.message,'error');
             console.log(data)
              subTotal.innerText =`₹${ parseInt(data.totalPriceCartItem).toLocaleString('en-IN')}`
              discount.innerText = `₹${parseInt(data.totalDiscountPrice).toLocaleString('en-IN')}`
@@ -840,6 +846,9 @@ function removerCoupon(){
              showToast('Coupon removed')
   
    
+    }).catch(error=>{
+        console.log(error)
+        showToast('Something was wrong!','error');
     })
 }
 

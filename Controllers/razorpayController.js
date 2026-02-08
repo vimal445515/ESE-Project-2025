@@ -52,8 +52,13 @@ try{
 
 const razorpayPaymentFaild = async(req,res)=>{
     const {orderId} = req.body;
+    try{
     const order = await razorpayService.paymentFaild(orderId);
     res.status(401).json({type:"error",message:"payment faild",href:`/orders/orderFailure?orderId=${orderId}&productOrderId=${order.orderId}&reason=${req.body.reson}`});
+    }catch(error){
+      console.log(error)
+      res.status(500).json({type:"serverError",message:"Internal server error"});
+    }
 }
 
 

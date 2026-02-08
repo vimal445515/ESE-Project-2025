@@ -331,7 +331,7 @@
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
                     <input type="hidden" name="categoryId" value="<%= productData.categoryId%>">
                      <% if(productData.variants.stock < 1 || productData.isDeleted ||categoryIsBlocked){%>
-                        <button type="button" class="btn-disabled">Add to Cart</button>
+                        <button type="button" id="addToCart" class="btn-disabled">Add to Cart</button>
                     <%}else{%>
                     <button  type="submit" id="addToCart" class="btn btn-outline-secondary"><i class="bi bi-cart-plus-fill fs-5"></i> Add to Cart</button>
                       <%}%>
