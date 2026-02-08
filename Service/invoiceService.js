@@ -17,7 +17,7 @@ export async function generateInvoicePDF(orderId) {
   const page = await browser.newPage();
 
   await page.setContent(invoiceHTML(order), {
-    waitUntil: "networkidle0"
+    waitUntil: "domcontentloaded"
   });
 
   const pdfBuffer = await page.pdf({ format: "A4" });

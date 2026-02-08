@@ -76,7 +76,7 @@ const placeOrder =  async(req,res)=>{
                       try{
                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
                         
-                       return res.status(200).json({type:"razorpay",orderId:order.orderId})
+                       return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
                       }catch(error){
                         console.log(error);
                         return res.status(500).json({type:"razorpayError",message:error.message})

@@ -17,7 +17,7 @@ const storeProducts = async (req,res)=>{
     if(error.message = "Invaid input"){
       res.status(400).json({type:"error",message:error.message});
     }else{
-      res.status(500).json({type:error,message:"upload faild"});
+      res.status(500).json({type:'error',message:"upload failed"});
     }
   }
     
