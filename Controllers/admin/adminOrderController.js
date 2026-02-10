@@ -97,6 +97,7 @@ const updateOrderReturnstatus = async(req,res) =>{
     await orderService.aproveSingleReturnProduct(orderId,req.query.variantId,req.query.productId)
     res.json({type:"success",message:"Order return accepted success fully"})
     }catch(error){
+        console.log(error)
     res.json({type:"error",message:" oops somthing was wrong!"})
    }
    }

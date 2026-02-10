@@ -34,6 +34,42 @@
       border: 1px solid #ccc;
     }
 
+      .password-wrapper {
+  position: relative;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
+#togglePassword {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
+#togglePassword1 {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
+#togglePassword2 {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
 
         /* Master Container Width */
         .page-container { max-width: 1200px; margin: 0 auto; }
@@ -90,23 +126,26 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Current Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
+                               
                                 <input type="password" id="password" class="form-control password-input">
+                               <i class="fa-solid fa-eye" id="togglePassword"></i>
                             </div>
                              <p class="text-danger" id="CurrentPasswordError"></p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
                                 <input type="password" id="newPassword" class="form-control password-input" placeholder="8+ characters">
-                                
+                                  <i class="fa-solid fa-eye" id="togglePassword1"></i>
                             </div>
                             <P class="text-danger" id="newPasswordError"></P>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Confirm Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
                                 <input type="password" id="confirmPassword"  class="form-control password-input" placeholder="8+ characters">
+                                  <i class="fa-solid fa-eye" id="togglePassword2"></i>
                             </div>
                             <P class="text-danger" id="confirmPasswordError"></P>
                         </div>
@@ -354,6 +393,39 @@
     }
   });
 
+  const password = document.getElementById("password");
+  const toggle = document.getElementById("togglePassword");
+
+  toggle.addEventListener("click", () => {
+    const isPassword = password.type === "password";
+    password.type = isPassword ? "text" : "password";
+
+    toggle.classList.toggle("fa-eye");
+    toggle.classList.toggle("fa-eye-slash");
+  });
+
+
+    const newPassword = document.getElementById("newPassword");
+  const toggle1 = document.getElementById("togglePassword1");
+
+  toggle1.addEventListener("click", () => {
+    const isPassword = newPassword.type === "password";
+    newPassword.type = isPassword ? "text" : "password";
+
+    toggle1.classList.toggle("fa-eye");
+    toggle1.classList.toggle("fa-eye-slash");
+  });
+
+    const confirmPassword = document.getElementById("confirmPassword");
+  const toggle2 = document.getElementById("togglePassword2");
+
+  toggle2.addEventListener("click", () => {
+    const isPassword = confirmPassword.type === "password";
+    confirmPassword.type = isPassword ? "text" : "password";
+
+    toggle2.classList.toggle("fa-eye");
+    toggle2.classList.toggle("fa-eye-slash");
+  });
 
             </script>
              <script src="/script/tost.js"></script>

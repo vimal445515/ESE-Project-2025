@@ -484,7 +484,7 @@ const deletereturnOrder = async(orderId,type)=>{
 
 const acceptOrderReturn = async(orderId,userId) =>{
      console.log("accepted succussfuly",orderId)
-    const returnOrder = await orderReturnModel.findOneAndUpdate({orderId:orderId},{$set:{status:"accept"}})
+    const returnOrder = await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"all"},{$set:{status:"accept"}})
     const order =    await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"return"}})
 
 
@@ -619,8 +619,8 @@ const rejectSingleReturnProduct= async(orderId,variantId,productId)=>{
 
 const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
     const returnOrder =  await orderReturnModel.findOneAndUpdate({orderId:orderId,type:"single",'product.variantId':new mongoose.Types.ObjectId(variantId)},{$set:{status:"approved"}})
-    console.log(data);
-   const order =   await orderModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{
+    
+   let order =   await orderModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{
         $set:{'items.$[item].status':"return"}
     },
     {arrayFilters:[
@@ -630,7 +630,7 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
 )
 
          if(returnOrder?.product){
-         order = await order.aggregate([
+         order = await orderModel.aggregate([
                 {$match:{_id:order._id}},
                 {$unwind:'$items'},
                 {
@@ -638,16 +638,29 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
                 }
             ])
 
-            if(order.payment.method === 'razorpay' || order.payment.method === 'wallet'){
-         await walletModel.findOneAndUpdate({userId:userId},{$inc:{balance:Number(order.items.finalPrice)}})
+            if(order[0].payment.method === 'razorpay' || order[0].payment.method === 'wallet'){
+            let price = order[0].items.finalPrice
+            if(order[0].coupon){
+                let orderSubTotal = (order[0].pricing.subTotal-order[0].pricing.offerDiscount);
+                let taxAmount = orderSubTotal * (18/100)
+                orderSubTotal = taxAmount + orderSubTotal;
+                console.log("orderSubTotal:",orderSubTotal)
+                console.log("finalPrice:",order[0].items.finalPrice)
+                let data = (order[0].items.finalPrice/orderSubTotal)
+                let couponShare = data*order[0].pricing.couponDiscount;
+                console.log("couponShare:",couponShare)
+                console.log("price:",price)
+                price = price - couponShare;
+            } 
+         await walletModel.findOneAndUpdate({userId:order[0].userId},{$inc:{balance:Number(price)}})
          let transactionId = helpers.generateTransactionId()
                 await walletTransaction.create({
                     transactionId:transactionId,
-                    userId:new mongoose.Types.ObjectId(userId),
-                    amount:order.items.finalPrice,
+                    userId:new mongoose.Types.ObjectId(order[0].userId),
+                    amount:price,
                     reason:'refund',
                     type:"cradit",
-                    orderId:order.orderId
+                    orderId:order[0].orderId
                 })
     }
 
