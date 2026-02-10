@@ -35,11 +35,12 @@ const walletTransactionSchema = new mongoose.Schema({
     reason:{
         type:String,
     },
-    createdAt:{
-        type:Date,
-        default:new Date()
-    }
-})
+    
+},{
+    timestamps: true 
+  })
+
+  walletTransactionSchema.index({userId:1,createdAt:-1});
 
 export const walletModel = mongoose.model('wallet',walletSchema)
 export const walletTransaction = mongoose.model('walletTransaction',walletTransactionSchema)

@@ -384,7 +384,7 @@
     const state = document.getElementById("state").value;
     const city = document.getElementById("city").value.trim();
     const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phoneNumber").value.trim();
+    const phoneNumber = document.getElementById("phoneNumber").value.trim();
     const payment = document.querySelector('input[name="payment"]:checked');
 
     clearErrors();
@@ -394,7 +394,7 @@
          setError("emailError", "Email Required");
       isValid = false;
     }
-     if(phone===""){
+     if(phoneNumber===""){
         setError("phoneNumberError", "Enter valid 10-digit phone number");
       isValid = false;
     }
@@ -407,7 +407,7 @@
    
 
     // Phone
-    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+    if (!/^[6-9][0-9]{9}$/.test(phoneNumber)) {
       setError("phoneNumberError", "Enter valid 10-digit phone number");
       isValid = false;
     }
@@ -452,7 +452,7 @@
          setError("emailError", "Email Required");
       isValid = false;
     }
-     if(phone===""){
+     if(phoneNumber===""){
         setError("phoneNumberError", "Enter valid 10-digit phone number");
       isValid = false;
     }
@@ -465,7 +465,7 @@
    
 
     // Phone
-    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+    if (!/^[6-9][0-9]{9}$/.test(phoneNumber)) {
       setError("phoneNumberError", "Enter valid 10-digit phone number");
       isValid = false;
     }
@@ -510,7 +510,7 @@
             country,
             state,city,
             email,
-            phone,
+            phoneNumber,
             payment:payment.value,
             quantity
         })
@@ -689,11 +689,7 @@
                    state.value = data.state
                     country.value = data.country
                    
-                }).catch(error=>{
-            hideLoader()
-            console.log(error)
-        })
-
+                })
 
         })
     document.querySelectorAll('#selectAddress').forEach(element=>{

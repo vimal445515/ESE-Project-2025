@@ -11,7 +11,7 @@ const createWallet = async(userId) =>{
 const getWallet = async(userId,skip,limit)=>{
     
    const  walletData =  await walletModel.findOne({userId:new mongoose.Types.ObjectId(userId)})
-    const walletTransactionData = await walletTransaction.find({userId:new mongoose.Types.ObjectId(userId)}).sort({createdAt:-1}).skip(skip).limit(limit);
+    const walletTransactionData = await walletTransaction.find({userId:new mongoose.Types.ObjectId(userId)}).skip(skip).limit(limit).sort({createdAt:-1});
     return {walletData,walletTransactionData};
 }
 

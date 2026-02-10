@@ -39,7 +39,8 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:orderDetails.total,
                     type:"debit",
-                    orderId:null
+                    orderId:null,
+                    reason:"Order"
                 }],{session})
         }
     }
@@ -160,6 +161,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:orderDetails.total,
                     type:"debit",
+                    reason:"Order",
                     orderId:null
                 }],{session})
         }
