@@ -104,7 +104,7 @@ const getAllAddressForCheckout = async(_id) =>{
 }
 
 const findAddressFromDB = async(addressId)=>{
-  
+  if(!addressId) return null;
   return await addressSchema.findOne({_id:addressId}); 
 }
 

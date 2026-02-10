@@ -173,7 +173,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Address</label>
-                            <select id="address" class="form-select">
+                            <select id="selectAddress" class="form-select">
                                 <option selected>Select...</option>
                                 <%if(!type){%>
                                 <% allAddress.forEach(address=>{%>
@@ -693,7 +693,7 @@
 
         })
 
-    document.querySelectorAll('#address').forEach(element=>{
+    document.querySelectorAll('#selectAddress').forEach(element=>{
         element.addEventListener('change',(e)=>{
             
                     fetch('/checkout/address',{
