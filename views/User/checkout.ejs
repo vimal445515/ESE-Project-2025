@@ -689,10 +689,13 @@
                    state.value = data.state
                     country.value = data.country
                    
-                })
-
+                }).catch(error=>{
+            hideLoader()
+            console.log(error)
         })
 
+
+        })
     document.querySelectorAll('#selectAddress').forEach(element=>{
         element.addEventListener('change',(e)=>{
             

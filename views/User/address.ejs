@@ -100,7 +100,7 @@
                                
                             
                         </div>
-                          <div class="col-lg-3  mb-lg-0">
+                          <div class="col-lg-3  mb-lg-0 <%= data?.address?'':'d-none'%>">
                             Default address:
                          <input type="checkbox" id="defaultAddress" >
                           <input type="checkbox" class="d-none" id="newDefaultAddress" >
@@ -225,7 +225,7 @@
                                  </div>
 
                                  <div class="col-md-1 mt-4">
-                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end">Delete</button>
+                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end <%= data?.address?'':'d-none'%>">Delete</button>
                                 </div>
 
 
