@@ -676,7 +676,7 @@
                     if(data?.type === 'error') return  showToast(data.message,'error');
                     console.log(data)
                     userName.value = data.userName 
-                    companyName.value = data.companyName
+                    companyName.value = data?.companyName||''
                    address.value  = data.address
                    city.value = data.city
                    email.value = data.email
@@ -701,7 +701,7 @@
                     if(data?.type === 'error') return  showToast(data.message,'error');
                     console.log(data)
                     userName.value = data.userName 
-                    companyName.value = data.companyName
+                    companyName.value = data?.companyName||''
                     address.value  = data.address
                     city.value = data.city
                     email.value = data.email
