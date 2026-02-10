@@ -10,6 +10,8 @@
      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
         <link  rel="stylesheet" href="/adminStyles/sideBar.css">
          <link rel="stylesheet" href="/adminStyles/navBar.css">
+         <link rel="stylesheet" href="/UserStyles/loader.css">
+         
     <style>
         :root {
             --sidebar-width: 250px;
@@ -91,6 +93,7 @@
         <div id="page-content-wrapper">
             <%- include('../partials/adminNavBar') %>
             <%-include('../partials/notification')%>
+            <%- include("../partials/loader")%>
             <div class="container-fluid px-4 mt-3">
                 <div class="mb-4">
                     <h4 class="fw-bold mb-1">Order Details</h4>
@@ -336,6 +339,7 @@ This action cannot be undone.
                     globalValue = e.target.value
                     return 
                 }
+                showLoader()
                 fetch('/admin/order/edit',{
                     method:"PATCH",
                     headers:{"Content-Type":"application/json"},
@@ -343,6 +347,7 @@ This action cannot be undone.
                 })
                 .then((data)=>data.json())
                 .then((data)=>{
+                    hideLoader()
                     if(data.type === 'success'){
                         window.location.href = '/admin/order/edit/<%= order[0]._id%>';
                     }
@@ -351,6 +356,7 @@ This action cannot be undone.
                     }
                 
             }).catch((error)=>{
+                hideLoader()
                 console.log(error)
                 showToast('Something was wrong!','error');
             })
@@ -360,6 +366,7 @@ This action cannot be undone.
       function cancel(){
          if(!globalValue) return ;
          modal.hide();
+         showLoader()
         fetch('/admin/order/edit',{
                     method:"PATCH",
                     headers:{"Content-Type":"application/json"},
@@ -367,6 +374,7 @@ This action cannot be undone.
                 })
                 .then((data)=>data.json())
                 .then((data)=>{
+                    hdieLoader()
                 value = null;
                  if(data.type === 'success'){
                         window.location.href = '/admin/order/edit/<%= order[0]._id%>';
@@ -376,6 +384,7 @@ This action cannot be undone.
                     }
 
             }).catch((error)=>{
+                hideLoader()
                 console.log(error)
                 showToast('Something was wrong!','error');
             })
@@ -384,8 +393,9 @@ This action cannot be undone.
         
         async function downloadInvoice(orderId) {
         try {
+            showLoader()
             const response = await fetch(`/invoice/${orderId}`);
-
+            hideLoader()
             if (!response.ok) {
             throw new Error("Invoice download failed");
             }
@@ -403,12 +413,13 @@ This action cannot be undone.
             window.URL.revokeObjectURL(url);
 
         } catch (error) {
+            hideLoader()
             alert("Unable to download invoice");
             console.error(error);
         }
         }
 
     </script>
-    
+    <script src="/script/loader.js"></script>
 </body>
 </html>

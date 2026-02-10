@@ -8,7 +8,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+     <link rel="stylesheet" href="/UserStyles/loader.css">
     <style>
 .password-wrapper {
   position: relative;
@@ -41,6 +41,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
 <body class="bg-light">
 
 <%- include("../partials/navbar") %>
+<%- include("../partials/loader")%>
 <%- include("../partials/notification.ejs")%>
 <section class="py-5">
     <div class="container d-flex justify-content-center">
@@ -118,6 +119,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
 <!-- Validation Script -->
 <script>
 document.getElementById("signupForm").addEventListener("submit", function (e) {
+    showLoader()
     let valid = true;
 
     const userName = document.getElementById("userName");
@@ -167,6 +169,7 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
     }
 
     if (!valid) {
+        hideLoader()
         e.preventDefault(); // stop form submit
     }
 });
@@ -198,6 +201,8 @@ const password = document.getElementById("password");
 
 
 </script>
+
+<script src="/script/loader.js"></script>
 
 </body>
 </html>

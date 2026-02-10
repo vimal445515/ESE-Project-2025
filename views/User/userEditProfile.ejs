@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <link rel="stylesheet" href="/userStyles/UserSideBar.css">
-
+   <link rel="stylesheet" href="/UserStyles/loader.css">
     <style>
         :root { --primary-blue: #3b59d8; --bg-color: #f4f5f7; }
         body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; padding-top: 50px; }
@@ -84,6 +84,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
             
             <%- include('../partials/userSideBar.ejs',{page:'account'}) %>
             <%- include("../partials/notification.ejs") %>
+            <%- include("../partials/loader")%>
             <div class="col-lg-9">
                 
                 <div class="card settings-card">
@@ -114,7 +115,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                                       <p id="phoneNuberError" class="text-danger"></p>
                                 </div>
                                 <div class="text-end">
-                                    <button onclick="sendUserData()" class="btn btn-custom-primary">Save Changes</button>
+                                    <button onclick="sendUserData()" class="btn btn-primary">Save Changes</button>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +150,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                             </div>
                             <P class="text-danger" id="confirmPasswordError"></P>
                         </div>
-                        <button id="passwordChange" class="btn btn-custom-primary w-30">Change Password</button>
+                        <button id="passwordChange" class="btn btn-primary w-30">Change Password</button>
                     </div>
                     
                 </div>
@@ -189,6 +190,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                     let croppedBlob;
                    
                     function sendUserData(){
+                      showLoader()
                         const data = new FormData()
                         const userName = document.querySelector("#userName").value;
                         const email = document.querySelector("#email").value;
@@ -224,7 +226,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                         body:data
                        }).then(data=>data.json())
                        .then(data=>{
-                        
+                        hideLoader()
                         if(data?.status=='success'){
                            showToast('Updated successfully')
                            setTimeout(()=>{
@@ -244,6 +246,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                             showToast(data.message,'error');
                         }
                        }).catch((error)=>{
+                        hideLoader()
                         console.log(error);
                         showToast('connection failed');
                        })
@@ -361,11 +364,13 @@ input[type="password"]::-webkit-textfield-decoration-container {
 
    
     if (isValid) {
+      
       console.log(currentPassword.value+" "+newPassword.value)
      const jsonData = JSON.stringify({
          currentPassword:currentPassword.value,
          newPassword:newPassword.value
         })
+        showLoader()
       fetch("/profile/editPassword",{
         method:"PATCH",
          headers: {
@@ -374,6 +379,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
         body:jsonData
       }).then(data=>data.json())
       .then(data=>{
+        hideLoader()
         if(data.status=='error'){
           showToast(data.message,'error')
         }
@@ -385,6 +391,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
         }
       })
       .catch((error)=>{
+        hideLoader()
         showToast('Somthing was Wrong',"error");
       })
     }
@@ -428,6 +435,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
   });
 
             </script>
+            <script src="/script/loader.js"></script>
              <script src="/script/tost.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

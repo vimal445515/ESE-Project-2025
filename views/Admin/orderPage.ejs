@@ -10,6 +10,7 @@
     <link  rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/UserStyles/loader.css">
 
     
     <style>
@@ -66,7 +67,7 @@
     </style>
 </head>
 <body>
-
+   
     <div class="d-flex" id="wrapper">
         <div id="sidebar-wrapper">
              <div class="bg-white" id="sidebar-wrapper">
@@ -84,6 +85,7 @@
             
             <%- include('../partials/adminNavBar.ejs') %>
             <%- include('../partials/notification')%>
+             <%- include("../partials/loader")%>
             <div class="container-fluid px-4">
                 <div class="d-flex justify-content-between">
                   <div class=" ms-2  input-group d-flex " style="max-width: 400px;">
@@ -290,6 +292,7 @@
          let filter  = "<%= filter%>"
          function search(page){
           correntPage = page
+          showLoader()
           window.location.href = `/admin/order?page=${correntPage}&sort=${sort}&search=${searchValue}&filter=${filter}`
         }
          function nextPage(correntPgae){
@@ -325,9 +328,13 @@
 
         function reject(orderId,type,productId,variantId){
             if(window.confirm("are you shure you what to reject the request!")){
+                showLoader()
                 fetch(`/admin/order/reject/${orderId}?type=${type}&productId=${productId}&variantId=${variantId}`)
             .then((data)=>{
+                hideLoader()
                 window.location.reload()
+            }).catch(error=>{
+                console.log(error)
             })
             }
             
@@ -335,8 +342,10 @@
 
         function accept(orderId,type,productId,variantId){
             if(window.confirm("are you shure you what to accept the request !")){
+                showLoader()
                 fetch(`/admin/order/accept/${orderId}?type=${type}&productId=${productId}&variantId=${variantId}`)
                 .then((data)=>{
+                    hideLoader()
                     window.location.reload()
                 })
             }
@@ -344,6 +353,7 @@
          
 
     </script>
+    <script src="/script/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

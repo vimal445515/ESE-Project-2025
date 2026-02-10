@@ -11,6 +11,7 @@
     
     <link rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
+     <link rel="stylesheet" href="/UserStyles/loader.css">
 
     <style>
         :root {
@@ -119,6 +120,7 @@
         <div id="page-content-wrapper">
             <%- include('../partials/adminNavBar.ejs') %>
             <%- include('../partials/notification.ejs')%>
+            <%- include("../partials/loader")%>
             <div class="container-fluid px-4 pt-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
@@ -289,6 +291,7 @@
           let correntPage = '<%= page%>';
 
         function search(page){
+            showLoader()
           correntPage = page
           window.location.href = `/offers/product?page=${correntPage}`
         }
@@ -308,6 +311,7 @@
              function action(productId,offerId,inputBox){
                 
                 const data = JSON.stringify({productId,action:inputBox.value,offerId})
+                showLoader()
                 fetch(`/offers/product/action?page=${correntPage}`,{
                     method:"PATCH",
                     headers:{'Content-Type':'application/json'},
@@ -315,9 +319,11 @@
                 })
                 .then((data)=>data.json())
                 .then((data=>{
+                    hideLoader()
                     if(data?.type === 'error') return showToast(data.message,'error');
                     window.location.href=data.href;
                 })).catch(error=>{
+                    hideLoader()
                     console.log(error)
                     return showToast('Something was wrong!','error')
                 })
@@ -356,13 +362,17 @@
                }
 
                 const data = JSON.stringify({offerName,discount,expiryDate,offerId})
+                showLoader()
                fetch('/offers/product/update',{
                 method:"PATCH",
                 headers:{'Content-Type':'application/json'},
                 body:data
                }).then(data=>data.json())
                .then(data=>{
+                hideLoader()
                 window.location.reload();
+               }).catch(error=>{
+                console.log(error)
                })
              }
 
@@ -382,5 +392,6 @@
              })
 
     </script>
+    <script src="/script/loader.js"></script>
 </body>
 </html>
