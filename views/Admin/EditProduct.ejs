@@ -609,8 +609,8 @@ function preview(e){
                 showError("basePriceError", "Enter valid base price."); valid = false;
             }
 
-            if (!discount || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
-                showError("discountError", "Discount must be between 0–100."); valid = false;
+            if (!discount || isNaN(discount) || Number(discount) < 0 || Number(discount) > 99) {
+                showError("discountError", "Discount must be between 0–99."); valid = false;
             }
 
 
