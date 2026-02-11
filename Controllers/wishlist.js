@@ -13,7 +13,8 @@ const loadWishListPage= async(req,res)=>{
 
 const storeWishlistData = async(req,res)=>{
    const url =  req.headers?.referer?.split('/')?.pop()?.trim()
-   if(url === 'products'){
+   console.log(req.body);
+   if(url.includes('products')){
     try{
      await wishlistService.storeWishlistItemInDB(req.body.productId,req.body.variantId,req.session._id);
     return  res.status(200).json({data:"success"});
@@ -22,7 +23,8 @@ const storeWishlistData = async(req,res)=>{
      }
    }
     await wishlistService.storeWishlistItemInDB(req.body.productId,req.body.variantId,req.session._id);
-    res.redirect('/wishlist');
+    req.flash('success','product added to wishlist.')
+    res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
 }
 
 const deleteWislistItem = async(req,res) =>{  

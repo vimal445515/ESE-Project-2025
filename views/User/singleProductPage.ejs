@@ -538,9 +538,14 @@ document.getElementById('incrementButton').addEventListener("click",()=>{
  }
 })
 
+<% if(success?.length >0){%>
+
+    showToast('<%= success[0]%>')
+<%}%>
 
 
 document.getElementById('addToCart').addEventListener('click',(e)=>{
+    window.location.reload()
     if(document.getElementById('quantityInput').value > 5){
          e.preventDefault()
         alert("! Sorry Maximum qunatity allowed 5");

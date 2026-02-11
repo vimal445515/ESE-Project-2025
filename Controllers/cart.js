@@ -13,7 +13,7 @@ const addToCart = async (req,res) =>{
    const isBlock = await productService.isBlocked(req.body.productId)
     if(!await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
                    req.flash('error','product is out of stock!')
-                   return res.redirect(`/productDetails/${req.body.productId}`)
+                   return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
       }
 
 
@@ -23,15 +23,16 @@ const addToCart = async (req,res) =>{
          if(await categoryService.isBlocked(req.body.categoryId)){
          console.log("this is working")
          req.flash("error","This product 1 is unavailable now");
-         return res.redirect(`productDetails/${req.body.productId}`)
+         return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
         }
         }
 
    if(isBlock.length === 0){
       req.flash("error","This product is unavailable now");
-      return res.redirect(`productDetails/${req.body.productId}`)
+      return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
    }
-
+const stock = await cartService.getCartSingleItem(req.body.productId,req.body.variantId)
+      const cartData = await cartService.getCartQuantity(req.body.productId,req.body.variantId)
 
 if(req.body.categoryId !== undefined){
    
@@ -55,8 +56,7 @@ if(req.body.categoryId !== undefined){
       }
 
      
-      const stock = await cartService.getCartSingleItem(req.body.productId,req.body.variantId)
-      const cartData = await cartService.getCartQuantity(req.body.productId,req.body.variantId)
+      
        let quantity =req.body?.quantity
        if(req.headers.referer.split('/').pop().trim()==="cart"){
             quantity = 1
@@ -76,7 +76,7 @@ if(req.body.categoryId !== undefined){
          return res.redirect('/cart');
       }
      
-      if(req.body?.quantity <= stock[0].variants.stock & req.body?.quantity <= 5){
+      if(Number(req.body?.quantity) <= stock[0].variants.stock & req.body?.quantity <= 5){
           if(req.body?.increment){
             await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
            let item = await cartService.getCartSingleItem(req.body.productId,req.body.variantId);
@@ -86,7 +86,8 @@ if(req.body.categoryId !== undefined){
             return res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
           }else{
              await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
-            return res.redirect('cart')
+               req.flash('success','Product added to cart')
+            return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
           }
       }
       else{
@@ -96,17 +97,20 @@ if(req.body.categoryId !== undefined){
           }else{
             
              req.flash("error",`Only ${stock[0].variants.stock} items available`)
-             return res.redirect('cart')
+             return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
           }
       }
       
       
    }
+    if(Number(req.body?.quantity) > stock[0].variants.stock) throw new Error(`Only ${stock[0].variants.stock} stock available`);
     await cartService.addProduct(req.body.productId,req.body.variantId,req.session._id,parseInt(req.body.quantity))
-    res.redirect('/cart')
+    req.flash('success','Product added to cart')
+    res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
  }catch(error){
       console.log(error)
-      res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:"error",message:error.message});
+      req.flash('error',error.message)
+      res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
  }
     
 }
