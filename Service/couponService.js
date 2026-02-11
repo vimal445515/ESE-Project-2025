@@ -81,20 +81,19 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
     if(await couponUseCount.findOne({couponCode:coupon.couponCode,userId:userId})){
         throw new Error('This coupon is already used');
     }
-    const  discount = (oldAmount.totalPriceCartItem*(coupon.discount/100))
+    // const  discount = (oldAmount.totalPriceCartItem*(coupon.discount/100))
+    const orderTotalBeforeCoupon = products.reduce((sum, item) => {
+        return sum + (item.finalPrice * item.quantity);
+    }, 0);
+
+    let discount = (orderTotalBeforeCoupon * coupon.discount) / 100;
+
    const  couponDiscount = Math.min(discount,coupon.maximumDiscount)
 
     
 
 
-    // Calculating total price of every itme in the items and store into a array with discount
-    // let totalPriceCartItem = products.reduce((total,item)=>{
-    //   total += ((item.product.variants?.price*item.quantity)-parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
-    //   return total;
-    // },0)
-
-
-
+   
    const totalPriceCartItem = Number(oldAmount.totalPriceCartItem) ; // Applay discount
    
   // Calculate total discount price 
@@ -103,21 +102,28 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
 
      products = products.map((item)=>{
         console.log("this is :",item.offerDiscountAmount)
-       let itemCouponDiscountAmount = (item.finalPrice/oldAmount.total) * couponDiscount
+    //    let itemCouponDiscountAmount = (item.finalPrice/oldAmount.total) * couponDiscount
+            let itemTotal = item.finalPrice * item.quantity;
+
+            let ratio = itemTotal / orderTotalBeforeCoupon;
+
+            let itemCouponDiscountAmount =
+                Number((ratio * couponDiscount).toFixed(2));
+
+            let couponAppliedFinalPrice =
+                Number((itemTotal - itemCouponDiscountAmount).toFixed(2));
         return {
             ...item,
-            finalPrice:(item.finalPrice*item.quantity)-itemCouponDiscountAmount,
-            itemCouponDiscountAmount,
+             couponAppliedFinalPrice:couponAppliedFinalPrice ,                    //(item.finalPrice*item.quantity)-itemCouponDiscountAmount,
+            itemCouponDiscountAmount:itemCouponDiscountAmount,
             offerDiscountAmount:item.offerDiscountAmount
+           
         }
        
     })
 
     console.log("this is products",products)
-//    const totalDiscountPrice = products.reduce((total,item)=>{
-//       total += (parseInt((item.product.discound/100)*(item.product.variants?.price*item.quantity)))
-//       return total;
-//     },0)
+
 
   const  tax = ( (Number(totalPriceCartItem) - Number(totalDiscountPrice)) * 18 ) / 100
   
@@ -126,6 +132,11 @@ const applayCouponCodeInTotalAmount = async(products,couponCode,userId)=>{
 
  return {totalPriceCartItem:Number(totalPriceCartItem),totalDiscountPrice:Number(totalDiscountPrice),tax:Number(tax),total:Number(total),couponDiscount:Number(couponDiscount),products:products,offerDiscount:Number(oldAmount.totalDiscountPrice)}
 }
+
+
+
+
+
 
 const calculateTotalAmount = (products)=>{
     return cartService.cartSummary(products)

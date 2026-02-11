@@ -74,7 +74,7 @@ const placeOrder =  async(req,res)=>{
                  
                     if(req.body.payment === 'razorpay'){
                       try{
-                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
+                        order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,products[0].couponAppliedFinalPrice,req.body.appliedCoupon)
                         
                        return res.status(200).json({type:"razorpay",orderId:order[0].orderId})
                       }catch(error){
@@ -83,14 +83,14 @@ const placeOrder =  async(req,res)=>{
                       }
                     }else if(req.body.payment === 'wallet'){
                        try{
-                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
+                         order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,products[0].finalPrice,products[0].offerDiscountAmount,products[0].couponAppliedFinalPrice,req.body.appliedCoupon)
                       }catch(error){
                         console.log(error)
                         return res.status(400).json({type:"walletError",message:error.message});
                       }
                     }
                     try{
-                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,products[0].offerDiscountAmount,req.body.appliedCoupon)
+                    order =  await orderSevice.orderSingleProduct(req.body.productId,req.body.variantId,product.categoryId,quantity,req.session._id,product.productName,product.generalPhoto,req.body.payment,req.body,orderDetails,product.variants?.price,product.discound,orderDetails.products[0].finalPrice,products[0].offerDiscountAmount,products[0].couponAppliedFinalPrice,req.body.appliedCoupon)
                     }catch(error){
                        return res.status(400).json({type:"codError",message:error.message});
                     }

@@ -12,7 +12,7 @@ import walletService from './walletService.js'
 import { walletModel,walletTransaction } from '../Models/walletSchema.js'
 import helpers from '../helpers/helpers.js'
 
-const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,productOfferPrice,coupon=null,orderStatus='placed')=>{
+const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,productName,generalPhoto,paymentMethod,reqObj,orderDetails,price,discount,productFinalPrice,productOfferPrice,couponAppliedFinalPrice=null,coupon=null,orderStatus='placed')=>{
     if(paymentMethod === "cod" && orderDetails.total > 1000) {
         throw new Error('Cash on Delivery is available only for orders up to ₹1000. To proceed with this order, please choose an online payment option.');
     }
@@ -87,6 +87,7 @@ const orderSingleProduct = async(productId,variantId,categoryId,quantity,userId,
                 categoryId:categoryId,
                 quantity:quantity,
                 offerPrice:productOfferPrice,
+                couponAppliedFinalPrice:couponAppliedFinalPrice,
                 finalPrice:Number(productFinalPrice+((18/100)*productFinalPrice)),
                 productName:productName,
                 price:parseInt(price-((discount/100)*price)),
@@ -175,6 +176,7 @@ const orderCartItmes = async(products,orderDetails,reqObj,userId,coupon=null,pay
             categoryId:product.product.categoryId,
             productName:product.product.productName,
             quantity:product.quantity,
+            couponAppliedFinalPrice:product?.couponAppliedFinalPrice||null,
             offerPrice:product.offerDiscountAmount,
             finalPrice:product.finalPrice,
             price:parseInt(product.product.variants.price-((product.product.discound/100)*product.product.variants.price)),
@@ -520,7 +522,7 @@ const getOrderDataForDashbord = async(userId)=>{
 
 const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =>{
    
-   await orderModel.findOneAndUpdate({_id:orderId},
+ const allItems =   await orderModel.findOneAndUpdate({_id:orderId},
         {
             $set:{'items.$[product].status':"cancelled"}
         },
@@ -567,6 +569,15 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =
                 couponDiscount = orderData[0].coupon.maximumDiscount;
              }
             }
+
+            
+                
+                if(allItems.items.length === 1){
+                  orderData[0].items.finalPrice = orderData[0].pricing.totalAmount;
+                }else{
+                    orderData[0].items.finalPrice = orderData[0].items.couponAppliedFinalPrice + (orderData[0].items.couponAppliedFinalPrice*(18/100))
+                }
+            
         }
 
         let discount = Math.round(orderData[0].pricing.offerDiscount) - Math.round(orderData[0].items.offerPrice )
@@ -597,6 +608,7 @@ const cancelSingleProduct = async(orderId,productId,variantId,quantity,userId) =
                     userId:new mongoose.Types.ObjectId(userId),
                     amount:Number(orderData[0].items.finalPrice.toFixed(2)),
                     type:"cradit",
+                    reason:"Order Cancel",
                     orderId:orderData[0].orderId
                 })
 
@@ -630,7 +642,7 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
     ]}
 
 )
-
+      const orderData = order;
          if(returnOrder?.product){
          order = await orderModel.aggregate([
                 {$match:{_id:order._id}},
@@ -639,20 +651,15 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
                     $match:{'items.variantId':returnOrder.product.variantId}
                 }
             ])
-
             if(order[0].payment.method === 'razorpay' || order[0].payment.method === 'wallet'){
             let price = order[0].items.finalPrice
             if(order[0].coupon){
-                let orderSubTotal = (order[0].pricing.subTotal-order[0].pricing.offerDiscount);
-                let taxAmount = orderSubTotal * (18/100)
-                orderSubTotal = taxAmount + orderSubTotal;
-                console.log("orderSubTotal:",orderSubTotal)
-                console.log("finalPrice:",order[0].items.finalPrice)
-                let data = (order[0].items.finalPrice/orderSubTotal)
-                let couponShare = data*order[0].pricing.couponDiscount;
-                console.log("couponShare:",couponShare)
-                console.log("price:",price)
-                price = price - couponShare;
+                console.log(order[0].items.length)
+                if(orderData.items.length === 1){
+                    price = order[0].pricing.totalAmount;
+                }else{
+                    price = order[0].items.couponAppliedFinalPrice + (order[0].items.couponAppliedFinalPrice*(18/100))
+                }
             } 
          await walletModel.findOneAndUpdate({userId:order[0].userId},{$inc:{balance:Number(price)}})
          let transactionId = helpers.generateTransactionId()
@@ -660,7 +667,7 @@ const aproveSingleReturnProduct = async(orderId,variantId,productId) =>{
                     transactionId:transactionId,
                     userId:new mongoose.Types.ObjectId(order[0].userId),
                     amount:price,
-                    reason:'refund',
+                    reason:'Refund',
                     type:"cradit",
                     orderId:order[0].orderId
                 })
