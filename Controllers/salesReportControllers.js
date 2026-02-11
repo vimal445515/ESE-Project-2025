@@ -30,7 +30,7 @@ const downloadExcelSheet = async(req,res)=>{
     const endDate = req.query.endDate?new Date( req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReportDownload(startDate,endDate);
-    const workbook =  salesReportService.generateExcelSheet(salesReport,orders)
+    const workbook =  salesReportService.generateExcelSheet(salesReport,orders,startDate,endDate)
 
     res.setHeader(
     'Content-Type',"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -42,6 +42,7 @@ res.setHeader(
 await workbook.xlsx.write(res);
  res.end();
  }catch(error){
+    console.log(error)
     req.flash('error',"Internal server error")
     res.status(500).redirect('/reports')
  }
@@ -54,7 +55,7 @@ const downloadPDF = async(req,res)=>{
     const endDate = req.query.endDate?new Date( req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReportDownload(startDate,endDate);
-    const report = await salesReportService.generateReportPDF(salesReport,orders)
+    const report = await salesReportService.generateReportPDF(salesReport,orders,startDate,endDate)
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
         "Content-Disposition",

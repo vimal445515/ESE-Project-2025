@@ -19,7 +19,7 @@ const getSalesReport = (startDate,endDate)=>{
             overalDiscountAmount:{$sum:'$pricing.discount'},
             overalTax:{$sum:'$pricing.tax'},
             netSales:{$sum:'$pricing.totalAmount'}
-        }})
+        }},{$sort:{createdAt:-1}})
 
        
 
@@ -27,10 +27,13 @@ const getSalesReport = (startDate,endDate)=>{
     return salesReport;
 }
 
-const generateExcelSheet= (reportData,orders)=>{
+const generateExcelSheet= (reportData,orders,startDate,endDate)=>{
         const workbook = new excelJS.Workbook();
         const sheet = workbook.addWorksheet('Sales report');
         sheet.addRow(["SALES SUMMARY"]);
+        if(startDate){
+        sheet.addRow(["Date",`${startDate?.toString().slice(4,15)}  To  ${endDate?.toString().slice(4,15)}`])
+        }
         sheet.addRow(['Total Order',reportData[0].totalOrder])
         sheet.addRow(['Overal Order Amount',`₹${reportData[0].overalOrderAmount.toFixed(2)}`])
         sheet.addRow(['Overal Discount Amount',`₹${reportData[0].overalDiscountAmount.toFixed(2)}`])
@@ -39,7 +42,7 @@ const generateExcelSheet= (reportData,orders)=>{
 
         sheet.addRow([]);
           sheet.addRow([]);
-
+        
             sheet.columns = [
     { key: "totalOrder", width: 30 },
     { key: "overalOrderAmount", width: 15 },
@@ -70,13 +73,25 @@ return workbook;
 }
 
 
-export async function generateReportPDF(salesReport,orders) {
+export async function generateReportPDF(salesReport,orders,startDate,endDate) {
   
   try{
     const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
-  await page.setContent(salesReportHtml(salesReport,orders), {
+ let dateHtml = ''
+ if(startDate){
+    dateHtml = 
+ 
+`<div class="row mb-4">
+    <div class="col">
+      <div class="kpi-card">
+        <strong>Date</strong><br>
+        ${startDate?.toString()?.slice(4,15)}  To  ${endDate?.toString()?.slice(4,15)}
+      </div>
+    </div> `
+}
+    
+  await page.setContent(salesReportHtml(salesReport,orders,dateHtml), {
     waitUntil: "domcontentloaded"
   });
 
