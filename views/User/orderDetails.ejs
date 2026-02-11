@@ -308,7 +308,7 @@ This action cannot be undone.
                         <% order.items.forEach(item=>{%>
                         <tr>
                             <td>
-                                <div class="d-flex align-items-start">
+                                <div class="d-flex align-items-start" onclick="window.location.href=`/productDetails/<%=item.productId%>?variantId=<%=item.variantId%>`">
                                     <img src="<%= item.image%>" class="product-img me-3" alt="Laptop">
                                     <div>
                                         <a href="#" class="product-title d-block"><%= item.productName%></a>

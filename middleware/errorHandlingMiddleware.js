@@ -28,6 +28,7 @@ const error =(error,req,res,next)=>{
     if(error.message === 'Internal server error'){
          return res.status(500).json({type:'error',message: "Internal server error"})
     }
+    console.log(error)
     res.status(404).redirect('/404Page');
    
    

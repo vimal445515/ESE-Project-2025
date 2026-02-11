@@ -128,7 +128,7 @@
                                 <% if(!noData) {%>
                                     <% data.forEach(item=>{%>
                                 <tr>
-                                    <td>
+                                    <td onclick="window.location.href=`productDetails/<%= item.productId%>?variantId=<%= item.variantId%>`">
                                         <div class="product-info">
                                             <img src="<%= item.product.generalPhoto.url%>" alt="Laptop" class="wishlist-img">
                                             <h6 class="product-name"><%= item.product.productName%></h6>

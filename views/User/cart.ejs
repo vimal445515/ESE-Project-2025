@@ -73,7 +73,7 @@
                             <tbody>
                                 <% cartItems.forEach((value)=>{ %>
                                 <tr id="row">
-                                    <td class="ps-4">
+                                    <td  onclick="window.location.href=`productDetails/<%= value.productId%>?variantId=<%= value.variantId%>`" class="ps-4">
                                         <div class="d-flex align-items-center">
                                             <button onclick="deleteCart(`<%= value._id%>`)" class="btn btn-sm text-muted me-3"><i class="bi bi-x-circle fs-5"></i></button>
                                             <img src="<%= value.product.generalPhoto.url %>" class="product-img me-3" alt="Laptop">
