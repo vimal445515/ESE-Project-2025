@@ -6,7 +6,7 @@ const error =(error,req,res,next)=>{
             req.flash("error",'File have a limit 2MB')
            return res.status(415).json({obj:req.originalUrl})
          }
-         else if(error.message === "Image file format ogg not allowed"){
+         else if(error?.message?.includes("Invalid image") ||error?.message?.includes("Format") || error?.message?.includes("allowed")){
             req.flash("error","Please upload a valid image file.")
            return res.status(415).json({obj:req.originalUrl})
          }
@@ -19,7 +19,7 @@ const error =(error,req,res,next)=>{
         req.flash("error",'File have a limit 2MB')
       return  res.status(415).redirect(req.originalUrl)
     }
-    else if(error.message === 'Image file format ogg not allowed'){
+    else if(error?.message?.includes("Invalid image") ||error?.message?.includes("Format") || error?.message?.includes("allowed")){
             req.flash("error","Please upload a valid image file.")
             return res.status(415).redirect(req.originalUrl)
          }
