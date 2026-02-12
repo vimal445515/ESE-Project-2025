@@ -49,6 +49,16 @@ const checkEmail = (req,res,next)=>{
     res.status(404).json({status:"error",message:"user not found"})
 }
 
+const checkEmailForpassword = (req,res,next)=>{
+    if(req.session.email) return next();
+    res.redirect('/forgotPasswordEmail');
+}
+
+const checkResetPasswordEmail = async(req,res,next)=>{
+   if(req.session.newEmail) return next();
+   res.status(400).redirect('/forgotPasswordEmail')
+}
+
 const checkUser = async (req,res,next)=>{
     console.log(req.session.email)
     const isTrue = await user.findUserFromDB(req.session.email)
@@ -76,7 +86,9 @@ export default {
     isUser,
     checkEmail,
     checkUser,
-    otpCheck
+    otpCheck,
+    checkEmailForpassword,
+    checkResetPasswordEmail
     
    
 }

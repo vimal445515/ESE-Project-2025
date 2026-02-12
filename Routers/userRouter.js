@@ -19,8 +19,8 @@ router.get("/logout",userControllers.logout);
 router.post("/resetPassword",userControllers.findEmail,userControllers.generateOtpForPasswordReset)
 router.get("/resetPassowrdOtp",Auth.otpCheck,Auth.checkEmail,userControllers.loadOtpPageForResetPassword)
 router.post('/otpVerificationResetPassword',Auth.checkEmail,userControllers.resetPasswordOtpVarification)
-router.get('/resetPasswordUser',userControllers.loadresetPasswordPage)
-router.post('/resetPasswordUser',Auth.checkEmail,userControllers.resetPassword)
+router.get('/resetPasswordUser',Auth.checkEmailForpassword,userControllers.loadresetPasswordPage)
+router.post('/resetPasswordUser',Auth.checkResetPasswordEmail,userControllers.resetPassword)
 router.get('/google/login',userControllers.startGoogleLogin)
 router.get('/google/authenticate',userControllers.googleAuthenticate,userControllers.storeUserDataInSession)
 

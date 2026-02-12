@@ -225,17 +225,21 @@ try{
 
 
 const loadresetPasswordPage = async (req,res)=>{
-  res.status(200).render('User/resetPassword');
+  const email = req.session.email;
+   req.session.email = null 
+   req.session.newEmail = email
+  res.status(200).render('User/resetPassword',{email:email});
 }
+
+
 const resetPassword = async(req,res) =>{
  
-  const {password} = req.body
+  const {password,email} = req.body
 try{
-  await userService.updatePassword(password,req.session.email)
-  await user.clearOtp(req.session.email)
+  await userService.updatePassword(password,email)
+  await user.clearOtp(email)
  req.session.destroy((err)=>{
     if(err) throw new Error("erorr in sesion distroy");
-   
     res.status(200).redirect('/login')
   })
 }catch(error){
