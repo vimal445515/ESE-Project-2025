@@ -199,6 +199,7 @@ const decrementQuantity = async(productId,variantId) =>{
 const incrementQuantity = async(productId,variantId,quantity) =>{
   try{
     await cartModel.findOneAndUpdate({productId:productId,variantId:variantId},{$inc:{quantity:quantity}})
+     await wishlistModel.deleteOne({productId:productId,variantId:variantId})
   }
   catch(error){
 

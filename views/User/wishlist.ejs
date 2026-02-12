@@ -167,7 +167,12 @@
                                 </tr>
                                 <%})%>
                                 <%}else{%>
-                                    <p class="text-center text-secondary">No data</p>
+                                    <tr>
+                                        <td></td>
+                                        <td><p class="text-center  text-secondary">No data</p></td>
+                                        <td></td>
+                                    </tr>
+                                    
                                 <%}%>
                             </tbody>
                         </table>
@@ -176,7 +181,9 @@
 
             </div> </div> </div> <%- include("../partials/footer") %>
             <script>
-                
+                <% if(success.length > 0){%>
+                    showToast('<%= success[0]%>');
+                    <%}%>
                 document.querySelectorAll('#remove').forEach(button=>{
                      let data  = button.nextElementSibling.value
                     button.addEventListener("click",()=>{

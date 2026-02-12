@@ -5,7 +5,8 @@ import orderSevice from '../Service/orderSevice.js'
 const leadCartPage = async(req,res) =>{
    
    const cartItems = await  cartService.getCartItems(req.session._id)
-
+  
+   req.headers.referer.split('/').pop().trim()==='wishlist'
    const subTotal = cartService.cartSummary(cartItems)
     res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:null,message:null,cartItems:cartItems,subTotal});
 }
@@ -13,6 +14,7 @@ const addToCart = async (req,res) =>{
    const isBlock = await productService.isBlocked(req.body.productId)
     if(!await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
                    req.flash('error','product is out of stock!')
+                   if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(400).redirect('/wishlist');
                    return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
       }
 
@@ -23,15 +25,17 @@ const addToCart = async (req,res) =>{
          if(await categoryService.isBlocked(req.body.categoryId)){
          console.log("this is working")
          req.flash("error","This product 1 is unavailable now");
+         if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(404).redirect('/wishlist');
          return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
         }
         }
 
    if(isBlock.length === 0){
       req.flash("error","This product is unavailable now");
+        if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(404).redirect('/wishlist');
       return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
    }
-const stock = await cartService.getCartSingleItem(req.body.productId,req.body.variantId)
+      const stock = await cartService.getCartSingleItem(req.body.productId,req.body.variantId)
       const cartData = await cartService.getCartQuantity(req.body.productId,req.body.variantId)
 
 if(req.body.categoryId !== undefined){
@@ -86,7 +90,8 @@ if(req.body.categoryId !== undefined){
             return res.status(200).json({type:"suceess",stock:item[0].variants.stock,subTotal})
           }else{
              await cartService.incrementQuantity(req.body.productId,req.body.variantId,Number(quantity))
-               req.flash('success','Product added to cart')
+             req.flash('success','Product added to cart')
+            if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(200).redirect('/wishlist');
             return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
           }
       }
@@ -97,6 +102,7 @@ if(req.body.categoryId !== undefined){
           }else{
             
              req.flash("error",`Only ${stock[0].variants.stock} items available`)
+             if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(200).redirect('/wishlist');
              return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
           }
       }
@@ -106,10 +112,12 @@ if(req.body.categoryId !== undefined){
     if(Number(req.body?.quantity) > stock[0].variants.stock) throw new Error(`Only ${stock[0].variants.stock} stock available`);
     await cartService.addProduct(req.body.productId,req.body.variantId,req.session._id,parseInt(req.body.quantity))
     req.flash('success','Product added to cart')
+   if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(200).redirect('/wishlist');
     res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
  }catch(error){
       console.log(error)
       req.flash('error',error.message)
+      if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(200).redirect('/wishlist');
       res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
  }
     
