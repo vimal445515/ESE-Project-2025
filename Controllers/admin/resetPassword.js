@@ -24,21 +24,32 @@ const generateOtpForPasswordReset= async (req,res)=>{
 
 const loadOtpPageForResetPassword = (req,res) =>{
   const {email} = req.session;
+  req.session.email= null;
   res.render('Admin/otpResetPassword',{email,status:null,message:null});
 }
 
 
 
  const resetPasswordOtpVarification = async (req,res) =>{
+
   const {otp} = req.body
-  const {email} = req.session;
+  const {email} = req.body;
+  try{
   const result = await user.checkOtp(otp,email);
 
-  if(result) return res.render('Admin/resetPassword');
-  
-  res.status(400).render('Admin/otpResetPassword',{email,status:"error",message:"invalid otp"})
+  if(result){
+    req.session.email = email
+    return res.status(200).json({type:"success",href:"/admin/password"});
+  } 
+  res.status(400).json({type:"error",message:"invalid otp"})
+  }catch(error){
+    res.status(500).json({type:"error",message:"Internal server error"})
+  }
 }
 
+const loadAdminPasswordChangePage = async(req,res)=>{
+  res.status(200).render("Admin/resetPassword");
+}
  const resetPassword = async(req,res) =>{
  
   const {password} = req.body
@@ -59,5 +70,6 @@ export default  {
     generateOtpForPasswordReset,
     loadOtpPageForResetPassword,
     resetPasswordOtpVarification,
-    resetPassword
+    resetPassword,
+    loadAdminPasswordChangePage
 }

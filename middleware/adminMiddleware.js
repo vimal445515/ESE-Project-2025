@@ -18,5 +18,5 @@ export const checkEmail = (req,res,next)=>{
     if(req.session.email) {
         return next()
     };
-   return  res.status(404).json({status:"error",message:"user not found"})
+   return res.status(400).redirect("/admin/login")
 }

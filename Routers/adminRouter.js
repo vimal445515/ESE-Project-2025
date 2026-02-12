@@ -17,8 +17,9 @@ router.get("/categories",isAdmin,loadCategoriePage)
 
 router.post("/resetPassword",resetPassword.findEmail,resetPassword.generateOtpForPasswordReset)
 router.get("/resetPassowrdOtp",checkEmail,resetPassword.loadOtpPageForResetPassword)
-router.post('/otpVerificationResetPassword',checkEmail,resetPassword.resetPasswordOtpVarification)
+router.post('/otpVerificationResetPassword',resetPassword.findEmail,resetPassword.resetPasswordOtpVarification)
 router.post('/resetPasswordAdmin',checkEmail,resetPassword.resetPassword)
+router.get('/password',checkEmail,resetPassword.loadAdminPasswordChangePage)
 
 router.get("/products",isAdmin,product.loadProductsPage)
 router.get("/addCategories",isAdmin,LoadAddCategoriesPage)
