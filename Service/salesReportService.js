@@ -8,7 +8,6 @@ const getSalesReport = (startDate,endDate)=>{
     
     const pipeline = []
     if(startDate){
-       
          pipeline.push({$match:{createdAt:{$gte:startDate,$lte:endDate}}})
     }
     
@@ -29,10 +28,11 @@ const getSalesReport = (startDate,endDate)=>{
 
 const generateExcelSheet= (reportData,orders,startDate,endDate)=>{
         const workbook = new excelJS.Workbook();
+        
         const sheet = workbook.addWorksheet('Sales report');
         sheet.addRow(["SALES SUMMARY"]);
         if(startDate){
-        sheet.addRow(["Date",`${startDate?.toString().slice(4,15)}  To  ${endDate?.toString().slice(4,15)}`])
+        sheet.addRow(["Date",`${startDate?.toISOString().slice(0,10)}  To  ${endDate?.toISOString().slice(0,10)}`])
         }
         sheet.addRow(['Total Order',reportData[0].totalOrder])
         sheet.addRow(['Overal Order Amount',`₹${reportData[0].overalOrderAmount.toFixed(2)}`])
@@ -59,7 +59,7 @@ const generateExcelSheet= (reportData,orders,startDate,endDate)=>{
         console.log(orders)
         sheet.addRow([order.orderId, 
             order.user[0].userName,
-            order.createdAt.toString().slice(0,10),
+            order.createdAt.toISOString().slice(0,10),
            `₹${order.pricing.subTotal.toFixed(2)}`,
            `₹${ order.pricing.offerDiscount.toFixed(2)}`, 
             `₹${order.pricing.couponDiscount.toFixed(2)}`,
@@ -86,7 +86,7 @@ export async function generateReportPDF(salesReport,orders,startDate,endDate) {
     <div class="col">
       <div class="kpi-card">
         <strong>Date</strong><br>
-        ${startDate?.toString()?.slice(4,15)}  To  ${endDate?.toString()?.slice(4,15)}
+        ${startDate?.toISOString()?.slice(0,10)}  To  ${endDate?.toISOString()?.slice(0,10)}
       </div>
     </div> `
 }

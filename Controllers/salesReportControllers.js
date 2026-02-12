@@ -10,7 +10,6 @@ const loadSalesReportPage = async(req,res)=>{
     const skip = helpers.paginationSkip(page,limit)
     const startDate = req.query.startDate === 'undefined'?undefined:req.query.startDate?new Date( req.query.startDate):null
     const endDate = req.query.endDate ==='undefined'?undefined:req.query.endDate?new Date(req.query.endDate):null
-    
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReport(startDate,endDate,skip,limit);
     
@@ -28,6 +27,8 @@ const downloadExcelSheet = async(req,res)=>{
     try{
      const startDate = req.query.startDate?new Date( req.query.startDate):null
     const endDate = req.query.endDate?new Date( req.query.endDate):null
+    console.log('endDate:',endDate)
+    console.log("endDate:",req.query.endDate)
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
     const orders = await orderService.getOrdersForSalesReportDownload(startDate,endDate);
     const workbook =  salesReportService.generateExcelSheet(salesReport,orders,startDate,endDate)
