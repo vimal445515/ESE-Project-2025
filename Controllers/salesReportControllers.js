@@ -8,6 +8,7 @@ const loadSalesReportPage = async(req,res)=>{
     const limit = 12;
     console.log(req.query.startDate,req.query.endDate)
     const skip = helpers.paginationSkip(page,limit)
+    try{
     const startDate = req.query.startDate === 'undefined'?undefined:req.query.startDate?new Date( req.query.startDate):null
     const endDate = req.query.endDate ==='undefined'?undefined:req.query.endDate?new Date(req.query.endDate):null
     const salesReport = await salesReportService.getSalesReport(startDate,endDate)
@@ -20,6 +21,10 @@ const loadSalesReportPage = async(req,res)=>{
     }
    
     res.status(200).render('Admin/SalesReportPage',{salesReportData:salesReport,orders,count,limit,page});
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error')
+    }
 }
 
 

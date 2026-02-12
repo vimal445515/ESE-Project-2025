@@ -1,6 +1,7 @@
 import adminDashbordService from "../Service/adminDashbordService.js";
 
 const loadAdminDashboard = async(req,res)=>{
+  try{
   const selectedType = req.query?.type||'Category';
   const filter = req.query?.filter||'Monthly'
    if(req.query.type){
@@ -16,7 +17,12 @@ const loadAdminDashboard = async(req,res)=>{
   console.log(data)
  
   res.status(200).render('Admin/dashboard',{data});
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect('/500Error');
+  }
 }
+
 
 export default {
     loadAdminDashboard

@@ -24,6 +24,7 @@ const storeProducts = async (req,res)=>{
     
 }
  const loadProductsPage = async(req,res)=>{
+  try{
     const page = req.query.page||1
     const search = req.query.search
     const limit = 5;
@@ -31,6 +32,10 @@ const storeProducts = async (req,res)=>{
     const products = await productService.getAllProducts(skip,limit,search);
     const count = await productService.getAllProductsCount();
     res.render('Admin/product',{products,page,limit,count})
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect('/500Error')
+    }
 }
 
 
@@ -38,11 +43,17 @@ const storeProducts = async (req,res)=>{
     const id =  req.params.id
     const index = Number(req.query.variant)?Number(req.query.variant):0;
     console.log(index,req.query.variant)
+    try{
     const product =  await productService.getProduct(id,index)
     const variantsData = await productService.variantCount(id);
     const productCategory = await productService.getCategory(product.categoryId);
     const categories = await adminService.getCategoriesForProductEdit()
     res.render("Admin/editProduct",{product,categories,productCategory,variantsData,index})
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect('/500Error')
+
+    }
 }
 const editProduct = async  (req,res) =>{
   try{
@@ -139,6 +150,7 @@ const loadUserSideProductsPage = async(req,res)=>{
     const searchValue = req.query.search;
     
     const limit = 12;
+    try{
     const skip = helpers.paginationSkip(page,limit)
     let products = await productService.getAllProductsUserSide (skip,limit,sort,category,priceRange,searchValue);
     products = await wishlistService.addLikeToProduct(products,req.session._id);
@@ -146,6 +158,9 @@ const loadUserSideProductsPage = async(req,res)=>{
     const count = toatalCount.length;
     const categoryNames =  await categoryService.getAllCategory();
     res.render('User/products',{products,userName:req.session.userName,page,limit,count,sort,searchValue,category,priceRange,profile:req.session.profile,categoryNames})
+    }catch(error){
+      res.status(500).redirect('/500Error')
+    }
 }
 
  const loadProductDetails = async (req, res) => {
@@ -157,13 +172,11 @@ const loadUserSideProductsPage = async(req,res)=>{
   let productData;
     let isLiked = false
     let wishlistId = null
+    try{
   const productArray = await productService.getSingleProduct(id, storage, ram,variantId);
   const getVariants = await productService.getVariants(id);
   const review = await reviewService.getReview(id)
   const average = helpers.calculateAvargeRating(review)
-
-  try{
-
   if (!productArray || productArray.length === 0) {
     const fallback = await productService.getSingleProduct(id);
     productData = fallback[0];
@@ -177,10 +190,7 @@ const loadUserSideProductsPage = async(req,res)=>{
     isLiked=true;
    wishlistId = wishlist._id;
   } 
-}catch(error){
-  
-  return res.redirect(`/productDetails/${productData._id}`)
-}
+
 const categoryIsBlocked = await categoryService.isBlocked(productData.categoryId);
   const relateditems = await productService.getRelateditems(productData.categoryId);
   res.render("User/singleProductPage", {
@@ -197,6 +207,10 @@ const categoryIsBlocked = await categoryService.isBlocked(productData.categoryId
     avarageRating:average.toFixed(1),
     categoryIsBlocked
   });
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect('/500Error')
+  }
 };
 
 

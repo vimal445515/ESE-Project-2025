@@ -10,28 +10,43 @@ const loadAdminOffersPage = (req,res)=>{
 const loadCategoryOfferPage = async(req,res)=>{
     const page = req.query?.page||1
     const limit = 10;
+    try{
     const skip = helpers.paginationSkip(page,limit)
     const categorys = await categoryService.getAllCategoryForOffer();
     const offers = await offerService.getAllOffers('category',skip,limit);
      const count = await offerService.getCout('category')
     res.status(200).render('Admin/categoryOfferPage',{categorys,offers,count,limit,page})
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error');
+    }
 }
 
 const loadProductOfferPage = async(req,res)=>{
     const page = req.query?.page||1
     const limit = 10;
+    try{
     const skip = helpers.paginationSkip(page,limit)
     const  products = await productService.getAllProductsForOffer()
     const offers = await offerService.getAllOffers('product',skip,limit);
     const count = await offerService.getCout('product')
     res.status(200).render('Admin/productOfferPage',{products,offers,count,limit,page});
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error')
+    }
 }
 
 const createOfferForProduct = async(req,res)=>{
+    try{
     const {offerName,productId,discount,expiryDate} = req.body;
     await offerService.createOffer(offerName,productId,discount,expiryDate);
     req.flash('success','Offer created successfully');
     res.status(200).redirect('/offers/product')
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error');
+    }
 }
 
 
@@ -67,9 +82,13 @@ const updateProductOffer = async (req,res)=>{
 
 
 const createOfferForCategory = async(req,res)=>{
+    try{
     const {offerName,categoryId,discount,expiryDate} = req.body;
     await offerService.createCategoryOffer(offerName,categoryId,discount,expiryDate)
     res.status(201).redirect('/offers/category');
+    }catch(error){
+        res.status(500).redirect('/500Error');
+    }
 }
 
 

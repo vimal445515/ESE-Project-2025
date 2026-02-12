@@ -445,7 +445,7 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
      .then((data)=>data.json())
      .then((data)=>{
               hideLoader()
-       
+              if(data.type ==='error') return showToast(data.message,'error');
                 document.getElementById('userName').value = data.userName
                 document.getElementById('address').value = data.address
                 document.getElementById('country').value = data.country

@@ -11,6 +11,7 @@ const leadCartPage = async(req,res) =>{
     res.render('User/cart',{userName:req.session.userName,profile:req.session.profile,status:null,message:null,cartItems:cartItems,subTotal});
 }
 const addToCart = async (req,res) =>{
+   try{
    const isBlock = await productService.isBlocked(req.body.productId)
     if(!await orderSevice.checkOrderStock(req.body.productId,req.body.variantId)){
                    req.flash('error','product is out of stock!')
@@ -18,7 +19,7 @@ const addToCart = async (req,res) =>{
                    return res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`)
       }
 
-
+      
 
       if(req.body.categoryId !== undefined){
          console.log(req.body.categoryId)
@@ -120,7 +121,15 @@ if(req.body.categoryId !== undefined){
       if( req.headers.referer.split('/').pop().trim()==='wishlist') return res.status(200).redirect('/wishlist');
       res.redirect(`/productDetails/${req.body.productId}?variantId=${req.body.variantId}`);
  }
-    
+    }catch(error){
+      console.log(error)
+      if(req.headers.referer.split('/').pop().trim()==="cart"){
+         req.flash('error','Internal server error');
+        return res.status(500).json({type:"error"});
+      }
+
+      return res.status(500).redirect('/500Error');
+    }
 }
 
 

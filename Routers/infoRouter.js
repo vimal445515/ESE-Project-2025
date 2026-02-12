@@ -14,5 +14,9 @@ router.get('/contact',(req,res)=>{
     res.status(200).render('User/contactPage',{userName:req.session?.userName||null,profile:req.session?.profile||null})
 })
 
+router.get('/500Error',(req,res)=>{
+    res.status(500).render('User/500Page')
+})
+
 router.post('/contact',infoController.sendMessage)
 export default router

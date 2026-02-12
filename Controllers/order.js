@@ -8,19 +8,26 @@ import { startSession } from "mongoose"
 import couponService from '../Service/couponService.js'
 
 const loadOrdersHistory = async(req,res)=>{
-    
+    try{
         const page = req.query.page||1
         const limit = 7;
         const skip = helpers.paginationSkip(page,limit)
         const orders =  await orderSevice.getOrders(req.session._id,skip,limit)
         const count = await orderSevice.countOrders(req.session._id);
         res.render('User/orders',{userName:req.session.userName,profile:req.session.profile,orders,page,limit,skip,count})
+        }catch(error){
+          res.status(500).redirect('/500Error')
+        }
 }
 
 const loadOrderDetailPage = async(req,res)=>{
+  try{
     const order = await orderSevice.getSingleOrder(req.params.id)
-    console.log(order[0]?._id,req.params.id)
     res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0],type:null})
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect('/500Error');
+    }
 }
 
 const cancelOrder = async(req,res)=>{
@@ -235,11 +242,15 @@ const returnOrder = (req,res)=>{
 }
 
 const search = async(req,res)=>{
-  console.log(req.body.value)
+  try{
     const search = req.body.value
     const userId = req.session._id
   const data =  await orderSevice.searchByUser(userId,search)
   res.render('User/orders',{userName:req.session.userName,profile:req.session.profile,orders:data,page:1,count:null,limit:null});
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect('/500Error')
+  }
 }
 
 

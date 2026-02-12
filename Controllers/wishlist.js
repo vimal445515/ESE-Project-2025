@@ -1,5 +1,6 @@
 import wishlistService from "../Service/wishlistService.js"
 const loadWishListPage= async(req,res)=>{
+  try{
       const data  = await wishlistService.getWishlistItems(req.session._id)
       console.log(data)
       if(data){
@@ -7,6 +8,10 @@ const loadWishListPage= async(req,res)=>{
       }
       else{
         res.render('User/wishlist',{userName:req.session.userName,profile:req.session.profile,data:null,noData:true})
+      }
+      }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error');
       }
      
     }
