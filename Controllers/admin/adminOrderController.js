@@ -93,7 +93,7 @@ const updateOrderReturnstatus = async(req,res) =>{
     if(req.query.type === 'all'){
    try{
     await orderSevice.acceptOrderReturn(orderId,req.session._id)
-    res.json({type:"success",message:"Order return accepted success fully"})
+    res.json({type:"success",message:"Order return accepted successfully"})
    }catch(error){
     res.json({type:"error",message:" oops somthing was wrong!"})
    }

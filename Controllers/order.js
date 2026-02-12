@@ -22,8 +22,8 @@ const loadOrdersHistory = async(req,res)=>{
 
 const loadOrderDetailPage = async(req,res)=>{
   try{
-    const order = await orderSevice.getSingleOrder(req.params.id)
-    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0],type:null})
+    const { order,block} = await orderSevice.getSingleOrder(req.params.id)
+    res.render('User/orderDetails',{userName:req.session.userName,profile:req.session.profile,order:order[0],type:null,block})
     }catch(error){
       console.log(error)
       res.status(500).redirect('/500Error');
@@ -263,8 +263,9 @@ const loadOrderScucessPage = (req,res)=>{
 
 const storeReturOrder  = async(req,res)=>{
   try{
-     await orderSevice.storeReturnOrderData(req.body.orderId,req.body.reason)
-   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'},productId:null})
+    console.log("this is the order data",req.body.orderId)
+  const order =  await orderSevice.storeReturnOrderData(req.body.orderId,req.body.reason)
+   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success',orderId:order?.orderId},productId:null})
   }catch(error){
     res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'},productId:null})
   }
@@ -285,8 +286,8 @@ const cancelProduct = async(req,res)=>{
 
 const returnSingleProduct= async(req,res)=>{
    try{
-     await orderSevice.storeSingleReturnOrderData(req.body.orderId,req.body.reason,req.body.productId,req.body.variantId)
-   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success'},productId:req.body.productId,variantId:req.body.variantId})
+    const order = await orderSevice.storeSingleReturnOrderData(req.body.orderId,req.body.reason,req.body.productId,req.body.variantId)
+   res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:"Return order request send successfully",type:'success',orderId:order.orderId},productId:req.body.productId,variantId:req.body.variantId})
   }catch(error){
     res.render('User/resendProductPage',{userName:req.session.userName,profile:req.session.profile,orderId:req.body.orderId,popup:{message:error,type:'error'},productId:req.body.productId,variantId:req.body.variantId})
   }

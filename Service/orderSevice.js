@@ -315,7 +315,19 @@ const checkOrderStockForCart= async(products)=>{
 
 const getSingleOrder = async(orderId)=>{
     
-    return await orderModel.find({orderId:orderId});
+    const order =  await orderModel.find({orderId:orderId});
+    let block = false
+    if(order[0].orderStatus !== 'delivered'){
+        order[0].items.forEach((item)=>{
+        if(item.status === 'cancelled') block = true;
+    })
+    }else{
+         order[0].items.forEach((item)=>{
+        if(item.status === 'return') block = true;
+    })
+    }
+     
+    return {order,block}
 }
 
 const getSingleOrderById = async(orderId)=>{
@@ -429,7 +441,10 @@ const getOrderById = async(orderId,sort)=>{
 
 const updateOrderCancel = async(orderId)=>{
    const items =  await orderModel.findOne({_id:orderId},{items:1,_id:0})
-    items.items.forEach(async(item)=>{
+   items.items.forEach((item)=>{
+    if(item.status === "cancelled") throw new Error("order item already cancelled.");
+   })
+   for(let item of  items.items){
         await productModel.findOneAndUpdate(
             {_id:item.productId},
             {$inc:{'variants.$[variant].stock':item.quantity}},
@@ -437,7 +452,7 @@ const updateOrderCancel = async(orderId)=>{
                 {'variant._id':item.variantId}
             ]}
         )
-    })
+    }
 
    const order =  await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"canceled"}})
    if(order.payment.status === 'paid' && order.orderStatus != "canceled"){
@@ -454,9 +469,13 @@ const searchByUser = async (userId,orderId)=>{
 
 
 const storeReturnOrderData = async(orderId,reason)=>{
+    const orderItems = await orderModel.findOne({_id:orderId},{items:1});
+     for(let orderItem of orderItems.items){
+        if(orderItem.status === "return") throw new Error("order product already returned this action canot be performed. you can return one product at a time.");
+     }
     if(!await orderReturnModel.findOne({orderId:orderId,type:'all'})){
-        await orderModel.findOneAndUpdate({orderId:orderId,type:"all"},{$set:{orderStatus:"return"}})
-      return  await orderReturnModel.create({orderId,reason,type:"all"});
+        await orderReturnModel.create({orderId,reason,type:"all"}); 
+        return await orderModel.findOne({_id:new mongoose.Types.ObjectId(orderId)})
     }
     throw new Error("Canot request more than one time !")
     
@@ -465,12 +484,14 @@ const storeSingleReturnOrderData = async(orderId,reason,productId,variantId)=>{
      const productName = await productModel.find({_id:productId},{productName:1,_id:0})
      
       const isPresent = await orderReturnModel.findOne({orderId:new mongoose.Types.ObjectId(orderId),"product.variantId": new mongoose.Types.ObjectId(variantId)})
-     if(isPresent)
+      const isReturnAllProducts = await orderReturnModel.findOne({orderId:new mongoose.Types.ObjectId(orderId),type:"all"})
+     if(isPresent || isReturnAllProducts)
      {
          throw new Error("Canot request more than one time !")
      }else{
 
-         return await orderReturnModel.create({orderId:new mongoose.Types.ObjectId(orderId),reason,type:'single',product:{productName:productName[0].productName,productId:new mongoose.Types.ObjectId(productId),variantId:new mongoose.Types.ObjectId(variantId)}})
+          await orderReturnModel.create({orderId:new mongoose.Types.ObjectId(orderId),reason,type:'single',product:{productName:productName[0].productName,productId:new mongoose.Types.ObjectId(productId),variantId:new mongoose.Types.ObjectId(variantId)}})
+         return await orderModel.findOne({_id: new mongoose.Types.ObjectId(orderId)})
      }
 
 }

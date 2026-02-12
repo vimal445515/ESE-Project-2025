@@ -153,13 +153,18 @@ This action cannot be undone.
                   <button onclick="downloadInvoice(`<%= order._id%>`)"  class=" btn text-primary text-decoration-none fw-bold small me-2">Download invoice</button>
                   <%}%>
 
-                <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled" ){%>
+                <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled"  && order.orderStatus !== "return" && !block ){%>
                 <a href="" data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small">Cancel Order</a>
-                <%}%>
-                <%if(order.orderStatus ==="delivered"){%>
+                <%}else{%>
+                     <a  data-toggle="modal" data-target="#exampleModal" class="text-primary text-decoration-none fw-bold small"></a>
+                    <%}%>
+                <%if(order.orderStatus ==="delivered" && !block){%>
                 <a href="/orders/return?orderId=<%=order._id%>"  class="text-primary text-decoration-none fw-bold small">Return order</a>
                 <%}%>
                 <%}%>
+                 <%if(order.orderStatus === 'return'){%>
+                    <a   class="text-success text-decoration-none fw-bold small">Order returned</a>
+                    <%}%>
             </div>
 
             <div class="order-header-box mb-4">
@@ -340,7 +345,7 @@ This action cannot be undone.
                                     <p   class=" text-success text-decoration-none fw-bold small"> Return approved</p>
                                 <%}else{%>
                                     <%if(order.orderStatus !== "paymentFailed"){%>
-                                      <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled"){%>
+                                      <%if(order.orderStatus !=="delivered" && order.orderStatus !== "canceled" && order.orderStatus !== "return" ){%>
                                 <button href="" data-toggle="modal" onclick="cancleSingleProductModal('<%= item.productId%>','<%= item.variantId %>','<%= item.quantity%>')"  class=" btn text-primary text-decoration-none fw-bold small">Cancel Order</button>
                                 <%}%>
                                 <%if(order.orderStatus ==="delivered"){%>
