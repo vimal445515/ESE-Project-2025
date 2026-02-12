@@ -343,16 +343,16 @@ const getAllOrders = async (skip,limit,sort,orderId,filter)=>{
     if(sort){
         switch(sort){
            case "ltoH":
-            pipeline.push({$sort:{"pricing.totalAmout":-1}})
-            break;
-           case 'htoL':
             pipeline.push({$sort:{"pricing.totalAmount":1}})
             break;
+           case 'htoL':
+            pipeline.push({$sort:{"pricing.totalAmount":-1}})
+            break;
            case "new":
-            pipeline.push({$sort:{'createdAt':1}})
+            pipeline.push({$sort:{'createdAt':-1}})
             break;
            case 'old':
-            pipeline.push({$sort:{"createAt":-1}})
+            pipeline.push({$sort:{"createdAt":1}})
             break;
 
         }

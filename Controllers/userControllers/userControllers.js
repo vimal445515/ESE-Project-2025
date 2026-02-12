@@ -12,6 +12,7 @@ import orderSevice from "../../Service/orderSevice.js";
 import walletController from "../walletController.js";
 import walletService from "../../Service/walletService.js";
 import { ConnectionClosedError } from "puppeteer";
+import { json } from "express";
 
 
 
@@ -50,7 +51,7 @@ const otpGenerator= async (req,res)=>{
    
     
   }
-  
+  try{
     req.session.email = email;
     req.session.tempUserName = userName;
     req.session.password = password
@@ -61,6 +62,10 @@ const otpGenerator= async (req,res)=>{
     await user.storeOtpInDb(email,OTP)
     otp.sendEmail(email,OTP);
     return res.status(200).render('User/otp',{email,userName,password,phoneNumber,referralCode })
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect('/500Error');
+    }
 }
 
 const verifyOtp = async (req,res) => {
@@ -70,12 +75,13 @@ const verifyOtp = async (req,res) => {
    const password =  req.session.password 
    const phoneNumber =  req.session.phoneNumber 
    const referralCode = req.session.referralCode;
+   try{
   const result = await user.checkOtp(otp,email);
   
   
    if(result){
     const code =  generateReferralCode(userName)
-    
+   
     const userData =  await user.storeUserData(otp,userName,email,password,phoneNumber,referralCode,code,"user");
     await walletService.createWallet(userData._id)
     if(referralCode){
@@ -88,11 +94,20 @@ const verifyOtp = async (req,res) => {
     return res.status(200).json({type:"success",href:"/login"});
   }
   return res.status(400).json({type:'error',message:"invalid OTP"});
+  }catch(error){
+    console.log(error)
+    return res.status(500).json({type:"error",message:"Internal server Error"});
+  }
 }
 
 const loadLoginPage = async(req,res) =>{
+  try{
     await user.clearOtp(req.email)
     return res.status(200).render('User/login',{userName:null,status:null,message:null})
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect("/500Error");
+    }
 }
 
 const authentication = async (req,res)=>{
@@ -129,23 +144,32 @@ const loadSignupPage = (req,res)=>{
 }
 
 const loadHomePage=async(req,res)=>{
+  try{
   const userName = req.session.userName||null  
   const data =  await user.getAllCategory()
   const newProducts = await productService.getNewProducts()
   const watches = await productService.getWatches()
   
   res.render('User/home',{userName,data,newProducts,watches,profile:req.session.profile});
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect('/500Error')
+  }
 } 
 
 const findEmail= async (req,res,next)=>{
    const {email} = req.body
+   try{
    const data = await user.findUserFromDB(email)
-  if(!data) return res.status(404).json({status:"error",message:"User not found"});
+  if(!data) return res.status(404).json({status:"error",type:"error",message:"User not found"});
   next()
-
+  }catch(error){
+    res.status(500).json({status:"error",type:"error",message:"Internal server Error"})
+  }
 }
 
 const generateOtpForPasswordReset= async (req,res)=>{
+  try{
   const {email} = req.body
   const OTP = otp.otpGenerator();
   await user.clearOtp(email)
@@ -153,10 +177,15 @@ const generateOtpForPasswordReset= async (req,res)=>{
   otp.sendEmail(email,OTP);
   req.session.email = email;
   res.status(200).json({status:"success",href:"/resetPassowrdOtp"});
+  }catch(error){
+    console.log(error)
+    res.status(500).json({status:"error",type:"error",message:"Internal server Error"});
+  }
   
 }
 
 const logout = (req,res)=>{
+  try{
   if(req.session.adminRole){
      req.session.userName = null
     req.session.role = null
@@ -169,6 +198,9 @@ const logout = (req,res)=>{
     if(err) throw new Error("erorr in sesion distroy");
     res.status(200).redirect('/login')
   })
+  }
+   }catch(error){
+    res.status(500).redirect("/500Error");
   }
 }
 const loadOtpPageForResetPassword = (req,res) =>{
@@ -198,7 +230,7 @@ const loadresetPasswordPage = async (req,res)=>{
 const resetPassword = async(req,res) =>{
  
   const {password} = req.body
-
+try{
   await userService.updatePassword(password,req.session.email)
   await user.clearOtp(req.session.email)
  req.session.destroy((err)=>{
@@ -206,7 +238,10 @@ const resetPassword = async(req,res) =>{
    
     res.status(200).redirect('/login')
   })
-
+}catch(error){
+  console.log(error)
+  res.status(500).redirect("/500Error");
+}
   
 }
 
@@ -232,9 +267,14 @@ const resetPassword = async(req,res) =>{
 
 
 const loadUserProfile= async(req,res)=>{
+  try{
    const address = await addressService.getUserAddress(req.session._id)
    const orderData = await orderSevice.getOrderDataForDashbord(req.session._id); 
     res.render('User/userDashbord',{userName:req.session.userName,email:req.session.email,referralCode:req.session.referralCode,profile:req.session.profile,address,orderData})
+    }catch(error){
+      console.log(error)
+      res.status(500).redirect('/500Error');
+    }
 }
 
 const editProfile=(req,res)=>{
@@ -278,15 +318,19 @@ const editProfile=(req,res)=>{
 }
 
 const resendOtp = async(req,res)=>{
-  console.log("this is eail",req.session.newEmail)
+
          
-    
+    try{
          const OTP = otp.otpGenerator();
          await user.clearOtp(req.session.newEmail) 
          console.log("email is wrking",req.session.newEmail)   
          await user.storeOtpInDb(req.session.newEmail,OTP)
          otp.sendEmail(req.session.newEmail,OTP);
           res.render('User/emailUpdateOtpPage',{status:"success",message:null})
+          }catch(error){
+            console.log(error)
+            res.status(500).redirect("/500Error");
+          }
      
 }
 
@@ -314,6 +358,7 @@ const verifyOptforUpdateEmail = async (req,res,next)=>{
 
 const userProfileResetPassword =async(req,res)=>{
   const {currentPassword,newPassword} =req.body;
+  try{
   const password = await userService.getCorrentPassword(req.session.email);
   if(await hash.comparePassword(currentPassword,password)){
     await userService.updatePassword(newPassword,req.session.email)
@@ -322,6 +367,9 @@ const userProfileResetPassword =async(req,res)=>{
    return res.status(401).json({status:"error",message:"invalid password"})
   }
   return res.status(200).json({status:"success",message:"password reseted successfully"});
+  }catch(error){
+    return res.status(500).json({status:"error",message:"Internal server error"});
+  }
   
 }
 

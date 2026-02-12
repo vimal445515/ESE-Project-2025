@@ -17,13 +17,18 @@ const loadOrderPage = async(req,res)=>{
    res.render('Admin/orderPage',{orders,skip,limit,page,count,sort,search,filter,notifications:notifications||[]})
     }catch(error){
         console.log(error)
+        res.status(500).redirect('/500Error')
     }
 }
 
 const loadEditOrderPage = async (req,res)=>{
     const {id:orderId}=req.params
+    try{
     const order = await orderService.getSingleOrderById(orderId)
     res.render('Admin/editOrder',{order})
+    }catch(error){
+        res.status(500).redirect('/500Error')
+    }
 }
 
 const deleteOrder = async(req,res)=>{

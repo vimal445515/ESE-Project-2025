@@ -7,11 +7,17 @@ import userService from "../../Service/userService.js"
 const findEmail= async (req,res,next)=>{
    const {email} = req.body
    console.log("this is wrking")
+  try{
    const data = await adminService.getAdminFromDB(email)
   if(!data) return res.status(404).json({status:"error",message:"User not found"});
   next()
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect("/500Error");
+  }
 }
 const generateOtpForPasswordReset= async (req,res)=>{
+  try{
   const {email} = req.body
   const OTP = otp.otpGenerator();
   await user.clearOtp(email)
@@ -19,7 +25,9 @@ const generateOtpForPasswordReset= async (req,res)=>{
   otp.sendEmail(email,OTP);
   req.session.email = email;
   res.status(200).json({status:"success",href:"/admin/resetPassowrdOtp"});
-  
+  }catch(error){
+    res.status(500).json({type:"error",message:"Internal server Error"});
+  }
 }
 
 const loadOtpPageForResetPassword = (req,res) =>{
@@ -53,7 +61,7 @@ const loadAdminPasswordChangePage = async(req,res)=>{
  const resetPassword = async(req,res) =>{
  
   const {password} = req.body
-
+try{
   await userService.updatePassword(password,req.session.email)
   await user.clearOtp(req.session.email)
  req.session.destroy((err)=>{
@@ -61,6 +69,10 @@ const loadAdminPasswordChangePage = async(req,res)=>{
    
     res.status(200).redirect('/admin/login')
   })
+  }catch(error){
+    console.log(error)
+    res.status(500).redirect('/500Error')
+  }
 
   
 }

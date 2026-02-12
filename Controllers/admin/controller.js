@@ -119,13 +119,23 @@ export const LoadAddCategoriesPage =(req,res)=>{
     res.render("Admin/addCategory",{status:null,message:null})
 }
 export const loadEditCategoriesPage = async (req,res) => {
+    try{
     const data = await adminService.getCategoryFromDB(req.params.id)
     return res.render("Admin/editCategory",{data,status:"null",message:"null"})
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error');
+    }
 }
 
 export const loadAddProductPage = async (req,res)=>{
+    try{
      const categorys  = await adminService.getCategoriesForProductEdit()
     res.render("Admin/addProduct",{categorys,status:"null",message:"null"})
+    }catch(error){
+        console.log(error)
+        res.status(500).redirect('/500Error');
+    }
 }
 
 
