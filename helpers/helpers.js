@@ -31,17 +31,8 @@ const groupValues = ()=>{
 }
 
 const deleteProfile = async(file)=>{
-    
    await cloudinary.uploader.destroy(file.publicId);
 
-    //  let __filename = fileURLToPath(import.meta.url);
-    //  let __dirname =path.dirname(path.dirname(__filename))
-    //  let root = __dirname.split("\\").join('/')
-    //  if(fs.existsSync(`${root}/public/upload/${file}`)){
-    //   fs.unlink(`${root}/public/upload/${file}`,(error)=>{
-    //      console.log("profile Deleted");
-    //   })
-    //  }
 }
 
 

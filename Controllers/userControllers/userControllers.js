@@ -329,7 +329,7 @@ const resendOtp = async(req,res)=>{
          await user.clearOtp(req.session.newEmail) 
          console.log("email is wrking",req.session.newEmail)   
          await user.storeOtpInDb(req.session.newEmail,OTP)
-         otp.sendEmail(req.session.newEmail,OTP);
+         await otp.sendEmail(req.session.newEmail,OTP);
           res.render('User/emailUpdateOtpPage',{status:"success",message:null})
           }catch(error){
             console.log(error)

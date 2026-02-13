@@ -228,7 +228,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                        .then(data=>{
                         hideLoader()
                         if(data?.status=='success'){
-                           showToast('Updated successfully')
+                           showToast('Otp send successfully')
                            setTimeout(()=>{
                              window.location.href=data.href
                            },1000)
@@ -237,9 +237,7 @@ input[type="password"]::-webkit-textfield-decoration-container {
                       
                         else if(data.status=='updated'){
                          showToast('Updated successfully')
-                           setTimeout(()=>{
-                             window.location.href=data.href
-                           },1000)
+                         return
                         }
                         if(data.status=="error")
                         {

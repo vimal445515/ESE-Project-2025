@@ -127,9 +127,9 @@ const updateUserData = async (req)=>{
     delete req.session?.newImageUrl
     delete req.session?.newImageId
      data =  await User.findOneAndUpdate({email:req.session.email},{$set:data},{new:true})
-     if(profile)
+     if(profile?.publicId)
      {
-       helpers.deleteProfile(profile.profile)
+      await helpers.deleteProfile(profile.profile)
      }
     req.session.userName = data.userName;
     req.session.email = data.email
