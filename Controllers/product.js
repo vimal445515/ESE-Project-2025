@@ -70,7 +70,6 @@ const editProduct = async  (req,res) =>{
      let generalPhoto = productHelper.extractGeneralImage(req?.files)
      console.log("price this ist",data.variants.price)
     
-    
 
     
      generalPhoto = generalPhoto?.publicId?generalPhoto:data.generalPhoto;
@@ -80,7 +79,6 @@ const editProduct = async  (req,res) =>{
      variant.stock = variantsData[0]?.stock||data.variants.stock
      variant.storage= variantsData[0]?.storage||data.variants.storage
      variant.ram = variantsData[0].ram||data.variants.ram
-     console.log(variantsData,data)
      variant.images = [
       variantsData[0]?.images[0]?.publicId?variantsData[0]?.images[0]:data.variants.images[0],
       variantsData[0]?.images[1]?.publicId?variantsData[0]?.images[1]:data.variants.images[1],
@@ -88,11 +86,10 @@ const editProduct = async  (req,res) =>{
       variantsData[0]?.images[3]?.publicId?variantsData[0]?.images[3]:data.variants.images[3],
      ]
       
-
-    productHelper.deleteExeistingImage(data.generalPhoto,data.variants.images[0],data.variants.images[1],data.variants.images[2],data.variants.images[3],variant.images,generalPhoto);
+    
+    await productHelper.deleteExeistingImage(data.generalPhoto,data.variants.images[0],data.variants.images[1],data.variants.images[2],data.variants.images[3],variant.images,generalPhoto);
     
     data = await productService.editProductInDB(productName,basePrice,description,category,discound,generalPhoto,variant,req.params.id,index)
-    console.log(data.variants[0].images[0]);
     res.status(200).json({_id:data._id})
     }catch(error){
       console.log(error)
