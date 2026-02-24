@@ -434,7 +434,6 @@ pipeline.push({$limit:1});
 const getVariants = async(_id)=>{
   return await productModel.aggregate([
     {$match:{_id:new mongoose.Types.ObjectId(_id)}},
-    // {$project:{storage:'$variants.storage',ram:"$variants.ram"}}
     
   ])
 }

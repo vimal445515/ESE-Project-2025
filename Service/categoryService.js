@@ -1,45 +1,48 @@
 import { categoryModel } from "../Models/categorySchema.js";
-import mongoose from "mongoose"
-const findCategoryByName = async (name,_id=null)=>{
-    let inputName = name.toLowerCase()
-    let  dBNames = await categoryModel.find({},{categoryName:1});
-    
-    for(let categoryObj of dBNames)
-    {
-        if(categoryObj.categoryName.toLowerCase() === inputName && categoryObj._id.toString() !== _id?.toString())
-        {
-          
-           return true
-        }
+import mongoose from "mongoose";
+const findCategoryByName = async (name, _id = null) => {
+  let inputName = name.toLowerCase();
+  let dBNames = await categoryModel.find({}, { categoryName: 1 });
+
+  for (let categoryObj of dBNames) {
+    if (
+      categoryObj.categoryName.toLowerCase() === inputName &&
+      categoryObj._id.toString() !== _id?.toString()
+    ) {
+      return true;
     }
-    return  false
-}
+  }
+  return false;
+};
 
-const isBlocked = async (categoryId) =>{
-    const data = await categoryModel.find({_id:categoryId});
-    console.log("working this category",data,categoryId)
-    return data[0].isBlocked;
-}
+const isBlocked = async (categoryId) => {
+  const data = await categoryModel.find({ _id: categoryId });
+  console.log("working this category", data, categoryId);
+  return data[0].isBlocked;
+};
 
-const getAllCategory = async()=>{
-    const category  = await categoryModel.find({isBlocked:false},{categoryName:1,_id:0})
-    return category
-}
+const getAllCategory = async () => {
+  const category = await categoryModel.find(
+    { isBlocked: false },
+    { categoryName: 1, _id: 0 },
+  );
+  return category;
+};
 
-const getAllCategoryForOffer = async()=>{
-    const category  = await categoryModel.find({isBlocked:false})
-    return category
-}
-const getSingleCategoryName = async(categoryId)=>{
-    return await categoryModel.findOne({_id: new mongoose.Types.ObjectId(categoryId)});
-}
-
-
+const getAllCategoryForOffer = async () => {
+  const category = await categoryModel.find({ isBlocked: false });
+  return category;
+};
+const getSingleCategoryName = async (categoryId) => {
+  return await categoryModel.findOne({
+    _id: new mongoose.Types.ObjectId(categoryId),
+  });
+};
 
 export default {
-    findCategoryByName,
-    getAllCategory,
-    isBlocked,
-    getAllCategoryForOffer,
-    getSingleCategoryName 
-}
+  findCategoryByName,
+  getAllCategory,
+  isBlocked,
+  getAllCategoryForOffer,
+  getSingleCategoryName,
+};

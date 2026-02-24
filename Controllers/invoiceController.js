@@ -9,11 +9,10 @@ export async function downloadInvoice(req, res) {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=invoice-${orderId}.pdf`
+      `attachment; filename=invoice-${orderId}.pdf`,
     );
 
     res.send(pdfBuffer);
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Invoice download failed" });
