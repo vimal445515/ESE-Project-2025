@@ -184,7 +184,7 @@
                              <div class="d-flex justify-content-end">
           <div class="pagination-container align-items-end">
                         <button onclick="previousPage('<%= page%>')" class="page-link-custom page-arrow"><i class="fa-solid fa-arrow-left"></i></button>
-                         <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                         <% for(let i = 1; i <=(count/limit)+1; i++) {%> 
                         <button  id="page" value="<%= i %>" onclick="search(`<%= i %>`)" class="page-link-custom active"><%= i%></button>
                          <% } %>
                         <button onclick="nextPage('<%= page%>')" class="page-link-custom page-arrow"><i class="fa-solid fa-arrow-right"></i></button>

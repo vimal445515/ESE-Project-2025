@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 import offerService from "./offerService.js";
 import offerModel from "../Models/offerSchema.js";
 import productHelpers from '../helpers/productHelper.js'
-
+import cloudinary from '../config/cloudinary.js'
 const storeProductDataInDB = async (generalPhoto,productName,basePrice,description,category,discound,variantsData)=>{
   
   return await productModel.create({
@@ -58,6 +58,20 @@ const countPages = async () =>{
 ])
 }
 
+const storeVariant = async(images,data)=>{
+    await productModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(data.productId)},{$push:{variants:{...data,images}}})
+}
+
+const deleteVariantImages = async(images)=>{
+  if(images[0]?.filename) await  cloudinary.uploader.destroy(images[0].filename);
+    if(images[0]?.filename)await  cloudinary.uploader.destroy(images[0].filename);
+      if(images[0]?.filename)  await  cloudinary.uploader.destroy(images[0].filename);
+        if(images[0]?.filename) await  cloudinary.uploader.destroy(images[0].filename);
+ 
+    
+  
+   
+}
 
 const getProduct = async (_id,index) =>{
   console.log("this is wrking")
@@ -463,8 +477,9 @@ export default {
  variantCount,
  getAllProductsForOffer,
  getSingleProductName,
-removeVariant 
-
+removeVariant ,
+storeVariant,
+deleteVariantImages
 
 
 }

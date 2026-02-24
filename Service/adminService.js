@@ -106,6 +106,13 @@ const getAllUsersCount = async ()=>{
      return await User.countDocuments()
 }
 
+const getActiveUserCount = async ()=>{
+  return await User.countDocuments({isBlocked:false})
+}
+const getBlockedUserCount = async() =>{
+  return await User.countDocuments({isBlocked:true})
+}
+
 
 
 export default {
@@ -123,5 +130,7 @@ export default {
     getCategoryFromDB,
     updateCategory,
     getAllUsersCount,
-    getAllCategoriesCount
+    getAllCategoriesCount,
+    getActiveUserCount,
+    getBlockedUserCount
 }

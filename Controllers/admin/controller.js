@@ -90,9 +90,9 @@ export const ActiveUsers = async(req,res)=>{
     const limit = 8;
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.findActiveUsers(skip,limit)
-    const count = await adminService.getAllUsersCount();
+    const count = await adminService.getActiveUserCount();
     
-    return res.render('admin/userManage',{data,page,limit,count,search:null})
+    return res.render('admin/userManage',{data,page,limit,count,search:null,user:"active"})
    }catch(error){
       req.flash('error','something was wrong please try again later!')
         return res.redirect('/admin/user')
@@ -105,8 +105,8 @@ export const blockedUsers = async (req,res)=>{
     const limit = 8;
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.findBlockedUsers(skip,limit);
-    const count = await adminService.getAllUsersCount();
-   return  res.render('admin/userManage',{data,page,limit,count,search:null});
+    const count = await adminService.getBlockedUserCount();
+   return  res.render('admin/userManage',{data,page,limit,count,search:null,user:"blocked"});
           
     }catch(error){
         console.log(error);
@@ -149,7 +149,7 @@ export const loadUserManagementPage = async(req,res) =>{
     const skip =  helpers.paginationSkip(page,limit)
     const data = await adminService.getAllUsers(skip,limit,search)
     const count = await adminService.getAllUsersCount();
-    res.render('admin/userManage',{data,page,limit,count,search})
+    res.render('admin/userManage',{data,page,limit,count,search,user:null})
 }
 
 export const handleImage = (req,res,next)=>{

@@ -72,29 +72,29 @@ const extractGeneralImage=(files)=>
 }
 
 
-const deleteExeistingImage = async(generalPhoto,img1,img2,img3,img4,newImages,newGeneralImage) =>{
+const deleteExeistingImage = async(generalPhoto,img1,img2,img3,img4,newImages=[],newGeneralImage) =>{
   
-  if(generalPhoto.publicId !== newGeneralImage.publicId && generalPhoto.publicId ){
+  if(generalPhoto?.publicId !== newGeneralImage?.publicId && generalPhoto?.publicId ){
     console.log("deleteing generalPhoto")
     await   cloudinary.uploader.destroy(generalPhoto.publicId)
   }
 
-  if(img1.publicId !== newImages[0].publicId && img1.publicId){
+  if(img1?.publicId !== newImages[0]?.publicId && img1?.publicId){
     console.log("deleteing first image")
    await cloudinary.uploader.destroy(img1.publicId)
   }
 
-  if(img2.publicId !== newImages[1].publicId && img2.publicId ){
+  if(img2?.publicId !== newImages[1]?.publicId && img2?.publicId ){
     console.log("deleteing second image")
    await cloudinary.uploader.destroy(img2.publicId)
   }
   
-  if(img3.publicId !== newImages[2].publicId && img3.publicId){
+  if(img3?.publicId !== newImages[2]?.publicId && img3?.publicId){
     console.log("deleteing third image")
    await cloudinary.uploader.destroy(img3.publicId)
   }
 
-  if(img4.publicId !== newImages[3].publicId && img4.publicId){
+  if(img4?.publicId !== newImages[3]?.publicId && img4?.publicId){
     console.log('deleting fourth image')
    await cloudinary.uploader.destroy(img4.publicId)
   }

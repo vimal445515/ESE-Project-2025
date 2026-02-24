@@ -150,13 +150,13 @@
                 
                 <ul class="nav nav-tabs-custom mt-3">
                     <li class="nav-item">
-                        <a class="nav-link active" onclick="window.location.href=`/coupon`">All</a>
+                        <a class="nav-link <%= couponsStatus === null?'active':''%>" onclick="window.location.href=`/coupon`">All</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" onclick="active()">Active</a>
+                        <a class="nav-link <%= couponsStatus === 'active'?'active':''%>" onclick="active()">Active</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" onclick="expired()">Expired</a>
+                        <a class="nav-link <%= couponsStatus === 'expired'?'active':''%>" onclick="expired()">deactive</a>
                     </li>
                 </ul>
 
@@ -219,7 +219,7 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
                                 <li class="page-item"><button onclick="previousPage('<%= page%>')" class="page-link" href=""><i class="fas fa-arrow-left"></i></button></li>
-                                 <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                                 <% for(let i = 1; i <= (count/limit)+1; i++) {%> 
                                 <li class="page-item"><button id="page" onclick="search('<%= i%>')" value="<%= i %>" class="page-link active-page" ><%= i%></button></li>
                                  <% } %>
                                 <li class="page-item"><button class="page-link" onclick="nextPage('<%= page%>')"><i class="fas fa-arrow-right"></i></button></li>
@@ -329,7 +329,7 @@
                             <input type="number" id="maximumDiscount" name="maximumDiscount" class="form-control" placeholder="Min price">
                              <p class="maximumDiscountError text-danger"></p>
                             </div>
-
+                            <input type="hidden" value="<%= couponsStatus%>" id="couponStatus">
                             
                             <div class="mb-3">
                             <label class="form-label">Expiry Date</label>

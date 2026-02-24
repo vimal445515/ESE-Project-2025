@@ -25,7 +25,7 @@ const getCoupons = async(page,limit,search,filter) =>{
         if(filter === 'active'){
             pipeline.push({$match:{isActive:true}})
         }
-        else{
+        else if(filter !== 'all'){
              pipeline.push({$match:{isActive:false}})
         }
     }
@@ -36,8 +36,17 @@ const getCoupons = async(page,limit,search,filter) =>{
     return await couponModel.aggregate(pipeline);
 }
 
-const getCount = async()=>{
-  return await couponModel.countDocuments();
+const getCount = async(filter)=>{
+    if(filter === 'expired'){
+         return await couponModel.countDocuments({isActive:false});
+    }
+    else if(filter === 'active'){
+        return await couponModel.countDocuments({isActive:true});
+    }
+    else{
+        return  await couponModel.countDocuments();
+    }
+ 
 }
 
 const activate = async(couponId)=>{

@@ -1,6 +1,6 @@
   let correntPage = 1;
   let searchValue = ''
-  let activeValue=''
+  let activeValue= document.getElementById("couponStatus").value || 'all'
        function showEditModal(couponCode,discount,minimumOrder, maximumDiscount,expiryDate){
         document.getElementById('couponCode').value= couponCode;
         document.getElementById('discount').value= discount;

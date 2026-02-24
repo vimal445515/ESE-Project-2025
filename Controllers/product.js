@@ -101,6 +101,47 @@ const editProduct = async  (req,res) =>{
     }
 }
 
+const addVariant = async(req,res)=>{
+      let valid = true;
+try{
+    if (!req.body.storage || isNaN(req.body.storage)) { valid = false}
+    if (!req.body.ram || isNaN(req.body.ram)) {  valid = false; }
+
+    if (!req.body.price || isNaN(req.body.price) || Number(req.body.price) <= 0) {
+        valid = false;
+    }
+
+    if (!req.body.stock || isNaN(req.body.stock) || Number(req.body.stock) <0 ) {
+         valid = false;
+    }
+
+    if (!req.files[0]) valid = false;
+    if (!req.files[1])  valid = false; 
+    if (!req.files[2])  valid = false; 
+    if (!req.files[3])  valid = false; 
+    
+    if(valid){
+     const images = [
+      {publicId:req.files[0].filename,url:req.files[0].path},
+      {publicId:req.files[1].filename,url:req.files[1].path},
+      {publicId:req.files[2].filename,url:req.files[2].path},
+      {publicId:req.files[3].filename,url:req.files[3].path}
+
+     ]
+      await productService.storeVariant(images,req.body);
+     return res.status(200).json({type:"success",message:"Variant added successfully"})
+    }else{
+      if(req.files){
+      await productService.deleteVariantImages(req.files)
+      }
+      return res.status(400).json({type:"error",message:"Invalid variant data please check every data befor upload"});
+    }
+  }catch(error){
+    console.log(error)
+    res.status(500).json({type:"error",message:"Internal server Error"})
+  }
+}
+
 
 const deleteProduct = async (req,res)=>{
   try{
@@ -221,5 +262,6 @@ export default {
     loadUserSideProductsPage,
     loadProductDetails,
     unDeleteProduct,
-    removeOneVariant
+    removeOneVariant,
+    addVariant
 }

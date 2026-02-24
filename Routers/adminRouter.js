@@ -41,6 +41,7 @@ router.post('/product/add', isAdmin,categoryThumbnail.any(),product.storeProduct
 router.patch('/product/edit/:id',isAdmin,categoryThumbnail.any(),product.editProduct)
 router.delete('/deleteProduct/:id',isAdmin,product.deleteProduct)
 router.patch('/unDeleteProduct/:id',isAdmin,product.unDeleteProduct)
+router.post('/variant',isAdmin,categoryThumbnail.any(),product.addVariant)
 
 router.get('/order',isAdmin,adminOrderController.loadOrderPage)
 

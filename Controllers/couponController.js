@@ -5,11 +5,13 @@ const loadCouponPage= async(req,res)=>{
     try{
     const page = req.query.page||1
     const search = req.query.search||null
-    const filter = req.query.filter||null
+    const filter = req.query.filter||"all"
     const limit = 9;
+
     const coupons = await couponService.getCoupons(page,limit,search,filter);
-    const count = await couponService.getCount()
-    res.render('Admin/couponPage',{userName:null,profile:null,coupons,page,count,limit})
+        console.log(page,search,filter,limit ,coupons)
+    const count = await couponService.getCount(filter)
+    res.render('Admin/couponPage',{userName:null,profile:null,coupons,page,count,limit,couponsStatus:filter||'all'})
     }catch(error){
         console.log(error)
         res.status(500).redirect('/500Error')
