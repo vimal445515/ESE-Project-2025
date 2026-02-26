@@ -17,7 +17,7 @@ import invoiceRoutes from "./Routers/invoiceRouter.js";
 import reviewRouter from "./Routers/reviewRouter.js";
 import flash from "connect-flash";
 import errorHandlingMiddleware from "./middleware/errorHandlingMiddleware.js";
-import cloudinary from "./config/cloudinary.js";
+import cloudinary from "./Config/cloudinary.js";
 import couponRouter from "./Routers/couponRouter.js";
 import offerRouter from "./Routers/offerRouter.js";
 import razorpayRouter from "./Routers/razorpayRouter.js";
