@@ -1,4 +1,4 @@
-export function salesReportHtml(salesReportData, orders) {
+export function salesReportHtml(salesReportData, orders,date) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +31,8 @@ export function salesReportHtml(salesReportData, orders) {
 
   <!-- SUMMARY SECTION -->
   <h3 class="mb-3">Sales Summary</h3>
-
+  ${date}
+ 
   <div class="row mb-4">
     <div class="col">
       <div class="kpi-card">

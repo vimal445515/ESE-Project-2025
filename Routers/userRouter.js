@@ -15,10 +15,12 @@ router.get('/login',Auth.isLoggedIn,userControllers.loadLoginPage);
 router.post('/login',userControllers.authentication);
 router.get("/home",Auth.isUser,Auth.checkUser,userControllers.loadHomePage);
 router.get("/logout",userControllers.logout);
+
 router.post("/resetPassword",userControllers.findEmail,userControllers.generateOtpForPasswordReset)
-router.get("/resetPassowrdOtp",Auth.checkEmail,userControllers.loadOtpPageForResetPassword)
+router.get("/resetPassowrdOtp",Auth.otpCheck,Auth.checkEmail,userControllers.loadOtpPageForResetPassword)
 router.post('/otpVerificationResetPassword',Auth.checkEmail,userControllers.resetPasswordOtpVarification)
-router.post('/resetPasswordUser',Auth.checkEmail,userControllers.resetPassword)
+router.get('/resetPasswordUser',Auth.checkEmailForpassword,userControllers.loadresetPasswordPage)
+router.post('/resetPasswordUser',Auth.checkResetPasswordEmail,userControllers.resetPassword)
 router.get('/google/login',userControllers.startGoogleLogin)
 router.get('/google/authenticate',userControllers.googleAuthenticate,userControllers.storeUserDataInSession)
 
@@ -34,7 +36,7 @@ router.get('/EditUser',Auth.isUser,Auth.checkUser,userControllers.editProfile)
 router.patch('/Profile/edit',Auth.isUser,Auth.checkUser,image.single('image'),userControllers.sendData)
 router.get("/profile/otp",Auth.isUser,Auth.checkUser,userControllers.loadOtpPageForUpdateEmail)
 router.get('/profile/resendOtp',Auth.isUser,Auth.checkUser,userControllers.resendOtp)
-router.post("/emailUpdateOtpVarification" ,Auth.isUser,Auth.checkUser,userControllers.verifyOptforUpdateEmail)
+router.post("/emailUpdateOtpVarification" ,Auth.isUser,userControllers.verifyOptforUpdateEmail)
 router.patch("/profile/editPassword",userControllers.userProfileResetPassword)
 
 router.get('/forgotPasswordEmail',(req,res)=>{

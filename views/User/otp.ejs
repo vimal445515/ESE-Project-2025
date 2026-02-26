@@ -8,12 +8,8 @@
     <title>Document</title>
 </head>
 <body>
+<%- include('../partials/notification.ejs')%>
 
-    <% if(status==="error"){ %>
-    <div class="alert alert-danger" role="alert">
-  <%= message%>
-</div>
-    <%}%>
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="p-5 bg-light border rounded" style="width: 360px;">
 
@@ -22,28 +18,25 @@
             we have send a otp verification<br>
             code to your email
         </p>
-        <form action="/otpVerification" method="post">
+        <form id="otpForm">
         <div class="mb-4 text-center">
-            <input type="text" name="otp" id="otp" class="form-control text-center" placeholder="Enter OTP">
-            <input type="hidden" name="userName" value="<%= userName %>">
-             <input type="hidden" name="email" value="<%= email %>">
-              <input type="hidden" name="password" value="<%= password %>">
-              <input type="hidden" name="refferralCode" value="<%= referralCode %>">
-              <input type="hidden" name="phoneNumber" value="<%= phoneNumber %>">
+            <input type="text" name="otp" id="otp" maxlength="4" class="form-control text-center" placeholder="Enter OTP">
         </div>
         <p id="error" class="text-danger"></p>
         <button type="submit" id="submit" class="btn  btn-primary w-100 mb-3">verify</button>
-
+        <div class="timer">
+          Resend otp again in <span class="text-bold" id="time">01:00</span>
+        </div>
         </form>
-           <form action="/signup" method="post">
+           <form id="resendForm"  action="/signup" method="post">
              <p  id="resend"  class="text-center text-muted d-none">
             didn't receive the code?<br>
              <input type="hidden" name="userName" value="<%= userName %>">
-             <input type="hidden" name="email" value="<%= email %>">
+             <input type="text" name="email" value="<%= email %>">
              <input type="hidden" name="password" value="<%= password %>">
              <input type="hidden" name="refferralCode" value="<%= referralCode %>">
              <input type="hidden" name="phoneNumber" value="<%= phoneNumber %>">
-            <button type="submit" class=" btn btn-primary ">resend code</>
+            <button type="submit" class=" btn btn-primary ">resend code</button>
             </p>
            </div>
 
@@ -54,16 +47,70 @@
 <script>
 
     document.getElementById("submit").addEventListener('click',(e)=>{
+      e.preventDefault()
         if(document.getElementById("otp").value===""){
-             e.preventDefault()
              document.getElementById("error").textContent="OTP Required";
-
+              return 
         }
+        const  form = document.getElementById("otpForm");
+
+        const data = JSON.stringify({
+          otp:form.otp.value
+        })
+        fetch('/otpVerification',
+          {method:"POST",
+            headers:{'Content-Type':"application/json"},
+            body:data
+          }
+        ).then(data=>data.json())
+        .then(data=>{
+          if(data.type==="success"){
+            window.location.href = data.href
+          }
+          else if(data.type === 'error'){
+            showToast(data.message,"error")
+          }
+        })
     })
+
+
+
+    
+
+
+
    const  resendDiv = document.querySelector("#resend")
- 
-   setTimeout(()=>{
-       resendDiv.classList.remove('d-none')
-   },30000)
+   const  timerEl = document.getElementById('time');
+
+
+    time = 50;
+   resendDiv.classList.add('d-none')
+    timerEl.innerText = "01:00";
+
+    setInterval(() => {
+      let min = Math.floor(time / 60);
+      let sec = time % 60;
+
+      timerEl.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+      if (time <= 0) {
+        timerEl.innerText = ''
+        document.querySelector('.timer').classList.add('d-none')
+        resendDiv.classList.remove('d-none')
+      }
+
+      time--;
+    }, 1100);
+
+
+  
+
+   form.addEventListener('submit',(e)=>{
+    e.preventDefault()
+
+
+   })
+
 </script>
+<script src="/script/tost.js"></script>
 </html>

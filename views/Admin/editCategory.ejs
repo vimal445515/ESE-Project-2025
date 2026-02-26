@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
      <link rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
+    <link rel="stylesheet" href="/UserStyles/loader.css">
     <style>
        
         :root {
@@ -157,10 +158,7 @@
     <div id="page-content-wrapper" >
 <%- include("../partials/notification.ejs")%>
 <%- include('../partials/adminNavBar')%>
-
- <% if(status === "error"){%>
-            <p class="alert alert-danger">Error! <%= message%></p>
-           <%} %>
+<%- include("../partials/loader")%>
 
 <div class="container-fluid">
 
@@ -172,7 +170,7 @@
             <h2 class="fw-bold mb-2">Edit Category</h2>
               <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-             <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted small">Dashboard</a></li>
+             <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none text-muted small">Dashboard</a></li>
              <li class="breadcrumb-item"><a href="/admin/categories" class="text-decoration-none text-muted small">Categories</a></li>
              <li class="breadcrumb-item active  text-primary small">Edit category</li>
                             </ol>
@@ -204,7 +202,6 @@
                                
                                 <img class="bi bi-image fs-3 text-muted" style="width: 100px; height: 100px; "src="<%= data.thumbnail.url %>">
                             </div>
-                            <p class="text-muted small mb-1">Drag and drop image here, or</p>
                             <p class="text-muted small mb-3">click change image </p>
                             <input class="btn change-image-btn" name="image"  type="file" id="imageUpload" >
                         </div>
@@ -225,6 +222,56 @@
 </form>
 </div>
 </div>
+<script>
+     const form = document.querySelector('form')
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+            
+            const fileInput = document.getElementById('imageUpload')
+            const categoryName = document.getElementById('categoryName').value;
+
+            const file = fileInput.files[0];
+            if(!categoryName){
+                 document.querySelector('.categoryNameError').innerText = "Required"
+                 return
+            }
+
+             if( !isNaN(categoryName)){
+                document.querySelector('.categoryNameError').innerText = "Invalid category name"
+                return
+             }
+                const formData = new FormData()
+                formData.append('image',file)
+                formData.append('categoryName',categoryName);
+
+    
+            showLoader()
+            fetch('/admin/category/edit/<%= data._id %>',{
+                method:'POST',
+                body:formData
+            }).then(data=>data.json())
+            .then(data =>{
+                hideLoader()
+                if(data.type === "success"){
+                    showToast(data.message)
+                    window.location.href = data.href;
+                }
+                else if(data.type === 'error'){
+                    showToast(data.message,'error')
+                }
+            }).catch((error)=>{
+                hideLoader()
+                console.log(error.message)
+                showToast('Something was wrong ','error')
+            })
+        })
+
+
+</script>
+<script src="/script/tost.js"></script>
+
+<script src="/script/loader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

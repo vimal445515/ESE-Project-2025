@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    
+     <link rel="stylesheet" href="/UserStyles/loader.css">
     <link rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
 
@@ -125,8 +125,9 @@
         </div>
 
         <div id="page-content-wrapper">
-            
+            <%- include("../partials/loader")%>
             <%- include('../partials/adminNavBar.ejs') %>
+            <%- include('../partials/notification')%>
 
             <div class="container-fluid px-4 pt-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -134,7 +135,7 @@
                         <h4 class="fw-bold mb-0">Coupon</h4>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted small">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none text-muted small">Dashboard</a></li>
                                 <li class="breadcrumb-item active small text-muted">Coupon List</li>
                             </ol>
                         </nav>
@@ -149,13 +150,13 @@
                 
                 <ul class="nav nav-tabs-custom mt-3">
                     <li class="nav-item">
-                        <a class="nav-link active" onclick="window.location.href=`/coupon`">All</a>
+                        <a class="nav-link <%= couponsStatus === null?'active':''%>" onclick="window.location.href=`/coupon`">All</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" onclick="active()">Active</a>
+                        <a class="nav-link <%= couponsStatus === 'active'?'active':''%>" onclick="active()">Active</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" onclick="expired()">Expired</a>
+                        <a class="nav-link <%= couponsStatus === 'expired'?'active':''%>" onclick="expired()">deactive</a>
                     </li>
                 </ul>
 
@@ -199,7 +200,7 @@
                                         <td class="text-muted"><%= coupon.createdAt.toString().slice(0,16)%></td>
                                         <td class="text-muted"><%= coupon.expiryDate?.toString().slice(0,16)%></td>
                                         <td class="text-center">
-                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','coupon.expiryDate')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
+                                            <button onclick="showEditModal('<%= coupon.couponCode%>','<%= coupon.discount%>','<%= coupon.minimumOrder%>','<%= coupon.maximumDiscount%>','<%=coupon.expiryDate%>')" class="btn btn-link text-muted p-0 me-3"><i class="fas fa-pencil-alt"></i></button>
                                              <%if(coupon.isActive){%>
                                             <button type="button" onclick="deactive('<%=coupon._id%>')" class="btn btn-link text-muted p-0"><i class="fas fa-trash"></i></button>
                                              <%}else{%>
@@ -218,7 +219,7 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
                                 <li class="page-item"><button onclick="previousPage('<%= page%>')" class="page-link" href=""><i class="fas fa-arrow-left"></i></button></li>
-                                 <% for(let i = 1; i <= parseInt(count/limit); i++) {%> 
+                                 <% for(let i = 1; i <= (count/limit)+1; i++) {%> 
                                 <li class="page-item"><button id="page" onclick="search('<%= i%>')" value="<%= i %>" class="page-link active-page" ><%= i%></button></li>
                                  <% } %>
                                 <li class="page-item"><button class="page-link" onclick="nextPage('<%= page%>')"><i class="fas fa-arrow-right"></i></button></li>
@@ -328,7 +329,7 @@
                             <input type="number" id="maximumDiscount" name="maximumDiscount" class="form-control" placeholder="Min price">
                              <p class="maximumDiscountError text-danger"></p>
                             </div>
-
+                            <input type="hidden" value="<%= couponsStatus%>" id="couponStatus">
                             
                             <div class="mb-3">
                             <label class="form-label">Expiry Date</label>
@@ -351,7 +352,8 @@
 
 
 
-
+    <script src="/script/tost.js"></script>
+    <script src="/script/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/script/couponPage.js"></script>
 </body>

@@ -1,23 +1,23 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const paymentSchema = new mongoose.Schema({
-
+const paymentSchema = new mongoose.Schema(
+  {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     amount: {
-      type: Number, 
-      required: true
+      type: Number,
+      required: true,
     },
-    paymentOrderId:{
-        type:String,
-        retuired:true
+    paymentOrderId: {
+      type: String,
+      retuired: true,
     },
     currency: {
       type: String,
-      default: "INR"
+      default: "INR",
     },
 
     receipt: String,
@@ -25,11 +25,11 @@ const paymentSchema = new mongoose.Schema({
     status: {
       type: String,
       enum: ["created", "paid", "failed"],
-      default: "created"
+      default: "created",
     },
     signature: String,
   },
-  { timestamps: true }
-)
+  { timestamps: true },
+);
 
-export default mongoose.model("payment",paymentSchema)
+export default mongoose.model("payment", paymentSchema);

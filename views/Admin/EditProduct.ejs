@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
     <link rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
     <style>
@@ -168,6 +170,34 @@
       max-width: 256px;
       border: 1px solid #ccc;
     }
+
+   
+.loader-overlay {
+  position: fixed;
+  inset: 0; 
+  background: rgba(0, 0, 0, 0.2); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.circle-loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.6);
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  background: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
     </style>
 </head>
 <body>
@@ -187,10 +217,48 @@
     </div>
 
     <div id="page-content-wrapper" >
-<%- include("../partials/notification.ejs")%>
 <%- include('../partials/adminNavBar')%>
 <%- include('../partials/notification.ejs')%>
+<div id="globalLoader" class="loader-overlay d-none">
+  <div class="circle-loader"></div>
+</div>
+
 <div class="content-body container-fluid">
+
+     <!-- Confirm Delete Variant Modal -->
+<div class="modal fade" id="confirmRemoveVariantModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Remove Variant
+        </h5>
+      </div>
+      <input type="hidden" id="removeProductId">
+      <input type="hidden" id="index">
+
+      <div class="modal-body">
+        <p class="mb-0">
+          Are you sure you want to remove this variant?
+          <br>
+          <strong class="text-danger">This action cannot be undone.</strong>
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" onclick="confirmRemove()" class="btn btn-danger" id="confirmRemoveBtn">
+          Yes, Remove
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 
@@ -199,7 +267,7 @@
             <h2 class="fw-bold mb-2">Edit Product</h2>
              <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-             <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted ">Dashboard</a></li>
+             <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none text-muted ">Dashboard</a></li>
              <li class="breadcrumb-item"><a href="/admin/products" class="text-decoration-none text-muted ">Products</a></li>
              <li class="breadcrumb-item active  text-primary">Edit products</li>
                             </ol>
@@ -263,7 +331,7 @@
         </div>
 
 
-      <!-- 🔹 Cropper Modal -->
+      <!--  Cropper Modal -->
   <div class="modal fade" id="cropModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
@@ -312,32 +380,58 @@
             <div class="form-card">
                 <h3 class="section-title">Variant</h3>
 
-                <div class="d-flex align-items-center mb-3">
-                    <% for(let i =0; i < variantsData.variants.length; i++){%>
-                    <a href="/admin/editProduct/<%= product._id%>?variant=<%=i%>" class="variant-pill bg-success me-2 text-white"><%= i+1%></a>
-                    <%}%>
-                   
-                </div>
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+    <% for(let i = 0; i < variantsData?.variants?.length; i++){ %>
+        <div class="card shadow-sm border-0 bg-light p-2 text-center" style="min-width: 100px; border-radius: 12px;">
+            <div class="mb-2">
+                <span class="badge rounded-pill bg-secondary-subtle text-secondary small">Variant <%= i+1 %></span>
+            </div>
+            
+            <div class="d-flex flex-column gap-2">
+                <a href="/admin/editProduct/<%= product._id %>?variant=<%= i %>" 
+                   class="btn btn-sm btn-outline-primary rounded-pill">
+                   Edit
+                </a>
+                
+                <button type="button" 
+                        class="btn btn-link btn-sm text-danger text-decoration-none p-0" 
+                        onclick="removeVariant('<%= product._id %>','<%= i %>')">
+                        <i class="bi bi-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+    <% } %>
+
+    <button type="button" id="addVariant" onclick="addVariant()" class="btn btn-outline-success d-flex flex-column align-items-center justify-content-center border-dashed" 
+            style="min-width: 100px; min-height: 110px; border-style: dashed !important; border-width: 2px; border-radius: 12px;">
+        <span class="fs-4">+</span>
+        <span class="small fw-bold">Add New</span>
+    </button>
+    <button type="button" id="saveVariant" onclick="saveVariant()" class="btn btn-outline-success d-flex d-none flex-column align-items-center justify-content-center border-dashed" 
+            style="min-width: 100px; min-height: 110px; border-style: dashed !important; border-width: 2px; border-radius: 12px;">
+        <span class="small fw-bold">Save</span>
+    </button>
+</div>
 
                 <div class="mb-3">
                     <label for="Storage" class="form-label">Enter Storage</label>
-                    <input type="text" value="<%= product.variants.storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
+                    <input type="text" value="<%= product?.variants?.storage %>" name="storage" class="form-control" id="storage" placeholder="Enter Storage">
                     <p id="storageError" class="text-danger small"></p>
                      <p id="categoryError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="ram" class="form-label">Enter Ram</label>
-                    <input type="text" name="ram" value="<%= product.variants.ram %>" class="form-control" id="ram" placeholder="Enter Ram">
+                    <input type="text" name="ram" value="<%= product?.variants?.ram %>" class="form-control" id="ram" placeholder="Enter Ram">
                     <p id="ramError" class="text-danger small"></p>
                 </div>
                 <div class="mb-3">
                     <label for="stock" class="form-label">Stock</label>
-                    <input type="number" name="stock" value="<%= product.variants.stock %>" class="form-control" id="stock" placeholder="Stock">
+                    <input type="number" name="stock" value="<%= product?.variants?.stock %>" class="form-control" id="stock" placeholder="Stock">
                     <p id="stockError" class="text-danger small"></p>
                 </div>
                 <div class="mb-0">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" value="<%= product.variants.price %>" class="form-control" id="price" placeholder="price">
+                    <input type="text" name="price" value="<%= product?.variants?.price %>" class="form-control" id="price" placeholder="price">
                     <p id="variantPriceError" class="text-danger small"></p>
                 </div>
             </div>
@@ -348,7 +442,7 @@
                <div class="d-flex gap-2 flex-wrap">
                     <div class="input-group">
                         <label class="input-group-text image-label" for="img1">
-                            <img class="previewImg" src="<%= product.variants.images[0].url %>" alt="preview">
+                            <img class="previewImg" src="<%= product?.variants?.images[0]?.url %>" alt="preview">
                         </label>
 
                         <input type="file" name="img1" class="form-control" onchange="preview(this)" id="img1">
@@ -357,13 +451,13 @@
                         <p id="img1Error" class="text-danger small"></p>
                     </div>
 
-                      <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product.variants.images[1].url %>" alt="preview"></label><input type="file" onchange="preview(this)" name="img2" class="form-control" id="img2">
+                      <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product?.variants?.images[1]?.url %>" alt="preview"></label><input type="file" onchange="preview(this)" name="img2" class="form-control" id="img2">
                     <p id="img2Error" class="text-danger small"></p>
                     </div>
-                       <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product.variants.images[2].url %>" alt="preview"> </label><input type="file" name="img3" onchange="preview(this)" class="form-control" id="img3">
+                       <div class="input-group"><label class="input-group-text image-label" for="imageInput"> <img class="previewImg" src="<%= product?.variants?.images[2]?.url %>" alt="preview"> </label><input type="file" name="img3" onchange="preview(this)" class="form-control" id="img3">
                     <p id="img3Error" class="text-danger small"></p>
                     </div>
-                        <div class="input-group"><label class="input-group-text image-label" for="imageInput"><img class="previewImg" src="<%= product.variants.images[3].url %>" alt="preview"> </label><input type="file" name="img4" onchange="preview(this)" class="form-control" id="img4">
+                        <div class="input-group"><label class="input-group-text image-label" for="imageInput"><img class="previewImg" src="<%= product?.variants?.images[3]?.url %>" alt="preview"> </label><input type="file" name="img4" onchange="preview(this)" class="form-control" id="img4">
                         <p id="img4Error" class="text-danger small"></p>
                         </div>
             </div>
@@ -483,12 +577,12 @@ function preview(e){
         showError("variantPriceError", "Enter a valid price."); valid = false;
     }
 
-    if (!stock || isNaN(stock) || Number(stock) < 0) {
+    if (!stock || isNaN(stock) || Number(stock) <0 ) {
         showError("stockError", "Enter valid stock."); valid = false;
     }
 
     
-    if (!valid) return;
+    if (!valid) return false;
 
 
            const group = {
@@ -503,21 +597,21 @@ function preview(e){
         }
        for(let value of objectArray)
        {
-        if(price ===value.price && stock === value.stock && storage ===value.storage && ram == value.ram)
+        if(price ===value.price && stock === value.stock && storage === value.storage && ram == value.ram)
        {
         alert("Repeat varients not allowed");
-        return
+        return false
        }
        }
 
      objectArray.push(group);
      console.log("value",group)
      console.log("Values ",objectArray)
-
+    return true
       
     }
     function saveData() {
-        add()
+         if( !add()) return ;
          clearErrors();
 
          const productName = document.querySelector("#productName").value;
@@ -536,8 +630,8 @@ function preview(e){
                 showError("basePriceError", "Enter valid base price."); valid = false;
             }
 
-            if (!discount || isNaN(discount) || Number(discount) < 0 || Number(discount) > 100) {
-                showError("discountError", "Discount must be between 0–100."); valid = false;
+            if (!discount || isNaN(discount) || Number(discount) < 0 || Number(discount) > 99) {
+                showError("discountError", "Discount must be between 0–99."); valid = false;
             }
 
 
@@ -570,7 +664,7 @@ function preview(e){
         formData.append(`discound`,discount)
         formData.append(`generalPhoto`,croppedBlob);
         formData.append(`category`,category);
-
+        showLoader();
         fetch('/admin/product/edit/<%= product._id%>?variant=<%=index%>',{
             method:'PATCH',
             body:formData
@@ -578,16 +672,30 @@ function preview(e){
         .then(data =>data.json())
         .then(data =>{
             console.log(data)
+            if(data?.type){
+                if(data.type === 'error'){
+                    showToast(data.message,"error")
+                    hideLoader();
+                    setTimeout(()=>{
+                        window.location.reload()
+                    },1000)
+                    return
+                }
+            }
             if(data?.obj){
               data =  data.obj.split('/')
               data = data[data.length-1]
               return  window.location.href = `/admin/editProduct/${data}`;
             }
-            window.location.href= `/admin/editProduct/${data._id}`
-            alert("updated ")
+             hideLoader();
+                setTimeout(()=>{
+                     window.location.href= `/admin/editProduct/${data._id}`
+                },3000)
+             showToast('Updated successfully')
         })
         .catch(()=>{
-            window.location.href="/admin/login"
+             hideLoader();
+             window.location.href="/admin/login"
         })
     }
 
@@ -609,7 +717,137 @@ function preview(e){
 
     }
 
+    function showLoader() {
+  document.getElementById("globalLoader").classList.remove("d-none");
+}
+
+function hideLoader() {
+  document.getElementById("globalLoader").classList.add("d-none");
+}
+const modalElement = document.getElementById('confirmRemoveVariantModal');
+const modal = new bootstrap.Modal(modalElement);
+function removeVariant(productId,index){
+      document.getElementById('removeProductId').value = productId;
+      document.getElementById('index').value = index
+      
+      modal.show()
+}
+
+function confirmRemove(){
+    modal.hide()
+   const productId =   document.getElementById('removeProductId').value
+   const index =  document.getElementById('index').value 
+    showLoader()
+    fetch('/admin/editproduct/removeVariant',{
+        method:'DELETE',
+        headers:{"Content-Type":'application/json'},
+        body:JSON.stringify({productId:productId,index:Number(index)})
+    }).then(data=>data.json())
+    .then(data=>{
+        hideLoader()
+        if(data.type==='success'){
+            showToast(data.message)
+            setTimeout(()=>{
+                 window.location.href= `/admin/editProduct/<%= product._id%>`
+            },2000)
+        }
+        else if(data.type === "warning"){
+            showToast(data.message,'warning');
+        }
+        else if(data.type === 'error'){
+            showToast(data.message,'error')
+        }
+        
+    })
+}
+
+function addVariant(){
+    document.getElementById('saveVariant').classList.remove('d-none')
+    document.getElementById("addVariant").classList.add('d-none')
+    clean()
+    document.querySelectorAll('.previewImg').forEach(e=>{
+        e.src = ''
+    })
+}
+
+function saveVariant(){
+      const price = document.querySelector("#price").value;
+            const stock = document.querySelector("#stock").value;
+            const storage =  document.querySelector("#storage").value;
+            const ram = document.querySelector("#ram").value;
+
+            const img1 =    document.querySelector("#img1").files[0];
+            const img2 =   document.querySelector("#img2").files[0];
+            const img3 =   document.querySelector("#img3").files[0];
+            const img4 =   document.querySelector("#img4").files[0];
+
+         let valid = true;
+
+    if (!storage || isNaN(storage)) { showError("storageError", "Storage is invalid."); valid = false; }
+    if (!ram || isNaN(ram)) { showError("ramError", "RAM is invalid."); valid = false; }
+
+    if (!price || isNaN(price) || Number(price) <= 0) {
+        showError("variantPriceError", "Enter a valid price."); valid = false;
+    }
+
+    if (!stock || isNaN(stock) || Number(stock) <0 ) {
+        showError("stockError", "Enter valid stock."); valid = false;
+    }
+
+    if (!img1) { showError("img1Error", "Image 1 required."); valid = false; }
+    if (!img2) { showError("img2Error", "Image 2 required."); valid = false; }
+    if (!img3) { showError("img3Error", "Image 3 required."); valid = false; }
+    if (!img4) { showError("img4Error", "Image 4 required."); valid = false; }
+
+    
+    if (!valid) return false;
+
+
+           const group = {
+            price,
+            stock,
+            storage,
+            ram,
+            img1,
+            img2,
+            img3,
+            img4,
+            productId:'<%= product._id%>'
+        }
+const formData = new FormData()
+formData.append('price',price)
+formData.append('stock',stock)
+formData.append('storage',storage)
+formData.append('ram',ram)
+formData.append('img1',img1)
+formData.append('img2',img2)
+formData.append('img3',img3)
+formData.append('img4',img4)
+formData.append('productId','<%= product._id%>')
+showLoader()
+ fetch("/admin/variant",{
+    method:"post",
+    body:formData
+ }).then(data=>data.json())
+ .then(data=>{
+    console.log(data)
+    if(data?.type === "success"){
+      showToast(data.message);
+      setTimeout(()=>{
+        window.location.reload()
+      },1000)
+    }
+    if(data?.type === 'error'){
+        return showToast(data.message,"message")
+    }
+ }).catch(error=>{
+    hideLoader()
+    console.log(error)
+    return showToast("Something was wrong!");
+ })
+}
 </script>
+<script src="/script/tost.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

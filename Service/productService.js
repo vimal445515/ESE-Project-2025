@@ -3,7 +3,8 @@ import { productModel } from "../Models/productSchema.js";
 import mongoose from "mongoose"
 import offerService from "./offerService.js";
 import offerModel from "../Models/offerSchema.js";
-
+import productHelpers from '../helpers/productHelper.js'
+import cloudinary from '../config/cloudinary.js'
 const storeProductDataInDB = async (generalPhoto,productName,basePrice,description,category,discound,variantsData)=>{
   
   return await productModel.create({
@@ -57,6 +58,20 @@ const countPages = async () =>{
 ])
 }
 
+const storeVariant = async(images,data)=>{
+    await productModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(data.productId)},{$push:{variants:{...data,images}}})
+}
+
+const deleteVariantImages = async(images)=>{
+  if(images[0]?.filename) await  cloudinary.uploader.destroy(images[0].filename);
+    if(images[0]?.filename)await  cloudinary.uploader.destroy(images[0].filename);
+      if(images[0]?.filename)  await  cloudinary.uploader.destroy(images[0].filename);
+        if(images[0]?.filename) await  cloudinary.uploader.destroy(images[0].filename);
+ 
+    
+  
+   
+}
 
 const getProduct = async (_id,index) =>{
   console.log("this is wrking")
@@ -71,6 +86,19 @@ const getProduct = async (_id,index) =>{
   console.log(data[0],"and ",oldData)
   return data[0]
  
+}
+
+
+const removeVariant = async (_id,index)=>{
+  const product = await productModel.findOne({_id})
+  if(product.variants.length > 1){
+     await productHelpers.deleteExeistingImage(null,product.variants[index].images[0],product.variants[index].images[1],product.variants[index].images[2],product.variants[index].images[3])
+     await productModel.updateOne({_id},{$unset:{[`variants.${index}`]:1}})
+     await productModel.updateOne({_id},{$pull:{variants:null}});
+     return true
+  }else{
+    return false
+  } 
 }
 
 const variantCount = async (productId)=>{
@@ -111,7 +139,7 @@ const unDeleteProductFromDB = async(_id)=>{
 }
 
 const getAllProductsCount = async ()=>{
-  return await productModel.countDocuments();
+  return await productModel.countDocuments({isDeleted:false});
 }
 
 const getWatches = async ()=>{
@@ -275,8 +303,10 @@ const getAllProductsUserSide = async (skip,limit,sort,category,priceRange,search
     pipeline.push({$match:{productName:{$regex:searchValue,$options:"i"}}});
   }
 
-  pipeline.push({$skip:skip},
+if( limit){
+    pipeline.push({$skip:skip},
   {$limit:limit})
+}
    
   const products =  await productModel.aggregate(pipeline)
   return products
@@ -404,7 +434,6 @@ pipeline.push({$limit:1});
 const getVariants = async(_id)=>{
   return await productModel.aggregate([
     {$match:{_id:new mongoose.Types.ObjectId(_id)}},
-    // {$project:{storage:'$variants.storage',ram:"$variants.ram"}}
     
   ])
 }
@@ -446,7 +475,10 @@ export default {
  unDeleteProductFromDB,
  variantCount,
  getAllProductsForOffer,
- getSingleProductName
+ getSingleProductName,
+removeVariant ,
+storeVariant,
+deleteVariantImages
 
 
 }

@@ -6,7 +6,7 @@
     <title>Address Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+     <link rel="stylesheet" href="/UserStyles/loader.css">
     <link rel="stylesheet" href="/userStyles/UserSideBar.css">
 
     <style>
@@ -70,14 +70,15 @@
 </head>
 <body class="pt-0">
     <%- include('../partials/navbar.ejs')%>
-
+    <%- include('../partials/notification.ejs')%>
+    <%- include("../partials/loader")%>
     <div class="container-fluid page-container mt-5">
         
         <div class="row">
             
             <%- include('../partials/userSideBar.ejs', {page: 'address'}) %>
 
-            <form href="/address" method="post" class="col-lg-9">
+            <form  class="col-lg-9">
                 
                 <div class="card settings-card">
                     <div class="card-body">
@@ -96,10 +97,16 @@
                             <div class="col-lg-4 mb-3 mb-lg-0">
                                 <label class="form-label" >Company Name <span class="text-muted fw-light">(Optional)</span></label>
                                 <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>" class="form-control">
-                            </div>
-
+                               
                             
                         </div>
+                          <div class="col-lg-3  mb-lg-0 <%= data?.address?'':'d-none'%>">
+                            Default address:
+                         <input type="checkbox" id="defaultAddress" >
+                          <input type="checkbox" class="d-none" id="newDefaultAddress" >
+                         </div>
+                            </div>
+                            
 
                         <div class="mb-4">
                             <label class="form-label">Address *</label>
@@ -204,9 +211,9 @@
                    <div class="col-md-7 ">
                                  <label class="form-label">select addresses</label>
                                 <select name="addresses" id="addressSelect" class="form-select">
-                                    <% if(allAddress){%>
+                                   <% if(allAddress){%> 
                                     <% allAddress.forEach(address=>{%>
-                                    <option value="<%= address?._id||``%>"><%= address?.address||``%></option>
+                                    <option value="<%= address?._id||``%>" "<%= address?.default === true?'selected':''%>" ><%= address?.address||``%></option>
                                     <%})%>
                                     <%}%>
                                 
@@ -218,7 +225,7 @@
                                  </div>
 
                                  <div class="col-md-1 mt-4">
-                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end">Delete</button>
+                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end <%= data?.address?'':'d-none'%>">Delete</button>
                                 </div>
 
 
@@ -230,16 +237,20 @@
                             </div>
             </form> </div> </div> <%- include("../partials/footer") %>
             <script>
+                
+     <%if(data?.default===true){%>
+      
+            document.getElementById('defaultAddress').checked = true
+        <%}%>
+
              let  tempState ='';
              let  tempCountry='';
               let  tempDistrict='';
   const form = document.querySelector("form");
-
   form.addEventListener("submit", async function (e) {
     e.preventDefault()
     let isValid = true;
 
-     
   
 
   console.log( tempState )
@@ -262,6 +273,16 @@
     const pinCode = form.pinCode.value.trim();
     const email = form.email.value.trim();
     const phoneNumber = form.phoneNumber.value.trim();
+    let newDefault = null;
+    if(form.isNew.value){
+        if(document.getElementById('newDefaultAddress').checked === true){
+            newDefault = true;
+    }
+    else{
+       newDefault = false;
+    }
+    }
+    
 
 
        
@@ -273,7 +294,6 @@
     );
 
  
-
 
 
 
@@ -349,9 +369,43 @@
         showError("cityError", "Invalid district for this PIN code");
       }
 
+     const data = JSON.stringify({
+             userName,
+             address,
+            country,
+             state ,
+            city ,
+            pinCode ,
+            email ,
+            phoneNumber,
+            companyName:form.companyName.value,
+            isNew:form.isNew.value,
+            addressId:form.addresses.value,
+            newDefault
+     })
    
     if (isValid) {
-       form.submit();
+      showLoader()
+      fetch('/address',
+        {method:'POST',
+         headers:{'Content-Type':'application/json'},
+         body:data
+        },
+        
+      ).then(data=>data.json())
+      .then(data=>{
+        hideLoader()
+        console.log(data)
+        if(data.type === "success"){
+            showToast("Success")
+            setTimeout(()=>{
+                window.location.href= data.href
+            },1000)
+        }
+        else if(data.type ==="error"){
+            showToast(data.message,'error')
+        }
+      })
     }
   });
 
@@ -384,17 +438,18 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
                                
    document.querySelectorAll('#addressSelect').forEach((element)=>{
     element.addEventListener('change',(e)=>{
+      showLoader()
         console.log(e.target.value)
      if(!e.target.value) return ;
      fetch(`/address/${e.target.value}`)
      .then((data)=>data.json())
      .then((data)=>{
-        
-       
+              hideLoader()
+              if(data.type ==='error') return showToast(data.message,'error');
                 document.getElementById('userName').value = data.userName
                 document.getElementById('address').value = data.address
                 document.getElementById('country').value = data.country
-                document.getElementById('companyName').value = data.companyName;
+                document.getElementById('companyName').value = data?.companyName||'';
                 document.getElementById('addressId').value = data._id;
                 document.getElementById('state').value = data.state
                 document.getElementById('city').value = data.city
@@ -402,11 +457,23 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
                 document.getElementById('email').value  = data.email
                 document.getElementById('phoneNumber').value = data.phoneNumber
                 e.vaule = data.address;
+
+                if(data.default == true){
+                     document.getElementById('defaultAddress').checked = true
+                }else{
+                     document.getElementById('defaultAddress').checked = false
+                }
      })
    })
    })
 
+
+
+
    function addNewAddress(){
+    document.getElementById('defaultAddress').classList.add('d-none')
+    document.getElementById('newDefaultAddress').classList.remove('d-none')
+    document.getElementById('newDefaultAddress').classList.add('d-inline-block')
             document.getElementById('new').value= "newAddress";
             document.getElementById('userName').value =''
             document.getElementById('address').value =''
@@ -423,6 +490,7 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
 
  function deleteAddress() {
     if(window.confirm("Are you shure about deleting this address","Deleteing the address?")){
+      showLoader()
         fetch('/address',{
         method:"DELETE",
         headers:{"Content-Type":"application/json"},
@@ -431,9 +499,25 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
     })
     .then((data)=>data.json())
     .then((data)=>{
-        
-        window.location.reload()
+      hideLoader()
+        if(data.type === 'error'){
+          showToast(data.message,'error');
+        }
+        if(data.type === 'success'){
+            showToast('Address Deleted')
+          setTimeout(()=>{
+           window.location.reload()
+          },500)
+          
+        }
+       
     })
+     .catch((error) => {
+    console.log(error)
+    hideLoader()
+    showToast('Something went wrong', 'error');
+    e.target.checked = false;
+   });
     }
   
  }
@@ -460,9 +544,42 @@ document.getElementById('pinCode').addEventListener('input',(e)=>{
 }
 
 
+document.getElementById('defaultAddress').addEventListener('click',(e)=>{
+   if (!e.target.checked) {
+    e.target.checked = true;
+    return;
+  }
+  showLoader()
+     fetch('/address/defaultAddress', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      addressId: document.getElementById('addressSelect').value
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+    hideLoader()
+    if (result.type === 'success') {
+      window.location.href = result.href;
+    } else {
+      showToast(result.message, 'error');
+      e.target.checked = false; 
+    }
+  })
+  .catch((error) => {
+    console.log(error)
+    hideLoader()
+    showToast('Something went wrong', 'error');
+    e.target.checked = false;
+  });
+})
+
   
 
             </script>
+            <script src="/script/loader.js"></script>
+            <script src="/script/tost.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

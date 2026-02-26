@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <link rel="stylesheet" href="/userStyles/UserSideBar.css">
-
+   <link rel="stylesheet" href="/UserStyles/loader.css">
     <style>
         :root { --primary-blue: #3b59d8; --bg-color: #f4f5f7; }
         body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; padding-top: 50px; }
@@ -34,6 +34,42 @@
       border: 1px solid #ccc;
     }
 
+      .password-wrapper {
+  position: relative;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
+#togglePassword {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
+#togglePassword1 {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
+#togglePassword2 {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
+
 
         /* Master Container Width */
         .page-container { max-width: 1200px; margin: 0 auto; }
@@ -48,6 +84,7 @@
             
             <%- include('../partials/userSideBar.ejs',{page:'account'}) %>
             <%- include("../partials/notification.ejs") %>
+            <%- include("../partials/loader")%>
             <div class="col-lg-9">
                 
                 <div class="card settings-card">
@@ -78,7 +115,7 @@
                                       <p id="phoneNuberError" class="text-danger"></p>
                                 </div>
                                 <div class="text-end">
-                                    <button onclick="sendUserData()" class="btn btn-custom-primary">Save Changes</button>
+                                    <button onclick="sendUserData()" class="btn btn-primary">Save Changes</button>
                                 </div>
                             </div>
                         </div>
@@ -90,27 +127,30 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Current Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
+                               
                                 <input type="password" id="password" class="form-control password-input">
+                               <i class="fa-solid fa-eye" id="togglePassword"></i>
                             </div>
                              <p class="text-danger" id="CurrentPasswordError"></p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
                                 <input type="password" id="newPassword" class="form-control password-input" placeholder="8+ characters">
-                                
+                                  <i class="fa-solid fa-eye" id="togglePassword1"></i>
                             </div>
                             <P class="text-danger" id="newPasswordError"></P>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Confirm Password</label>
-                            <div class="input-group">
+                            <div class="password-wrapper">
                                 <input type="password" id="confirmPassword"  class="form-control password-input" placeholder="8+ characters">
+                                  <i class="fa-solid fa-eye" id="togglePassword2"></i>
                             </div>
                             <P class="text-danger" id="confirmPasswordError"></P>
                         </div>
-                        <button id="passwordChange" class="btn btn-custom-primary w-30">Change Password</button>
+                        <button id="passwordChange" class="btn btn-primary w-30">Change Password</button>
                     </div>
                     
                 </div>
@@ -150,6 +190,7 @@
                     let croppedBlob;
                    
                     function sendUserData(){
+                      showLoader()
                         const data = new FormData()
                         const userName = document.querySelector("#userName").value;
                         const email = document.querySelector("#email").value;
@@ -185,20 +226,27 @@
                         body:data
                        }).then(data=>data.json())
                        .then(data=>{
-                        
+                        hideLoader()
                         if(data?.status=='success'){
+                           showToast('Otp send successfully')
+                           setTimeout(()=>{
+                             window.location.href=data.href
+                           },1000)
                            
-                            window.location.href=data.href
                         }
                       
                         else if(data.status=='updated'){
-
-                          window.location.href=data.href
+                         showToast('Updated successfully')
+                         return
                         }
                         if(data.status=="error")
                         {
-                            
+                            showToast(data.message,'error');
                         }
+                       }).catch((error)=>{
+                        hideLoader()
+                        console.log(error);
+                        showToast('connection failed');
                        })
                  
                   }
@@ -314,11 +362,13 @@
 
    
     if (isValid) {
+      
       console.log(currentPassword.value+" "+newPassword.value)
      const jsonData = JSON.stringify({
          currentPassword:currentPassword.value,
          newPassword:newPassword.value
         })
+        showLoader()
       fetch("/profile/editPassword",{
         method:"PATCH",
          headers: {
@@ -327,12 +377,20 @@
         body:jsonData
       }).then(data=>data.json())
       .then(data=>{
+        hideLoader()
         if(data.status=='error'){
-          alert(data.message)
+          showToast(data.message,'error')
         }
         if(data.status =="success"){
-          alert(data.message)
+          document.getElementById("password").value = "";
+          document.getElementById("newPassword").value = "";
+           document.getElementById("confirmPassword").value = "";
+          showToast(data.message)
         }
+      })
+      .catch((error)=>{
+        hideLoader()
+        showToast('Somthing was Wrong',"error");
       })
     }
     else{
@@ -340,8 +398,43 @@
     }
   });
 
+  const password = document.getElementById("password");
+  const toggle = document.getElementById("togglePassword");
+
+  toggle.addEventListener("click", () => {
+    const isPassword = password.type === "password";
+    password.type = isPassword ? "text" : "password";
+
+    toggle.classList.toggle("fa-eye");
+    toggle.classList.toggle("fa-eye-slash");
+  });
+
+
+    const newPassword = document.getElementById("newPassword");
+  const toggle1 = document.getElementById("togglePassword1");
+
+  toggle1.addEventListener("click", () => {
+    const isPassword = newPassword.type === "password";
+    newPassword.type = isPassword ? "text" : "password";
+
+    toggle1.classList.toggle("fa-eye");
+    toggle1.classList.toggle("fa-eye-slash");
+  });
+
+    const confirmPassword = document.getElementById("confirmPassword");
+  const toggle2 = document.getElementById("togglePassword2");
+
+  toggle2.addEventListener("click", () => {
+    const isPassword = confirmPassword.type === "password";
+    confirmPassword.type = isPassword ? "text" : "password";
+
+    toggle2.classList.toggle("fa-eye");
+    toggle2.classList.toggle("fa-eye-slash");
+  });
 
             </script>
+            <script src="/script/loader.js"></script>
+             <script src="/script/tost.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

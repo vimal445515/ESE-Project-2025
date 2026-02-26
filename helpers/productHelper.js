@@ -30,23 +30,26 @@ let imgObj = {}
 
 
 for(let i = 0; i < length/4;i++){
-  
-  imgObj[`img1${i}`] = imageObj[`${i}`]?.filename
-  imgObj[`url1${i}`] = imageObj[`${i}`].path
+  let index = i*4;
+  imgObj[`img1${i}`] = imageObj[`${index}`]?.filename
+  imgObj[`url1${i}`] = imageObj[`${index}`].path
 
-  imgObj[`img2${i}`] = imageObj[`${i+1}`]?.filename
-  imgObj[`url2${i}`] = imageObj[`${i+1}`].path
+  imgObj[`img2${i}`] = imageObj[`${index+1}`]?.filename
+  imgObj[`url2${i}`] = imageObj[`${index+1}`].path
 
-  imgObj[`img3${i}`] = imageObj[`${i+2}`]?.filename
-  imgObj[`url3${i}`] = imageObj[`${i+2}`].path
+  imgObj[`img3${i}`] = imageObj[`${index+2}`]?.filename
+  imgObj[`url3${i}`] = imageObj[`${index+2}`].path
 
-  imgObj[`img4${i}`] = imageObj[`${i+3}`]?.filename
-  imgObj[`url4${i}`] = imageObj[`${i+3}`].path
+  imgObj[`img4${i}`] = imageObj[`${index+3}`]?.filename
+  imgObj[`url4${i}`] = imageObj[`${index+3}`].path
 }
 
 
 for(let i = 0; i < objArray.length/4; i++)
 {
+  if(obj[`price${i}`] < 0 || isNaN(obj[`price${i}`]) || obj[`stock${i}`] <0 || isNaN(obj[`stock${i}`]) ){
+    throw new Error("Invaid input");
+  }
    resultArray.push({
      price: obj[`price${i}`],
      stock: obj[`stock${i}`],
@@ -69,64 +72,36 @@ const extractGeneralImage=(files)=>
 }
 
 
-const deleteExeistingImage = (generalPhoto,img1,img2,img3,img4,data) =>{
+const deleteExeistingImage = async(generalPhoto,img1,img2,img3,img4,newImages=[],newGeneralImage) =>{
   
-  if(generalPhoto){
-      cloudinary.uploader.destroy(generalPhoto.publicId)
-  }
-  if(img1){
-   cloudinary.uploader.destroy(img1.publicId)
+  if(generalPhoto?.publicId !== newGeneralImage?.publicId && generalPhoto?.publicId ){
+    console.log("deleteing generalPhoto")
+    await   cloudinary.uploader.destroy(generalPhoto.publicId)
   }
 
-  if(img2){
-    cloudinary.uploader.destroy(img2.publicId)
+  if(img1?.publicId !== newImages[0]?.publicId && img1?.publicId){
+    console.log("deleteing first image")
+   await cloudinary.uploader.destroy(img1.publicId)
   }
 
-  if(img3){
-    cloudinary.uploader.destroy(img3.publicId)
+  if(img2?.publicId !== newImages[1]?.publicId && img2?.publicId ){
+    console.log("deleteing second image")
+   await cloudinary.uploader.destroy(img2.publicId)
+  }
+  
+  if(img3?.publicId !== newImages[2]?.publicId && img3?.publicId){
+    console.log("deleteing third image")
+   await cloudinary.uploader.destroy(img3.publicId)
   }
 
-  if(img4){
-    cloudinary.uploader.destroy(img4.publicId)
+  if(img4?.publicId !== newImages[3]?.publicId && img4?.publicId){
+    console.log('deleting fourth image')
+   await cloudinary.uploader.destroy(img4.publicId)
   }
+
+  console.log("image deleted",img1,img2,img3,img4);
 
   
-
-  // let __filename = fileURLToPath(import.meta.url);
-  // let __dirname =path.dirname(path.dirname(__filename))
-  // let root = __dirname.split("\\").join('/')
-  // console.log(data.generalPhoto, generalPhoto)
-  // if(fs.existsSync(`${root}/public/upload/${data.generalPhoto}`) && data.generalPhoto !== generalPhoto){
-  //   fs.unlink(`${root}/public/upload/${data.generalPhoto}`,(error)=>{
-  //       console.log("general image deleted")
-  //   });
-  
-  // } 
-  // if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[0]}`) && data.variants.images[0] !== img1) 
-  // {
-  //   fs.unlink(`${root}/public/upload/${data.variants.images[0]}`,(error)=>{
-  //     console.log("img1 deleted")
-  //   })
-    
-  // }
-  //    if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[1]}`) && data.variants.images[1] !== img1) {
-  //     fs.unlink(`${root}/public/upload/${data.variants.images[1]}`,(error)=>{
-  //       console.log("img2 deleted")
-  //     })
-      
-  //    }
-  //      if(fs.existsSync(`${root}/pubilc/upload/${ data.variants.images[2]}`) && data.variants.images[2] !== img1) {
-  //       fs.unlink(`${root}/public/upload/${data.variants.images[2]}`,(error)=>{
-  //          console.log("img2 deleted")
-  //       })
-       
-  //      }
-  //       if(fs.existsSync(`${root}/pubilc/upload/${data.variants.images[3]}`) && data.variants.images[3] === img1){
-  //          fs.unlink(`${root}/public/upload/${data.variants.images[3]}`,(error)=>{
-  //             console.log("img2 deleted")
-  //          })
-         
-  //       }
  
 }
 
@@ -156,10 +131,10 @@ let objArray =  Object.entries(obj);
 let resultArray = []
 let imgObj = {}
 
-for(let i = 0; i < length/4; i++){
+for(let i = 0; i < length; i++){
+  console.log(imageObj[`${i}`])
   let newKey = `${imageObj[`${i}`].fieldname}`
   imageObj[newKey] = imageObj[`${i}`]
-  delete imageObj[`${i}`]
   console.log(imageObj)
 }
 
@@ -181,6 +156,9 @@ for(let i = 0; i < length/4; i++){
 
 for(let i = 0; i < objArray.length/4; i++)
 {
+   if(obj[`stock${i}`] < 0 ){
+    throw new Error("Invalid stock");
+   }
    resultArray.push({
      price: obj[`price${i}`],
      stock: obj[`stock${i}`],

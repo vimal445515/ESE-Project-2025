@@ -1,12 +1,12 @@
   let correntPage = 1;
   let searchValue = ''
-  let activeValue=''
+  let activeValue= document.getElementById("couponStatus").value || 'all'
        function showEditModal(couponCode,discount,minimumOrder, maximumDiscount,expiryDate){
         document.getElementById('couponCode').value= couponCode;
         document.getElementById('discount').value= discount;
         document.getElementById('minimumOrder').value= minimumOrder;
         document.getElementById('maximumDiscount').value= maximumDiscount;
-        document.getElementById('expiryDate').value= expiryDate;
+        document.getElementById('expiryDate').value=new Date(expiryDate).toISOString().split('T')[0];;
 
         const editCouponModal = document.getElementById('editCouponModal');
         const modal = new bootstrap.Modal(editCouponModal);
@@ -16,8 +16,10 @@
 
       
          function search(page){
+          
           let search = document.getElementById('searchInput').value.trim()
           correntPage = page
+          showLoader()
           window.location.href = `/coupon?page=${correntPage}&search=${searchValue}&filter=${activeValue}`
         }
          function nextPage(correntPgae){
@@ -47,24 +49,38 @@
         }
 
         function activate(couponId){
-          
+           showLoader()
             fetch('coupon/activate',{
                 method:'PATCH',
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify({couponId:couponId})
-            }).then(data=>{
+            }).then(data=>data.json())
+            .then(data=>{
+              hideLoader()
+              if(data.type === 'error') return showToast(data.message,'error');
                 search(1)
+            }).catch(error=>{
+              hideLoader()
+              console.log(error)
+              return showToast('Something was wrong!','error');
             })
         }
 
         function deactive(couponId){
-          
+          showLoader()
             fetch('coupon/deactive',{
                 method:'PATCH',
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify({couponId:couponId})
-            }).then(data=>{
+            }).then(data=>data.json())
+            .then(data=>{
+              hideLoader()
+              if(data.type === 'error') return showToast(data.message,'error');
                 search(1)
+            }).catch(error=>{
+              hideLoader()
+              console.log(error)
+              return showToast('Something was wrong!','error');
             })
         }
 

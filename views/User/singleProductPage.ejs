@@ -21,12 +21,25 @@
         }
 
         /* --- Image Gallery Styles --- */
-        .main-image {
+        .zoom-box {
             width: 100%;
             height: 450px;
-            object-fit: contain;
+            overflow: hidden;
             border: 1px solid #eee;
             border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            position: relative;
+            cursor: zoom-in;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
         }
         .thumbnail {
             width: 100px;
@@ -106,14 +119,14 @@
             cursor: not-allowed !important;
         }
         
-        /* --- Related Items Specific Styles --- */
+       
         .related-card {
             border: 1px solid #eee;
             border-radius: 0.5rem;
             padding: 1rem;
             text-align: center;
             width: 100%;
-            background-color: #fff; /* Ensure card background is white */
+            background-color: #fff;
         }
         .related-img {
             width: 100%;
@@ -121,33 +134,23 @@
             object-fit: contain;
             margin-bottom: 0.5rem;
         }
-        /* Style for horizontal scroll wrapper */
+       
         .related-scroll-wrapper {
             overflow-x: auto;
-            white-space: nowrap; /* Prevents wrapping of inner cards */
+            white-space: nowrap; 
             padding-bottom: 1rem;
-            /* Optional: Add smooth scrolling */
             scroll-behavior: smooth;
         }
         .related-card-wrapper {
             display: inline-block;
-            width: 250px; /* Fixed width for the cards in the carousel */
+            width: 250px; 
             margin-right: 1rem;
             white-space: normal;
         }
 
 
-.main-image {
-  width: 100%;
-  height: auto;
-  transition: transform 0.4s ease;
-}
-
 .zoom-box:hover .main-image {
-  transform: scale(1.30);
-  cursor: zoom-in;
-   
-   
+  transform: scale(2.5);
 }
     .userProfile {
   width: 39px;          
@@ -305,7 +308,7 @@
                 <%}else{%>
                     <div class="input-group" style="width: 120px;">
                     <button id="decrementButton" class="btn btn-outline-secondary counter-btn rounded-start" type="button">-</button>
-                    <input type="text" id="quantityInput"   class="form-control text-center p-0"  style="height: 40px; width: 40px;">
+                    <input type="text" id="quantityInput"   class="form-control text-center p-0"  style="height: 40px; width: 40px;" readonly>
                     <button id="incrementButton" class="btn btn-outline-secondary counter-btn rounded-end" type="button">+</button>
                 </div>
                 <%}%>
@@ -331,7 +334,7 @@
                     <input type="hidden" name="variantId" value="<%= productData.variants._id%>">
                     <input type="hidden" name="categoryId" value="<%= productData.categoryId%>">
                      <% if(productData.variants.stock < 1 || productData.isDeleted ||categoryIsBlocked){%>
-                        <button type="button" class="btn-disabled">Add to Cart</button>
+                        <button type="button" id="addToCart" class="btn-disabled">Add to Cart</button>
                     <%}else{%>
                     <button  type="submit" id="addToCart" class="btn btn-outline-secondary"><i class="bi bi-cart-plus-fill fs-5"></i> Add to Cart</button>
                       <%}%>
@@ -498,21 +501,7 @@
     document.getElementById("quantityforCheckout").value = quantity;
    
     
-    //  document.querySelector('#memorySelect').value='<%= ram%>'||document.querySelector('#memorySelect').value
-    // let storage ='<%= storage%>'
-    // document.querySelector('#storageSelect').value='<%= storage%>'||document.querySelector('#storageSelect').value
    
-
-//   function redirectWithFilters() {
-//     const ram = memorySelect.value;
-//     const rom = storageSelect.value;
-
-//     window.location.href =
-//       `/productDetails/<%= productData._id %>?ram=${ram}&rom=${rom}`;
-//   }
-
-//    document.querySelector('#memorySelect').addEventListener('change',redirectWithFilters)
-    //  document.querySelector('#storageSelect').addEventListener('change',redirectWithFilters)
  const mainImage = document.querySelector("#bigimg");
 const thumbnails = document.querySelectorAll(".thumbnail");
 
@@ -523,7 +512,19 @@ thumbnails.forEach((img) => {
     thumbnails.forEach(t => t.classList.remove("active"));
     img.classList.add("active");
   });
-})
+});
+
+const zoomBox = document.querySelector(".zoom-box");
+zoomBox.addEventListener("mousemove", (e) => {
+    const { left, top, width, height } = zoomBox.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    mainImage.style.transformOrigin = `${x}% ${y}%`;
+});
+
+zoomBox.addEventListener("mouseleave", () => {
+    mainImage.style.transformOrigin = "center center";
+});
 document.querySelector('.fw-bold').textContent =  `<%= productData.productName%> <%= productData.variants.ram%>GB RAM <%= productData.variants.storage%> GB SSD`
  
 document.getElementById('decrementButton').addEventListener("click",()=>{
@@ -544,12 +545,22 @@ document.getElementById('incrementButton').addEventListener("click",()=>{
     sessionStorage.setItem('quantity',quantity);
     window.location.reload()
 
+ }else{
+    showToast(`Only ${stock} stock is available`,'error');
+    setTimeout(()=>{
+        window.location.reload()
+    },2000)
  }
 })
 
+<% if(success?.length >0){%>
+
+    showToast('<%= success[0]%>')
+<%}%>
 
 
 document.getElementById('addToCart').addEventListener('click',(e)=>{
+    window.location.reload()
     if(document.getElementById('quantityInput').value > 5){
          e.preventDefault()
         alert("! Sorry Maximum qunatity allowed 5");

@@ -11,7 +11,7 @@
     
     <link rel="stylesheet" href="/adminStyles/sideBar.css">
     <link rel="stylesheet" href="/adminStyles/navBar.css">
-
+    <link rel="stylesheet" href="/UserStyles/loader.css">
     <style>
         :root {
             --sidebar-width: 250px;
@@ -114,6 +114,7 @@
         <div id="page-content-wrapper">
             <%- include('../partials/adminNavBar.ejs') %>
              <%- include('../partials/notification.ejs')%>
+             <%- include("../partials/loader")%>
 
             <div class="container-fluid px-4 pt-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -198,7 +199,7 @@
                     <h5 class="modal-title fw-bold">Create Category Offer</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="category" method="POST">
+                <form id="createForm" action="category" method="POST">
                     <div class="modal-body px-4 pb-4">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Offer Name</label>
@@ -216,11 +217,13 @@
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="form-label small fw-bold text-muted">Discount (%)</label>
-                                <input type="number" class="form-control" name="discount" min="1" max="99" required>
+                                <input type="number" class="form-control" id="discountForCreateOffer" name="discount" min="1" max="99" required>
+                                <p class="discountForCreateOfferError text-danger"></p>
                             </div>
                             <div class="col-6 mb-3">
                                 <label class="form-label small fw-bold text-muted">Expiry Date</label>
-                                <input type="date" class="form-control" name="expiryDate" required>
+                                <input type="date" class="form-control" name="expiryDate" id="expiryDateForCreateOffer" required>
+                                <p class="text-danger expiryDateForCreateOfferError"></p>
                             </div>
                         </div>
                     </div>
@@ -299,7 +302,7 @@
              }
 
           function action(categoryId,offerId,inputBox){
-                
+                showLoader()
                 const data = JSON.stringify({categoryId,action:inputBox.value,offerId})
                 fetch(`/offers/category/action?page=${correntPage}`,{
                     method:"PATCH",
@@ -307,9 +310,16 @@
                     body:data
                 })
                 .then((data)=>data.json())
-                .then(data=>{
+                .then((data=>{
+                    hideLoader()
+                    if(data?.type === 'error') return showToast(data.message,'error');
                     window.location.href=data.href;
+                })).catch(error=>{
+                    hideLoader()
+                    console.log(error)
+                    return showToast('Something was wrong!','error')
                 })
+            
              }
                function showModal(offer){
                 document.getElementById("editCategoryOfferName").value=offer.offerName
@@ -333,7 +343,7 @@
                 document.getElementById('DiscountError').innerText= "Required"
                 return;
                }
-               if(discount >99){
+               if(discount >99 || discount < 1){
                  document.getElementById('DiscountError').innerText= "Invalid Discount"
                  return;
                }
@@ -344,15 +354,39 @@
                }
 
                 const data = JSON.stringify({offerName,discount,expiryDate,offerId})
+                showLoader()
                fetch('/offers/category/update',{
                 method:"PATCH",
                 headers:{'Content-Type':'application/json'},
                 body:data
                }).then(data=>data.json())
                .then(data=>{
+                hideLoader()
                 window.location.reload();
+               }).catch((error)=>{
+                console.log(error)
+                hideLoader()
+                showToast("Somthing was wrong!",'error')
                })
              }
+
+               document.getElementById('createForm').addEventListener('submit',(e)=>{
+                e.preventDefault()
+                let flag = true;
+                if(new Date(document.querySelector('#expiryDateForCreateOffer').value)< new Date()){
+                    document.querySelector('.expiryDateForCreateOfferError').innerText = "Invaild date";
+                    flag = false
+                }
+                if(document.getElementById('discountForCreateOffer').value >99 ||document.getElementById('discountForCreateOffer').value < 1 ){
+                    document.querySelector(".discountForCreateOffer").innerText = "Invalid discount"
+                    flag = false
+                }
+
+                if(flag){
+                    document.getElementById('createForm').submit()
+                }
+             })
     </script>
+    <script src="/script/loader.js"></script>
 </body>
 </html>
