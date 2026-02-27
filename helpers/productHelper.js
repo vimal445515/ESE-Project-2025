@@ -1,7 +1,7 @@
 import fs from 'fs'
 import {fileURLToPath} from 'url'
 import path from 'path'
-import cloudinary from '../config/cloudinary.js'
+import cloudinary from '../Config/cloudinary.js'
 
 const structureProductData = (image,info) =>{
 let imageObj = {...image}
