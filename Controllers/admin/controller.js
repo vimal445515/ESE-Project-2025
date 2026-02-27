@@ -165,7 +165,7 @@ export const loadUserManagementPage = async (req, res) => {
   const skip = helpers.paginationSkip(page, limit);
   const data = await adminService.getAllUsers(skip, limit, search);
   const count = await adminService.getAllUsersCount();
-  res.render("admin/userManage", {
+  res.render("Admin/userManage", {
     data,
     page,
     limit,
@@ -230,7 +230,7 @@ export const loadCategoriePage = async (req, res, next) => {
         .status(200)
         .json({ type: "success", message: "category blocked successfully" });
     }
-    res.render("admin/categories", { data, page, limit, count });
+    res.render("Admin/categories", { data, page, limit, count });
   } catch (error) {
     console.log(error);
     if (req.params?.isBlocked) {
