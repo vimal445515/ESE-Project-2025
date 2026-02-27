@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 import offerService from "./offerService.js";
 import offerModel from "../Models/offerSchema.js";
 import productHelpers from '../helpers/productHelper.js'
-import cloudinary from '../config/cloudinary.js'
+import cloudinary from '../Config/cloudinary.js'
 const storeProductDataInDB = async (generalPhoto,productName,basePrice,description,category,discound,variantsData)=>{
   
   return await productModel.create({
