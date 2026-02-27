@@ -1,4 +1,4 @@
-import cartService from "../service/cartService.js";
+import cartService from "../Service/cartService.js";
 import productService from "../Service/productService.js";
 import categoryService from "../Service/categoryService.js";
 import orderSevice from "../Service/orderSevice.js";
