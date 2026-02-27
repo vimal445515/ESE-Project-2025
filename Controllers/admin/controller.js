@@ -92,7 +92,7 @@ export const ActiveUsers = async (req, res) => {
     const data = await adminService.findActiveUsers(skip, limit);
     const count = await adminService.getActiveUserCount();
 
-    return res.render("admin/userManage", {
+    return res.render("Admin/userManage", {
       data,
       page,
       limit,
@@ -112,7 +112,7 @@ export const blockedUsers = async (req, res) => {
     const skip = helpers.paginationSkip(page, limit);
     const data = await adminService.findBlockedUsers(skip, limit);
     const count = await adminService.getBlockedUserCount();
-    return res.render("admin/userManage", {
+    return res.render("Admin/userManage", {
       data,
       page,
       limit,
