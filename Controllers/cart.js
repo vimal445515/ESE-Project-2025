@@ -1,4 +1,4 @@
-import cartService from "../service/cartService.js";
+import cartService from "../Service/cartService.js";
 import productService from "../Service/productService.js";
 import categoryService from "../Service/categoryService.js";
 import orderSevice from "../Service/orderSevice.js";
@@ -83,13 +83,11 @@ const addToCart = async (req, res) => {
             );
             const cartItems = await cartService.getCartItems(req.session._id);
             const subTotal = cartService.cartSummary(cartItems);
-            return res
-              .status(200)
-              .json({
-                type: "suceess",
-                stock: item[0].variants.stock,
-                subTotal,
-              });
+            return res.status(200).json({
+              type: "suceess",
+              stock: item[0].variants.stock,
+              subTotal,
+            });
           }
 
           return res.json({ type: "error" });
@@ -134,13 +132,11 @@ const addToCart = async (req, res) => {
             let cartItems = await cartService.getCartItems(req.session._id);
             let subTotal = cartService.cartSummary(cartItems);
             console.log("this is cart times", cartItems);
-            return res
-              .status(200)
-              .json({
-                type: "suceess",
-                stock: item[0].variants.stock,
-                subTotal,
-              });
+            return res.status(200).json({
+              type: "suceess",
+              stock: item[0].variants.stock,
+              subTotal,
+            });
           } else {
             await cartService.incrementQuantity(
               req.body.productId,
