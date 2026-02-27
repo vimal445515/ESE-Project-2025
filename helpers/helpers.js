@@ -2,7 +2,7 @@ import fs from "fs"
 import path from 'path'
 import { fileURLToPath } from "url"
 import {transport} from '../Config/EmailConfig.js'
-import cloudinary from "../config/cloudinary.js";
+import cloudinary from "../Config/cloudinary.js";
 const otpGenerator=()=>{
    return Math.floor(Math.random(999,10000)*10000)
 }
