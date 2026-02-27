@@ -1,7 +1,7 @@
 import {Router} from "express" 
 import auth from '../middleware/userAuth.js'
-import orderController from "../controllers/order.js"
-import order from "../controllers/order.js";
+import orderController from "../Controllers/order.js"
+
 
 const router = Router();
 
