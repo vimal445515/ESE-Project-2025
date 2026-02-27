@@ -308,7 +308,7 @@ const loadUserProfile = async (req, res) => {
     const orderData = await orderSevice.getOrderDataForDashbord(
       req.session._id,
     );
-    res.render("User/userDashbord", {
+    res.render("User/UserDashbord", {
       userName: req.session.userName,
       email: req.session.email,
       referralCode: req.session.referralCode,
