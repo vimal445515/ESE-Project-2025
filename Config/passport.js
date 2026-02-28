@@ -9,7 +9,7 @@ passport.use(
     {
       clientID: process.env.CLINT_ID,
       clientSecret: process.env.CLINT_SECRET,
-      callbackURL: "http://localhost:3000/google/authenticate",
+      callbackURL: "https://ses-online.shop/google/authenticate",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
