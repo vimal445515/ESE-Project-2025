@@ -18,9 +18,10 @@ const storeReview = async (req, res) => {
     res.render("User/orderDetails", {
       userName: req.session.userName,
       profile: req.session.profile,
-      order: order[0],
+      order: order?.order[0],
       type: "success",
       message: "Review Added successfully",
+      block: order?.block,
     });
   } catch (error) {
     res.render("User/orderDetails", {
