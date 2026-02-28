@@ -6,5 +6,6 @@ export const sessionMiddleware = session({
   saveUninitialized: false,
   cookie: {
     maxAge: 60 * 60 * 1000,
+     secure: true
   },
 });
