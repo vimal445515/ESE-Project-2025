@@ -100,7 +100,15 @@ export async function generateReportPDF(
   endDate,
 ) {
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+      ],
+    });
     const page = await browser.newPage();
     let dateHtml = "";
     if (startDate) {
