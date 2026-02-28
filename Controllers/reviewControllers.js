@@ -21,15 +21,16 @@ const storeReview = async (req, res) => {
       order: order?.order[0],
       type: "success",
       message: "Review Added successfully",
-      block: order?.block,
+      block: order?.block
     });
   } catch (error) {
     res.render("User/orderDetails", {
       userName: req.session.userName,
       profile: req.session.profile,
-      order: order[0],
+       order: order?.order[0],
       type: "error",
       message: "! Oops somthing was wrong",
+       block: order?.block
     });
   }
 };

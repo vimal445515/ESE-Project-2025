@@ -80,7 +80,7 @@ const generateExcelSheet = (reportData, orders, startDate, endDate) => {
     console.log(orders);
     sheet.addRow([
       order.orderId,
-      order.user[0].userName,
+      order.user[0]?.userName || "",
       order.createdAt.toISOString().slice(0, 10),
       `₹${order.pricing.subTotal.toFixed(2)}`,
       `₹${order.pricing.offerDiscount.toFixed(2)}`,
