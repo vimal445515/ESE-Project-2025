@@ -1,4 +1,4 @@
-export function salesReportHtml(salesReportData, orders,date) {
+export function salesReportHtml(salesReportData, orders, date) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,21 +37,21 @@ export function salesReportHtml(salesReportData, orders,date) {
     <div class="col">
       <div class="kpi-card">
         <strong>Total Orders</strong><br>
-        ${salesReportData[0]?.totalOrder||0}
+        ${salesReportData[0]?.totalOrder || 0}
       </div>
     </div>
 
     <div class="col">
       <div class="kpi-card">
         <strong>Total Revenue</strong><br>
-        ₹${salesReportData[0]?.netSales.toFixed(2).toLocaleString('en-IN')||0}
+        ₹${salesReportData[0]?.netSales.toFixed(2).toLocaleString("en-IN") || 0}
       </div>
     </div>
 
     <div class="col">
       <div class="kpi-card">
         <strong>Total Discount</strong><br>
-        ₹${salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString('en-IN')||0}
+        ₹${salesReportData[0]?.overalDiscountAmount.toFixed(2).toLocaleString("en-IN") || 0}
       </div>
     </div>
   </div>
@@ -74,20 +74,22 @@ export function salesReportHtml(salesReportData, orders,date) {
     </thead>
 
     <tbody>
-      ${ 
-        orders?.map(order => `
+      ${orders
+        ?.map(
+          (order) => `
         <tr>
           <td>${new Date(order?.createdAt).toISOString().slice(0, 10)}</td>
           <td>${order.orderId}</td>
-          <td>${order.user[0].userName}</td>
-          <td>₹${order.pricing.subTotal.toFixed(2).toLocaleString('en-IN')}</td>
-          <td>-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString('en-IN')}</td>
-          <td>-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString('en-IN')}</td>
-          <td>+₹${order.pricing.tax.toFixed(2).toLocaleString('en-IN')}</td>
-          <td><strong>₹${order.pricing.totalAmount.toFixed(2).toLocaleString('en-IN')}</strong></td>
+          <td>${order.user[0]?.userName || ""}</td>
+          <td>₹${order.pricing.subTotal.toFixed(2).toLocaleString("en-IN")}</td>
+          <td>-₹${order.pricing.offerDiscount.toFixed(2).toLocaleString("en-IN")}</td>
+          <td>-₹${order.pricing.couponDiscount.toFixed(2).toLocaleString("en-IN")}</td>
+          <td>+₹${order.pricing.tax.toFixed(2).toLocaleString("en-IN")}</td>
+          <td><strong>₹${order.pricing.totalAmount.toFixed(2).toLocaleString("en-IN")}</strong></td>
         </tr>
-      `).join("")
-      }
+      `,
+        )
+        .join("")}
     </tbody>
   </table>
 
