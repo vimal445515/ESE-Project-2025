@@ -39,6 +39,7 @@ cloudinary.api
 app.use(sessionMiddleware);
 app.use(flash());
 
+app.set("trust proxy", 1);
 app.use(express.json());
 app.set("view engine", "ejs");
 app.use(nocache());
