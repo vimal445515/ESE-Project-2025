@@ -59,7 +59,7 @@ const loadEditProductPage = async (req, res) => {
       product.categoryId,
     );
     const categories = await adminService.getCategoriesForProductEdit();
-    res.render("Admin/editProduct", {
+    res.render("Admin/EditProduct", {
       product,
       categories,
       productCategory,
