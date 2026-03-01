@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { generateReferralCode } from "../helpers/referralCodeHelper.js";
 import { User } from "../Models/userSchema.js";
 import env from "dotenv";
 env.config();
@@ -9,7 +10,7 @@ passport.use(
     {
       clientID: process.env.CLINT_ID,
       clientSecret: process.env.CLINT_SECRET,
-      callbackURL: "https://ses-online.shop/google/authenticate",
+      callbackURL: process.env.CALLBACKURL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -27,6 +28,7 @@ passport.use(
           userName: profile.displayName,
           email,
           googleId: profile.id,
+          referralId: generateReferralCode(profile.displayName),
         });
         return done(null, user);
       } catch (err) {
