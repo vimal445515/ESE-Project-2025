@@ -293,6 +293,7 @@ const storeUserDataInSession = (req, res) => {
   req.session.phoneNumber = req.user.phoneNumber;
   req.session._id = req.user._id;
   req.session.profile = req.user.profile.url;
+  req.session.referralCode = req.user.referralId
   res.redirect("/home");
 };
 
