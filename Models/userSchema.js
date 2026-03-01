@@ -28,12 +28,14 @@ const userSchema = new mongoose.Schema({
   },
   isBlocked: {
     type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,
   },
   deleted: {
     type: Boolean,
+    default: false,
   },
   googleId: {
     type: String,

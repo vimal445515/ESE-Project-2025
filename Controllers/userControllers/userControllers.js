@@ -58,15 +58,13 @@ const otpGenerator = async (req, res) => {
     await user.clearOtp(email);
     await user.storeOtpInDb(email, OTP);
     otp.sendEmail(email, OTP);
-    return res
-      .status(200)
-      .render("User/otp", {
-        email,
-        userName,
-        password,
-        phoneNumber,
-        referralCode,
-      });
+    return res.status(200).render("User/otp", {
+      email,
+      userName,
+      password,
+      phoneNumber,
+      referralCode,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).redirect("/500Error");
@@ -190,13 +188,11 @@ const findEmail = async (req, res, next) => {
         .json({ status: "error", type: "error", message: "User not found" });
     next();
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        type: "error",
-        message: "Internal server Error",
-      });
+    res.status(500).json({
+      status: "error",
+      type: "error",
+      message: "Internal server Error",
+    });
   }
 };
 
@@ -211,13 +207,11 @@ const generateOtpForPasswordReset = async (req, res) => {
     res.status(200).json({ status: "success", href: "/resetPassowrdOtp" });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({
-        status: "error",
-        type: "error",
-        message: "Internal server Error",
-      });
+    res.status(500).json({
+      status: "error",
+      type: "error",
+      message: "Internal server Error",
+    });
   }
 };
 
@@ -360,13 +354,11 @@ const sendData = async (req, res, next) => {
       return res.status(200).json({ status: "success", href: "/profile/otp" });
     } else {
       await userService.updateUserData(req);
-      res
-        .status(200)
-        .json({
-          status: "updated",
-          message: "Data updated",
-          href: "/EditUser",
-        });
+      res.status(200).json({
+        status: "updated",
+        message: "Data updated",
+        href: "/EditUser",
+      });
     }
   } catch (error) {
     console.log("error from user profile edit", error);
@@ -414,6 +406,10 @@ const userProfileResetPassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   try {
     const password = await userService.getCorrentPassword(req.session.email);
+    if (!password)
+      return res
+        .status(400)
+        .json({ status: "error", message: "Unable to change password!" });
     if (await hash.comparePassword(currentPassword, password)) {
       await userService.updatePassword(newPassword, req.session.email);
     } else {
