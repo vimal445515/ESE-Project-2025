@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { generateReferralCode } from "../helpers/referralCodeHelper.js";
 import { User } from "../Models/userSchema.js";
+import walletService from "../Service/walletService.js";
 import env from "dotenv";
 env.config();
 
@@ -30,6 +31,7 @@ passport.use(
           googleId: profile.id,
           referralId: generateReferralCode(profile.displayName),
         });
+        await walletService.createWallet(user._id);
         return done(null, user);
       } catch (err) {
         return done(err, null);
