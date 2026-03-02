@@ -226,7 +226,7 @@ const orderCartItmes = async (
         quantity: product.quantity,
         couponAppliedFinalPrice: product?.couponAppliedFinalPrice || null,
         offerPrice: product.offerDiscountAmount,
-        finalPrice: product.finalPrice,
+        finalPrice: product.finalPrice + product.finalPrice * (18 / 100),
         price: parseInt(
           product.product.variants.price -
             (product.product.discound / 100) * product.product.variants.price,
@@ -753,7 +753,6 @@ const cancelSingleProduct = async (
 };
 
 const rejectSingleReturnProduct = async (orderId, variantId, productId) => {
-
   const data = await orderReturnModel.findOneAndUpdate(
     {
       orderId: orderId,
