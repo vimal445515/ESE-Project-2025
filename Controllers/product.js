@@ -189,12 +189,10 @@ const addVariant = async (req, res) => {
       if (req.files) {
         await productService.deleteVariantImages(req.files);
       }
-      return res
-        .status(400)
-        .json({
-          type: "error",
-          message: "Invalid variant data please check every data befor upload",
-        });
+      return res.status(400).json({
+        type: "error",
+        message: "Invalid variant data please check every data befor upload",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -235,13 +233,11 @@ const removeOneVariant = async (req, res) => {
         .status(200)
         .json({ type: "success", message: "variant removed successfully" });
     } else {
-      return res
-        .status(400)
-        .json({
-          type: "warning",
-          message:
-            "Only one variant is currently available. A product must have at least one active variant.",
-        });
+      return res.status(400).json({
+        type: "warning",
+        message:
+          "Only one variant is currently available. A product must have at least one active variant.",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -258,7 +254,10 @@ const loadUserSideProductsPage = async (req, res) => {
   const category = req.query.category;
   const priceRange = req.query.priceRange;
   const searchValue = req.query.search;
-
+  if (req.session?.productId) {
+    delete req.session.productId;
+    delete req.session.variantId;
+  }
   const limit = 12;
   try {
     const skip = helpers.paginationSkip(page, limit);
@@ -307,7 +306,12 @@ const loadProductDetails = async (req, res) => {
   const storage = req.query.rom;
   const ram = req.query.ram;
   const variantId = req.query.variantId;
-
+  req.session.productId = id;
+  req.session.variantId = variantId;
+  if (req.session?.userName) {
+    delete req.session.productId;
+    delete req.session.variantId;
+  }
   let productData;
   let isLiked = false;
   let wishlistId = null;
