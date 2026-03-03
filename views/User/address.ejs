@@ -1,585 +1,735 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="stylesheet" href="/UserStyles/loader.css">
-    <link rel="stylesheet" href="/UserStyles/UserSideBar.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Address Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/UserStyles/loader.css">
+  <link rel="stylesheet" href="/UserStyles/UserSideBar.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary-blue: #4f46e5;
+      --primary-light: #818cf8;
+      --bg-color: #f4f5f7;
+      /* Matching original bg */
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      /* Softer shadow */
+      --transition: all 0.3s ease;
+    }
 
-    <style>
-      
-        :root { --primary-blue: #3b59d8; --bg-color: #f4f5f7; }
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; padding-top: 50px; }
-        .page-container { max-width: 1200px; margin: 0 auto; }
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--text-dark);
+      padding-top: 50px;
+      /* Restored original padding */
+      -webkit-font-smoothing: antialiased;
+    }
 
-    
-        .settings-card { background: white; border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 30px; }
-        .card-body { padding: 40px; }
+    .page-container {
+      max-width: 1200px;
+      /* Restored original constraint */
+      margin: 0 auto;
+    }
 
-       
-        .form-label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #444;
-            margin-bottom: 8px;
-        }
+    h1,
+    h2,
+    h3,
+    .heading-font {
+      font-family: 'Outfit', sans-serif;
+    }
 
-        .form-control, .form-select {
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-            padding: 10px 15px;
-            font-size: 0.95rem;
-            color: #333;
-        }
+    .address-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        .form-control:focus, .form-select:focus {
-            box-shadow: none;
-            border-color: var(--primary-blue);
-        }
+    .address-item-card {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 140px;
+    }
 
-        .form-control::placeholder {
-            color: #aaa;
-        }
+    .address-item-card:hover {
+      border-color: var(--primary-light);
+      background: #fcfdfe;
+    }
 
-        
-        .btn-save-address {
-            background-color: var(--primary-blue);
-            color: white;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 25px;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            width: 100%; 
-            height: 100%; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .address-item-card.active {
+      border-color: var(--primary-blue);
+      background-color: #f5f3ff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    }
 
-        .btn-save-address:hover {
-            background-color: #304ac0;
-            color: white;
-        }
+    .address-item-card.is-default::before {
+      content: 'Default';
+      position: absolute;
+      top: 10px;
+      right: -25px;
+      background: var(--primary-blue);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 25px;
+      transform: rotate(45deg);
+    }
 
-    </style>
+    .address-item-card i {
+      font-size: 1rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .address-item-card .name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+      color: var(--text-dark);
+    }
+
+    .address-item-card .details {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .add-new-address-card {
+      border: 2px dashed #cbd5e1;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--text-muted);
+      box-shadow: none;
+    }
+
+    .settings-card {
+      background: white;
+      border: none;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .card-header-premium {
+      background: #fff;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .card-header-premium h4 {
+      margin: 0;
+      font-weight: 700;
+      color: var(--text-dark);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .card-body-premium {
+      padding: 2rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      border-color: var(--primary-blue);
+      outline: none;
+    }
+
+    .error-text {
+      font-size: 0.75rem;
+      color: #ef4444;
+      margin-top: 0.2rem;
+      min-height: 1rem;
+    }
+
+    .btn-premium {
+      border-radius: 8px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-save-address {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      width: 100%;
+    }
+
+    .btn-save-address:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+    }
+
+    .btn-delete {
+      background: #fff;
+      color: #ef4444;
+      border: 1px solid #fee2e2;
+    }
+
+    .btn-delete:hover {
+      background: #fef2f2;
+    }
+
+    #addressSelect {
+      display: none !important;
+    }
+
+    .default-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+    }
+
+    .default-checkbox-wrapper input {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
 </head>
+
 <body class="pt-0">
-    <%- include('../partials/navbar.ejs')%>
+  <%- include('../partials/navbar.ejs')%>
     <%- include('../partials/notification.ejs')%>
-    <%- include("../partials/loader")%>
-    <div class="container-fluid page-container mt-5">
-        
-        <div class="row">
-            
-            <%- include('../partials/userSideBar.ejs', {page: 'address'}) %>
+      <%- include("../partials/loader")%>
+        <div class="container-fluid page-container mt-5">
 
-            <form  class="col-lg-9">
-                
+          <div class="row">
+
+            <%- include('../partials/userSideBar.ejs', {page: 'address' }) %>
+
+              <div class="col-lg-9">
                 <div class="card settings-card">
-                    <div class="card-body">
-                        
-                        <div class="row mb-4 " >
-                            <div class="  col-lg-5 mb-3 mb-lg-0">
-                                <label class="form-label">User name *</label>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <input type="text" name="userName" id="userName"  value="<%= data?.userName||``%>" class="form-control" placeholder="First name">
-                                    </div>
-                                    <span id="userNameError"></span>
-                                </div>
-                            </div>
-                            <input type="hidden" name="addressId" id="addressId">
-                            <div class="col-lg-4 mb-3 mb-lg-0">
-                                <label class="form-label" >Company Name <span class="text-muted fw-light">(Optional)</span></label>
-                                <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>" class="form-control">
-                               
-                            
-                        </div>
-                          <div class="col-lg-3  mb-lg-0 <%= data?.address?'':'d-none'%>">
-                            Default address:
-                         <input type="checkbox" id="defaultAddress" >
-                          <input type="checkbox" class="d-none" id="newDefaultAddress" >
-                         </div>
-                            </div>
-                            
+                  <div class="card-header-premium d-flex justify-content-between align-items-center">
+                    <h4 id="formTitle">Manage Addresses</h4>
+                    <button type="button" onclick="deleteAddress()" id="deleteBtn"
+                      class="btn btn-premium btn-delete <%= data?.address?'':'d-none'%>">
+                      <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                  </div>
 
-                        <div class="mb-4">
-                            <label class="form-label">Address *</label>
-                            <input type="text" id="address" value="<%= data?.address||``%>" name="address" class="form-control">
-                            <p id="addressError" class="text-danger"></p>
-                        </div>
-
-                         <div class="col-md-3">
-                                <label class="form-label">PIN Code *</label>
-                                <input name="pinCode" id="pinCode" value="<%= data?.pinCode||``%>" type="text" class="form-control">
-                                 <p id="pinCodeError" class="text-danger"></p>
-                            </div>
-                           
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Country *</label>
-                                <select name="country" id="country" class="form-select">
-                                   <option value="" disabled <%= !data?.country ? "selected" : "" %>> Select...</option>
-                                    <option value="India" <%= data?.country === "India" ? "selected" : "" %>>India</option>
-                                    <option value="USA" <%= data?.country === "USA" ? "selected" : "" %> >USA</option>
-                                </select>
-                                 <p id="countryError" class="text-danger"></p>
-                            </div>
-                                                        <%
-                                const states = [
-                                "Andhra Pradesh",
-                                "Arunachal Pradesh",
-                                "Assam",
-                                "Bihar",
-                                "Chhattisgarh",
-                                "Goa",
-                                "Gujarat",
-                                "Haryana",
-                                "Himachal Pradesh",
-                                "Jharkhand",
-                                "Karnataka",
-                                "Kerala",
-                                "Madhya Pradesh",
-                                "Maharashtra",
-                                "Manipur",
-                                "Meghalaya",
-                                "Mizoram",
-                                "Nagaland",
-                                "Odisha",
-                                "Punjab",
-                                "Rajasthan",
-                                "Sikkim",
-                                "Tamil Nadu",
-                                "Telangana",
-                                "Tripura",
-                                "Uttar Pradesh",
-                                "Uttarakhand",
-                                "West Bengal"
-                                ];
-                                %>
-
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">State *</label>
-
-                                <select name="state" id="state" class="form-select">
-                                    <option value="" disabled <%= !data?.state ? "selected" : "" %>>
-                                    Select...
-                                    </option>
-
-                                    <% states.forEach(state => { %>
-                                    <option 
-                                        value="<%= state %>"
-                                        <%= data?.state === state ? "selected" : "" %>>
-                                        <%= state %>
-                                    </option>
-                                    <% }) %>
-                                </select>
-
-                                <p id="stateError" class="text-danger"></p>
-                                </div>
-
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">City/District *</label>
-                                <input type="text" id="city" value="<%= data?.city%>" class="form-control" name="city">
-                                <p id="cityError" class="text-danger"></p>
-                            </div>
-                           
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label">Email *</label>
-                                <input name="email" id="email" value="<%= data?.email||``%>" type="email" class="form-control">
-                                <p id="emailError" class="text-danger"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number *</label>
-                                <input name="phoneNumber" id="phoneNumber" value="<%= data?.phoneNumber||`` %>" type="text" class="form-control">
-                                <p id="phoneNumberError" class="text-danger"></p>
-                            </div>
-                        </div>
+                  <div class="card-body card-body-premium">
+                    <div class="mb-4">
+                      <h2 style="font-size: 1.25rem; font-weight: 700;">Your Saved Addresses</h2>
+                      <p class="text-muted" style="font-size: 0.85rem;">Select an address to edit or add a new one.</p>
                     </div>
-                </div>
 
-                <div class=" row mb-5">
-                   <div class="col-md-7 ">
-                                 <label class="form-label">select addresses</label>
-                                <select name="addresses" id="addressSelect" class="form-select">
-                                   <% if(allAddress){%> 
-                                    <% allAddress.forEach(address=>{%>
-                                    <option value="<%= address?._id||``%>" "<%= address?.default === true?'selected':''%>" ><%= address?.address||``%></option>
-                                    <%})%>
-                                    <%}%>
-                                
-                                </select>
-                                </div>
-
-                                <div class="col-md-2 mt-4">
-                                <button type="submit" class="btn btn-primary ">Save Address</button>
-                                 </div>
-
-                                 <div class="col-md-1 mt-4">
-                                <button type="button" onclick="deleteAddress()" class="btn btn-danger justify-content-end <%= data?.address?'':'d-none'%>">Delete</button>
-                                </div>
-
-
-                                 <div class="col-md-1 mt-4 ">
-                                <button type="button" onclick="addNewAddress()" class="btn btn-success ">New</button>
-                                <input type="hidden" id="new" name="isNew">
-                               </div>
-                               
+                    <!-- Address Cards Grid -->
+                    <div class="address-card-grid">
+                      <% if(allAddress && allAddress.length> 0){%>
+                        <% allAddress.forEach(address=> { %>
+                          <div
+                            class="address-item-card <%= address?._id?.toString() === data?._id?.toString() ? 'active' : '' %> <%= address?.default ? 'is-default' : '' %>"
+                            onclick="selectAddressCard('<%= address?._id %>')" id="card-<%= address?._id %>">
+                            <div>
+                              <i class="fa-solid fa-location-dot"></i>
+                              <div class="name">
+                                <%= address?.userName %>
+                              </div>
+                              <div class="details">
+                                <%= address?.address %><br>
+                                  <%= address?.city %>, <%= address?.state %>
+                                      <%= address?.pinCode %>
+                              </div>
                             </div>
-            </form> </div> </div> <%- include("../partials/footer") %>
-            <script>
-                
-     <%if(data?.default===true){%>
-      
-            document.getElementById('defaultAddress').checked = true
-        <%}%>
+                          </div>
+                          <% }) %>
+                            <% } %>
 
-             let  tempState ='';
-             let  tempCountry='';
-              let  tempDistrict='';
-  const form = document.querySelector("form");
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault()
-    let isValid = true;
+                              <div class="address-item-card add-new-address-card" onclick="addNewAddress()">
+                                <i class="fa-solid fa-plus-circle"></i>
+                                <span style="font-size: 0.85rem; font-weight: 600;">Add New</span>
+                              </div>
+                    </div>
 
-  
+                    <hr class="my-4" style="border-top: 1px solid #f1f5f9;">
 
-  console.log( tempState )
-    // helper functions
-    const showError = (id, msg) => {
-      document.getElementById(id).innerText = msg;
-      isValid = false;
-    };
+                    <!-- Form Section -->
+                    <form id="addressForm">
+                      <select name="addresses" id="addressSelect" class="form-select">
+                        <% if(allAddress){%>
+                          <% allAddress.forEach(address=>{%>
+                            <option value="<%= address?._id||``%>" <%=address?.default===true?'selected':''%> ><%=
+                                address?.address||``%>
+                            </option>
+                            <%})%>
+                              <%}%>
+                      </select>
 
-    const clearError = (id) => {
-      document.getElementById(id).innerText = "";
-    };
+                      <input type="hidden" name="addressId" id="addressId" value="<%= data?._id %>">
+                      <input type="hidden" id="new" name="isNew">
 
-    // get values
-    const userName = form.userName.value.trim();
-    const address = form.address.value.trim();
-    const country = form.country.value.trim();
-    const state = form.state.value.trim();
-    const city = form.city.value.trim();
-    const pinCode = form.pinCode.value.trim();
-    const email = form.email.value.trim();
-    const phoneNumber = form.phoneNumber.value.trim();
-    let newDefault = null;
-    if(form.isNew.value){
-        if(document.getElementById('newDefaultAddress').checked === true){
-            newDefault = true;
-    }
-    else{
-       newDefault = false;
-    }
-    }
-    
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Full Name *</label>
+                          <input type="text" name="userName" id="userName" value="<%= data?.userName||``%>"
+                            class="form-control" placeholder="John Doe">
+                          <div id="userNameError" class="error-text"></div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Company Name</label>
+                          <input type="text" name="companyName" id="companyName" value="<%= data?.companyName||``%>"
+                            class="form-control">
+                        </div>
 
+                        <div class="col-12">
+                          <label class="form-label">Street Address *</label>
+                          <input type="text" id="address" name="address" class="form-control"
+                            value="<%= data?.address||``%>" placeholder="House number and street name">
+                          <div id="addressError" class="error-text"></div>
+                        </div>
 
-       
-    const isCorrect = await validatePincodeMapping(
-      pinCode,
-      state,
-      country,
-      city
-    );
+                        <div class="col-md-4">
+                          <label class="form-label">PIN Code *</label>
+                          <input name="pinCode" id="pinCode" value="<%= data?.pinCode||``%>" type="text"
+                            class="form-control">
+                          <div id="pinCodeError" class="error-text"></div>
+                        </div>
 
- 
+                        <div class="col-md-4">
+                          <label class="form-label">Town / City *</label>
+                          <input type="text" id="city" value="<%= data?.city%>" class="form-control" name="city">
+                          <div id="cityError" class="error-text"></div>
+                        </div>
 
+                        <div class="col-md-4">
+                          <label class="form-label">State *</label>
+                          <select name="state" id="state" class="form-select">
+                            <option value="" disabled <%=!data?.state ? "selected" : "" %>>Select State</option>
+                            <% const states=["Andhra Pradesh", "Arunachal Pradesh" , "Assam" , "Bihar" , "Chhattisgarh"
+                              , "Goa" , "Gujarat" , "Haryana" , "Himachal Pradesh" , "Jharkhand" , "Karnataka"
+                              , "Kerala" , "Madhya Pradesh" , "Maharashtra" , "Manipur" , "Meghalaya" , "Mizoram"
+                              , "Nagaland" , "Odisha" , "Punjab" , "Rajasthan" , "Sikkim" , "Tamil Nadu" , "Telangana"
+                              , "Tripura" , "Uttar Pradesh" , "Uttarakhand" , "West Bengal" ]; states.forEach(state=> {
+                              %>
+                              <option value="<%= state %>" <%=data?.state===state ? "selected" : "" %>><%= state %>
+                              </option>
+                              <% }) %>
+                          </select>
+                          <div id="stateError" class="error-text"></div>
+                        </div>
 
+                        <div class="col-md-6">
+                          <label class="form-label">Country *</label>
+                          <select name="country" id="country" class="form-select">
+                            <option value="" disabled <%=!data?.country ? "selected" : "" %>>Select Country</option>
+                            <option value="India" <%=data?.country==="India" ? "selected" : "" %>>India</option>
+                            <option value="USA" <%=data?.country==="USA" ? "selected" : "" %>>USA</option>
+                          </select>
+                          <div id="countryError" class="error-text"></div>
+                        </div>
 
-   
+                        <div class="col-md-6">
+                          <label class="form-label">Set Default</label>
+                          <div class="default-checkbox-wrapper <%= data?.address?'':'d-none'%>"
+                            id="defaultAddressWrapper">
+                            <input type="checkbox" id="defaultAddress" <%=data?.default?'checked':'' %>>
+                            <span style="font-size: 0.85rem;">Set as default</span>
+                          </div>
+                          <div class="default-checkbox-wrapper d-none" id="newDefaultAddressWrapper">
+                            <input type="checkbox" id="newDefaultAddress">
+                            <span style="font-size: 0.85rem;">Set as default</span>
+                          </div>
+                        </div>
 
-   
+                        <div class="col-md-6">
+                          <label class="form-label">Email Address *</label>
+                          <input name="email" id="email" value="<%= data?.email||``%>" type="email"
+                            class="form-control">
+                          <div id="emailError" class="error-text"></div>
+                        </div>
 
-    clearError("userNameError");
-    if (!userName) {
-      showError("userNameError", "User name is required");
-    }
+                        <div class="col-md-6">
+                          <label class="form-label">Phone Number *</label>
+                          <input name="phoneNumber" id="phoneNumber" value="<%= data?.phoneNumber||`` %>" type="text"
+                            class="form-control">
+                          <div id="phoneNumberError" class="error-text"></div>
+                        </div>
 
-   
-    clearError("addressError");
-    if (!address) {
-      showError("addressError", "Address is required");
-    }
+                        <div class="col-12 mt-4">
+                          <button type="submit" class="btn btn-premium btn-save-address">
+                            Save Address Details
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <%- include("../partials/footer") %>
 
+          <script>
+            // Helper function for the new card UI
+            function selectAddressCard(id) {
+              const select = document.getElementById('addressSelect');
+              select.value = id;
+              // Reset the "new" address flag
+              const newAddressInput = document.getElementById('new');
+              if (newAddressInput) newAddressInput.value = '';
 
-   
-    
-    clearError("countryError");
-    if (!country) {
-      showError("countryError", "Please select a country");
-    }
-   
+              // Trigger the existing change event listener
+              const event = new Event('change');
+              select.dispatchEvent(event);
 
-    
-    clearError("stateError");
-    if (!state) {
-      showError("stateError", "Please select a state");
-    }
-    
+              // UI updates
+              document.querySelectorAll('.address-item-card').forEach(card => card.classList.remove('active'));
+              const selectedCard = document.getElementById('card-' + id);
+              if (selectedCard) selectedCard.classList.add('active');
 
-   
-  
-    if (!city) {
-      showError("cityError", "Please select a city");
-    }
+              document.getElementById('formTitle').innerText = 'Edit Address';
+              const deleteBtn = document.getElementById('deleteBtn');
+              if (deleteBtn) deleteBtn.classList.remove('d-none');
 
-    
-    clearError("pinCodeError");
-    if (!/^\d{6}$/.test(pinCode)) {
-      showError("pinCodeError", "Enter a valid 6-digit PIN code");
-    }
-
-    
-    clearError("emailError");
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      showError("emailError", "Enter a valid email address");
-    }
-
-    
-    clearError("phoneNumberError");
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      showError("phoneNumberError", "Enter a valid 10-digit phone number");
-    }
-
-
-        if (!isCorrect.state) {
-      showError("pinCodeError", "State / Country / City does not match PIN code");
-      showError("stateError", "Invalid state for this PIN code");
-      // showError("countryError", "Invalid country for this PIN code");
-      // showError("cityError", "Invalid city for this PIN code");
-    }
- 
-    if (!isCorrect.country) {
-      showError("countryError", "Invalid country for this PIN code");
-      }
-
-      if(!isCorrect.district){
-        showError("cityError", "Invalid district for this PIN code");
-      }
-
-     const data = JSON.stringify({
-             userName,
-             address,
-            country,
-             state ,
-            city ,
-            pinCode ,
-            email ,
-            phoneNumber,
-            companyName:form.companyName.value,
-            isNew:form.isNew.value,
-            addressId:form.addresses.value,
-            newDefault
-     })
-   
-    if (isValid) {
-      showLoader()
-      fetch('/address',
-        {method:'POST',
-         headers:{'Content-Type':'application/json'},
-         body:data
-        },
-        
-      ).then(data=>data.json())
-      .then(data=>{
-        hideLoader()
-        console.log(data)
-        if(data.type === "success"){
-            showToast("Success")
-            setTimeout(()=>{
-                window.location.href= data.href
-            },1000)
-        }
-        else if(data.type ==="error"){
-            showToast(data.message,'error')
-        }
-      })
-    }
-  });
-
-document.getElementById('pinCode').addEventListener('input',(e)=>{
-      if(e.target.value.length ===6){
-
-        fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
-        .then(data=>data.json())
-        .then(data=>{
-            console.log(data)
-            if(data[0].Status==="Error"){
-                document.getElementById("pinCodeError").textContent = "Pin code not found!"
+              const defWrapper = document.getElementById('defaultAddressWrapper');
+              const newDefWrapper = document.getElementById('newDefaultAddressWrapper');
+              if (defWrapper) defWrapper.classList.remove('d-none');
+              if (newDefWrapper) {
+                newDefWrapper.classList.add('d-none');
+                newDefWrapper.classList.remove('d-flex');
+              }
             }
-            if(data[0].Status==="Success"){
-                document.getElementById("pinCodeError").textContent = ""
-                form.state.value = data[0].PostOffice[0].State
-                form.country.value = data[0].PostOffice[0].Country
-                form.city.value = data[0].PostOffice[0].District
 
-                tempState = data[0].PostOffice[0].State
-                tempCountry = data[0].PostOffice[0].Country
-                tempDistrict = data[0].PostOffice[0].District
-            }
-     })
-      }
+        <%if (data?.default === true) {%>
+              document.getElementById('defaultAddress').checked = true
+                <%}%>
 
-   })
+                  let tempState = '';
+            let tempCountry = '';
+            let tempDistrict = '';
 
+            const form = document.getElementById("addressForm");
+            form.addEventListener("submit", async function (e) {
+              e.preventDefault()
+              let isValid = true;
 
-                               
-   document.querySelectorAll('#addressSelect').forEach((element)=>{
-    element.addEventListener('change',(e)=>{
-      showLoader()
-        console.log(e.target.value)
-     if(!e.target.value) return ;
-     fetch(`/address/${e.target.value}`)
-     .then((data)=>data.json())
-     .then((data)=>{
-              hideLoader()
-              if(data.type ==='error') return showToast(data.message,'error');
-                document.getElementById('userName').value = data.userName
-                document.getElementById('address').value = data.address
-                document.getElementById('country').value = data.country
-                document.getElementById('companyName').value = data?.companyName||'';
-                document.getElementById('addressId').value = data._id;
-                document.getElementById('state').value = data.state
-                document.getElementById('city').value = data.city
-                document.getElementById('pinCode').value = data.pinCode
-                document.getElementById('email').value  = data.email
-                document.getElementById('phoneNumber').value = data.phoneNumber
-                e.vaule = data.address;
+              // helper functions
+              const showError = (id, msg) => {
+                const errEl = document.getElementById(id);
+                if (errEl) errEl.innerText = msg;
+                isValid = false;
+              };
 
-                if(data.default == true){
-                     document.getElementById('defaultAddress').checked = true
-                }else{
-                     document.getElementById('defaultAddress').checked = false
+              const clearError = (id) => {
+                const errEl = document.getElementById(id);
+                if (errEl) errEl.innerText = "";
+              };
+
+              // get values
+              const userName = form.userName.value.trim();
+              const address = form.address.value.trim();
+              const country = form.country.value.trim();
+              const state = form.state.value.trim();
+              const city = form.city.value.trim();
+              const pinCode = form.pinCode.value.trim();
+              const email = form.email.value.trim();
+              const phoneNumber = form.phoneNumber.value.trim();
+
+              let newDefault = null;
+              if (form.isNew.value) {
+                if (document.getElementById('newDefaultAddress').checked === true) {
+                  newDefault = true;
+                } else {
+                  newDefault = false;
                 }
-     })
-   })
-   })
+              }
 
+              const isCorrect = await validatePincodeMapping(pinCode, state, country, city);
 
+              clearError("userNameError");
+              if (!userName) showError("userNameError", "User name is required");
 
+              clearError("addressError");
+              if (!address) showError("addressError", "Address is required");
 
-   function addNewAddress(){
-    document.getElementById('defaultAddress').classList.add('d-none')
-    document.getElementById('newDefaultAddress').classList.remove('d-none')
-    document.getElementById('newDefaultAddress').classList.add('d-inline-block')
-            document.getElementById('new').value= "newAddress";
-            document.getElementById('userName').value =''
-            document.getElementById('address').value =''
-            document.getElementById('country').value =''
-            document.getElementById('addressId').value = ''
-            document.getElementById('companyName').value = ""
-            document.getElementById('state').value = ''
-            document.getElementById('city').value = ''
-            document.getElementById('pinCode').value = ''
-            document.getElementById('email').value  = ''
-            document.getElementById('phoneNumber').value = ''
-            document.getElementById('addressSelect').innerHTML= "<option selected>new</option>"
-   }
+              clearError("countryError");
+              if (!country) showError("countryError", "Please select a country");
 
- function deleteAddress() {
-    if(window.confirm("Are you shure about deleting this address","Deleteing the address?")){
-      showLoader()
-        fetch('/address',{
-        method:"DELETE",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({addressId:document.getElementById("addressSelect").value})
-        
-    })
-    .then((data)=>data.json())
-    .then((data)=>{
-      hideLoader()
-        if(data.type === 'error'){
-          showToast(data.message,'error');
-        }
-        if(data.type === 'success'){
-            showToast('Address Deleted')
-          setTimeout(()=>{
-           window.location.reload()
-          },500)
-          
-        }
-       
-    })
-     .catch((error) => {
-    console.log(error)
-    hideLoader()
-    showToast('Something went wrong', 'error');
-    e.target.checked = false;
-   });
-    }
-  
- }
+              clearError("stateError");
+              if (!state) showError("stateError", "Please select a state");
 
+              clearError("cityError");
+              if (!city) showError("cityError", "Please select a city");
 
- async function validatePincodeMapping(pinCode, state, country, city) {
-  try {
-    const res = await fetch(`https://api.postalpincode.in/pincode/${pinCode}`);
-    const data = await res.json();
+              clearError("pinCodeError");
+              if (!/^\d{6}$/.test(pinCode)) {
+                showError("pinCodeError", "Enter a valid 6-digit PIN code");
+              }
 
-    if (data[0].Status !== "Success") return false;
+              clearError("emailError");
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRegex.test(email)) {
+                showError("emailError", "Enter a valid email address");
+              }
 
-    const postOffice = data[0].PostOffice[0];
+              clearError("phoneNumberError");
+              if (!/^\d{10}$/.test(phoneNumber)) {
+                showError("phoneNumberError", "Enter a valid 10-digit phone number");
+              }
 
-    return {
-    state:postOffice.State === state,
-    country:postOffice.Country === country,
-    district: postOffice.District === city
-    }
-  } catch (err) {
-    console.error("Pincode validation error", err);
-    return false;
-  }
-}
+              if (isCorrect) {
+                if (!isCorrect.state) {
+                  showError("pinCodeError", "State / Country / City does not match PIN code");
+                  showError("stateError", "Invalid state for this PIN code");
+                }
+                if (!isCorrect.country) {
+                  showError("countryError", "Invalid country for this PIN code");
+                }
+                if (!isCorrect.district) {
+                  showError("cityError", "Invalid district for this PIN code");
+                }
+              }
 
+              if (isValid) {
+                const submitData = JSON.stringify({
+                  userName,
+                  address,
+                  country,
+                  state,
+                  city,
+                  pinCode,
+                  email,
+                  phoneNumber,
+                  companyName: form.companyName.value,
+                  isNew: form.isNew.value,
+                  addressId: form.addresses.value,
+                  newDefault
+                });
 
-document.getElementById('defaultAddress').addEventListener('click',(e)=>{
-   if (!e.target.checked) {
-    e.target.checked = true;
-    return;
-  }
-  showLoader()
-     fetch('/address/defaultAddress', {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      addressId: document.getElementById('addressSelect').value
-    })
-  })
-  .then(res => res.json())
-  .then(result => {
-    hideLoader()
-    if (result.type === 'success') {
-      window.location.href = result.href;
-    } else {
-      showToast(result.message, 'error');
-      e.target.checked = false; 
-    }
-  })
-  .catch((error) => {
-    console.log(error)
-    hideLoader()
-    showToast('Something went wrong', 'error');
-    e.target.checked = false;
-  });
-})
+                showLoader();
+                fetch('/address', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: submitData
+                }).then(data => data.json())
+                  .then(data => {
+                    hideLoader();
+                    if (data.type === "success") {
+                      showToast("Success");
+                      setTimeout(() => {
+                        window.location.href = data.href;
+                      }, 1000);
+                    } else if (data.type === "error") {
+                      showToast(data.message, 'error');
+                    }
+                  }).catch(err => {
+                    hideLoader();
+                    showToast('Something went wrong', 'error');
+                  });
+              }
+            });
 
-  
+            document.getElementById('pinCode').addEventListener('input', (e) => {
+              if (e.target.value.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
+                  .then(data => data.json())
+                  .then(data => {
+                    if (data[0].Status === "Error") {
+                      document.getElementById("pinCodeError").textContent = "Pin code not found!"
+                    }
+                    if (data[0].Status === "Success") {
+                      document.getElementById("pinCodeError").textContent = ""
+                      form.state.value = data[0].PostOffice[0].State
+                      form.country.value = data[0].PostOffice[0].Country
+                      form.city.value = data[0].PostOffice[0].District
+                      tempState = data[0].PostOffice[0].State
+                      tempCountry = data[0].PostOffice[0].Country
+                      tempDistrict = data[0].PostOffice[0].District
+                    }
+                  });
+              }
+            });
 
-            </script>
-            <script src="/script/loader.js"></script>
-            <script src="/script/tost.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            document.querySelectorAll('#addressSelect').forEach((element) => {
+              element.addEventListener('change', (e) => {
+                showLoader();
+                if (!e.target.value || e.target.value === 'new') {
+                  hideLoader();
+                  return;
+                }
+                fetch(`/address/${e.target.value}`)
+                  .then((data) => data.json())
+                  .then((data) => {
+                    hideLoader();
+                    if (data.type === 'error') return showToast(data.message, 'error');
+                    document.getElementById('userName').value = data.userName;
+                    document.getElementById('address').value = data.address;
+                    document.getElementById('country').value = data.country;
+                    document.getElementById('companyName').value = data?.companyName || '';
+                    document.getElementById('addressId').value = data._id;
+                    document.getElementById('state').value = data.state;
+                    document.getElementById('city').value = data.city;
+                    document.getElementById('pinCode').value = data.pinCode;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('phoneNumber').value = data.phoneNumber;
+
+                    if (data.default == true) {
+                      document.getElementById('defaultAddress').checked = true;
+                    } else {
+                      document.getElementById('defaultAddress').checked = false;
+                    }
+                  })
+                  .catch((err) => {
+                    console.error("Fetch error:", err);
+                    hideLoader();
+                    showToast('Failed to load address details', 'error');
+                  });
+              });
+            });
+
+            function addNewAddress() {
+              document.getElementById('formTitle').innerText = 'Add New Address';
+              document.getElementById('deleteBtn').classList.add('d-none');
+
+              document.getElementById('defaultAddressWrapper').classList.add('d-none');
+              document.getElementById('newDefaultAddressWrapper').classList.remove('d-none');
+              document.getElementById('newDefaultAddressWrapper').classList.add('d-flex');
+
+              document.getElementById('new').value = "newAddress";
+              document.getElementById('userName').value = '';
+              document.getElementById('address').value = '';
+              document.getElementById('country').value = '';
+              document.getElementById('addressId').value = '';
+              document.getElementById('companyName').value = "";
+              document.getElementById('state').value = '';
+              document.getElementById('city').value = '';
+              document.getElementById('pinCode').value = '';
+              document.getElementById('email').value = '';
+              document.getElementById('phoneNumber').value = '';
+
+              // Select the empty or "new" value if it exists, without destroying other options
+              const select = document.getElementById('addressSelect');
+              if (select) select.value = '';
+
+              document.querySelectorAll('.address-item-card').forEach(card => card.classList.remove('active'));
+              document.querySelector('.add-new-address-card').classList.add('active');
+            }
+
+            function deleteAddress() {
+              if (window.confirm("Are you sure about deleting this address?")) {
+                showLoader();
+                fetch('/address', {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ addressId: document.getElementById("addressSelect").value })
+                })
+                  .then((data) => data.json())
+                  .then((data) => {
+                    hideLoader();
+                    if (data.type === 'error') {
+                      showToast(data.message, 'error');
+                    }
+                    if (data.type === 'success') {
+                      showToast('Address Deleted');
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 500);
+                    }
+                  })
+                  .catch((error) => {
+                    hideLoader();
+                    showToast('Something went wrong', 'error');
+                  });
+              }
+            }
+
+            async function validatePincodeMapping(pinCode, state, country, city) {
+              try {
+                const res = await fetch(`https://api.postalpincode.in/pincode/${pinCode}`);
+                const data = await res.json();
+                if (data[0].Status !== "Success") return false;
+                const postOffice = data[0].PostOffice[0];
+                return {
+                  state: postOffice.State === state,
+                  country: postOffice.Country === country,
+                  district: postOffice.District === city
+                };
+              } catch (err) {
+                console.error("Pincode validation error", err);
+                return null;
+              }
+            }
+
+            document.getElementById('defaultAddress').addEventListener('click', (e) => {
+              if (!e.target.checked) {
+                e.target.checked = true;
+                return;
+              }
+              showLoader();
+              fetch('/address/defaultAddress', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  addressId: document.getElementById('addressSelect').value
+                })
+              })
+                .then(res => res.json())
+                .then(result => {
+                  hideLoader();
+                  if (result.type === 'success') {
+                    window.location.href = result.href;
+                  } else {
+                    showToast(result.message, 'error');
+                    e.target.checked = false;
+                  }
+                })
+                .catch((error) => {
+                  hideLoader();
+                  showToast('Something went wrong', 'error');
+                  e.target.checked = false;
+                });
+            });
+          </script>
+          <script src="/script/loader.js"></script>
+          <script src="/script/tost.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
