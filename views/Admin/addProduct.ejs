@@ -533,19 +533,16 @@
                           <% } %>
                       </div>
                     </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                      <button type="button" onclick="clean()" class="btn btn-light px-3 fw-bold border btn-sm">Clear
+                        Form</button>
+                      <button type="button" onclick="add()" id="addButton"
+                        class="btn btn-primary px-4 fw-bold btn-sm">Add Variant</button>
+                    </div>
                   </div>
                 </div>
-
               </div>
             </div>
-
-
-
-          </div>
-          <div class="d-flex justify-content-end gap-2 pb-4">
-            <button type="button" onclick="clean()" class="btn btn-light px-4 fw-bold border">Clear Form</button>
-            <button type="button" onclick="add()" id="addButton" class="btn btn-primary px-5 fw-bold">Add
-              Variant</button>
           </div>
 
     </div>
@@ -820,16 +817,43 @@
       if (!valid) return;
 
       const formData = new FormData();
-      objectArray.forEach((group, i) => {
-        formData.append(`price${i}`, group.price);
-        formData.append(`stock${i}`, group.stock);
-        formData.append(`storage${i}`, group.storage);
-        formData.append(`ram${i}`, group.ram);
-        formData.append(`img1${i}`, group.img1);
-        formData.append(`img2${i}`, group.img2);
-        formData.append(`img3${i}`, group.img3);
-        formData.append(`img4${i}`, group.img4);
-      });
+
+      // If objectArray is empty, try to use the current form values as the first variant
+      if (objectArray.length === 0) {
+        const storage = document.getElementById('storage').value;
+        const ram = document.getElementById('ram').value;
+        const stock = document.getElementById('stock').value;
+        const price = document.getElementById('price').value;
+        const img1 = document.getElementById('img1').files[0];
+        const img2 = document.getElementById('img2').files[0];
+        const img3 = document.getElementById('img3').files[0];
+        const img4 = document.getElementById('img4').files[0];
+
+        if (storage && ram && price && stock && img1 && img2 && img3 && img4) {
+          formData.append(`price0`, price);
+          formData.append(`stock0`, stock);
+          formData.append(`storage0`, storage);
+          formData.append(`ram0`, ram);
+          formData.append(`img10`, img1);
+          formData.append(`img20`, img2);
+          formData.append(`img30`, img3);
+          formData.append(`img40`, img4);
+        } else {
+          showToast("Please add at least one complete variant.", "error");
+          return;
+        }
+      } else {
+        objectArray.forEach((group, i) => {
+          formData.append(`price${i}`, group.price);
+          formData.append(`stock${i}`, group.stock);
+          formData.append(`storage${i}`, group.storage);
+          formData.append(`ram${i}`, group.ram);
+          formData.append(`img1${i}`, group.img1);
+          formData.append(`img2${i}`, group.img2);
+          formData.append(`img3${i}`, group.img3);
+          formData.append(`img4${i}`, group.img4);
+        });
+      }
 
       formData.append(`productName`, productName);
       formData.append(`basePrice`, basePrice);
