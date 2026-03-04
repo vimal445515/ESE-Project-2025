@@ -769,24 +769,42 @@
             const discount = document.getElementById("discount").value;
             const category = document.getElementById("productCategory").value;
 
+            // Variant fields
+            const price = document.getElementById("price").value;
+            const stock = document.getElementById("stock").value;
+            const storage = document.getElementById("storage").value;
+            const ram = document.getElementById("ram").value;
+
+            const img1 = document.getElementById("img1").files[0];
+            const img2 = document.getElementById("img2").files[0];
+            const img3 = document.getElementById("img3").files[0];
+            const img4 = document.getElementById("img4").files[0];
+
             let valid = true;
             if (!productName) { showError("productNameError", "Product name required."); valid = false; }
             if (!description) { showError("descriptionError", "Description required."); valid = false; }
             if (!basePrice || isNaN(basePrice) || Number(basePrice) <= 0) { showError("basePriceError", "Valid base price required."); valid = false; }
 
+            // Variant validation
+            if (!storage || isNaN(storage)) { showError("storageError", "Valid storage required."); valid = false; }
+            if (!ram || isNaN(ram)) { showError("ramError", "Valid RAM required."); valid = false; }
+            if (!price || isNaN(price) || Number(price) <= 0) { showError("variantPriceError", "Valid price required."); valid = false; }
+            if (!stock || isNaN(stock) || Number(stock) < 0) { showError("stockError", "Valid stock quantity required."); valid = false; }
+
             if (!valid) return;
 
             const formData = new FormData()
-            objectArray.forEach((group, index) => {
-                formData.append(`price${index}`, group.price)
-                formData.append(`stock${index}`, group.stock)
-                formData.append(`storage${index}`, group.storage)
-                formData.append(`ram${index}`, group.ram)
-                formData.append(`img1${index}`, group.img1)
-                formData.append(`img2${index}`, group.img2)
-                formData.append(`img3${index}`, group.img3)
-                formData.append(`img4${index}`, group.img4)
-            })
+
+            // Append the variant data into index 0 as backend expects
+            formData.append(`price0`, price);
+            formData.append(`stock0`, stock);
+            formData.append(`storage0`, storage);
+            formData.append(`ram0`, ram);
+
+            if (img1) formData.append(`img10`, img1);
+            if (img2) formData.append(`img20`, img2);
+            if (img3) formData.append(`img30`, img3);
+            if (img4) formData.append(`img40`, img4);
 
             formData.append(`productName`, productName)
             formData.append(`basePrice`, basePrice)

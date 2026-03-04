@@ -96,7 +96,7 @@ const editProduct = async (req, res) => {
     variant.price = variantsData[0]?.price || data.variants.price;
     variant.stock = variantsData[0]?.stock || data.variants.stock;
     variant.storage = variantsData[0]?.storage || data.variants.storage;
-    variant.ram = variantsData[0].ram || data.variants.ram;
+    variant.ram = variantsData[0]?.ram || data.variants.ram;
     variant.images = [
       variantsData[0]?.images[0]?.publicId
         ? variantsData[0]?.images[0]
